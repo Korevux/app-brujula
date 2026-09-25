@@ -1,0 +1,13 @@
+{
+  "name": "Brújula Interior",
+  "short_name": "Brújula",
+  "description": "Un acompañante personal para convertir intención en acción.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f7f8fa",
+  "theme_color": "#f7f8fa",
+  "icons": [
+    { "src": "icon.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

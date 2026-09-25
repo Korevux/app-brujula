@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#eef2e6"/>
+      <stop offset="1" stop-color="#dbe4d2"/>
+    </linearGradient>
+    <linearGradient id="arrow" x1="110" y1="90" x2="400" y2="400" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5fb0ec"/>
+      <stop offset="1" stop-color="#2b6fb8"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" rx="120" fill="url(#bg)"/>
+
+  <!-- single bold navigation arrow, thick enough to read at small sizes -->
+  <path d="M108 356 L364 100 L316 396 L248 300 Z" fill="url(#arrow)" stroke="#2b6fb8" stroke-width="6" stroke-linejoin="round"/>
+</svg>

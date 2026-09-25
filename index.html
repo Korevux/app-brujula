@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover">
+<title>Brújula Interior</title>
+<meta name="description" content="Brújula Interior — acompañante personal para convertir intención en acción.">
+<meta name="theme-color" content="#f7f8fa">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Brújula Interior">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+/* ============================================================
+   Brújula Interior — estilos
+   Paleta: blanco / gris neutro claro / azul (acento único, del logo)
+   ============================================================ */
+:root{
+  --bg:#f7f8fa;
+  --bg-soft:#eef1f5;
+  --card:#ffffff;
+  --border:#e3e7ed;
+  --border-strong:#ccd3dd;
+  --accent:#2b6fb8;
+  --accent-light:#4fa3e0;
+  --accent-dark:#1d5590;
+  --accent-soft:#e8f2fc;
+  --gold:#c9a15a;
+  --gold-soft:#f3e6cb;
+  --ink:#1a1d22;
+  --ink-soft:#5b6270;
+  --ink-faint:#8a91a0;
+  --white:#ffffff;
+  --danger:#d6483f;
+  --radius-lg:22px;
+  --radius-md:16px;
+  --radius-sm:12px;
+  --shadow-sm:0 2px 10px rgba(20,30,45,0.06);
+  --shadow-md:0 6px 24px rgba(20,30,45,0.10);
+  --shadow-lg:0 12px 36px rgba(20,30,45,0.14);
+  --maxw:480px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
+  color: var(--ink);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+#app{
+  max-width: var(--maxw);
+  margin: 0 auto;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  position:relative;
+  padding-bottom: 86px;
+}
+h1,h2,h3,h4{ margin:0; font-weight:700; color:var(--ink); letter-spacing:-0.01em; }
+p{margin:0;}
+button{ font-family:inherit; cursor:pointer; border:none; }
+input,textarea,select{ font-family:inherit; }
+::-webkit-scrollbar{ width:0; height:0; }
+
+/* ---------- Header ---------- */
+.topbar{
+  padding: 18px 18px 8px 18px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.brand{ display:flex; align-items:center; gap:8px; }
+.brand-mark{
+  width:30px;height:30px;border-radius:9px;
+  box-shadow: var(--shadow-sm);
+  flex-shrink:0;
+  overflow:hidden;
+}
+.brand-mark img{ width:100%; height:100%; display:block; }
+.about-logo{ width:72px; height:72px; border-radius:18px; box-shadow: var(--shadow-sm); margin-bottom:12px; }
+.brand-name{ font-size:15px; font-weight:700; color:var(--accent-dark); letter-spacing:0.02em; }
+
+/* ---------- Screen container ---------- */
+.screen{ padding: 8px 16px 24px 16px; display:none; animation: fadein .28s ease; }
+.screen.active{ display:block; }
+@keyframes fadein{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+/* ---------- Cards ---------- */
+.card{
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 14px;
+  border: 1px solid var(--border);
+}
+.card.tight{ padding:14px 16px; }
+.card-title{ font-size:13px; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent-dark); font-weight:700; margin-bottom:8px; }
+.card-title .icon{ margin-right:6px; }
+
+/* ---------- Hero / Saludo ---------- */
+.hero{ padding: 4px 2px 14px 2px; }
+.hero .greeting{ font-size:22px; font-weight:700; color:var(--ink); }
+.hero .date{ font-size:13px; color:var(--ink-soft); margin-top:2px; text-transform:capitalize; }
+
+/* ---------- Enfoque de hoy — highlight ---------- */
+.enfoque-hero{
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+  color: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-md);
+  margin-bottom:14px;
+  position:relative;
+  overflow:hidden;
+}
+.enfoque-hero::after{
+  content:""; position:absolute; right:-30px; top:-30px; width:120px; height:120px;
+  border-radius:50%; background: rgba(255,255,255,0.08);
+}
+.enfoque-label{ font-size:12px; text-transform:uppercase; letter-spacing:0.08em; opacity:0.85; font-weight:700; }
+.enfoque-metas-text{ font-size:18px; font-weight:700; margin-top:6px; line-height:1.3; }
+.enfoque-razones-text{ font-size:13px; opacity:0.85; margin-top:6px; }
+.enfoque-empty{ font-size:14px; opacity:0.9; line-height:1.5; }
+.enfoque-cta{
+  margin-top:14px; background: var(--white); color: var(--accent-dark);
+  padding:12px 18px; border-radius: 999px; font-weight:700; font-size:14px;
+  width:100%; box-shadow: var(--shadow-sm);
+}
+.enfoque-cta:active{ transform: scale(0.98); }
+.paso-row{ display:flex; align-items:flex-start; gap:10px; margin-top:12px; background: rgba(255,255,255,0.14); border-radius:14px; padding:10px 12px; }
+.paso-check{ width:24px; height:24px; border-radius:7px; border:2px solid rgba(255,255,255,0.75); flex-shrink:0; display:flex; align-items:center; justify-content:center; margin-top:1px; transition: all .15s ease; }
+.paso-check.checked{ background: var(--white); border-color: var(--white); }
+.paso-check.checked::after{ content:"✓"; color:var(--accent-dark); font-size:14px; font-weight:800; }
+.paso-text{ font-size:14.5px; font-weight:600; line-height:1.35; }
+.paso-text.done{ text-decoration:line-through; opacity:0.75; }
+
+/* ---------- Buttons ---------- */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+  padding: 13px 18px; border-radius: 999px; font-weight:700; font-size:14.5px;
+  background: var(--accent); color: var(--white); box-shadow: var(--shadow-sm);
+  transition: transform .15s ease;
+  min-height:46px;
+}
+.btn:active{ transform: scale(0.97); }
+.btn.secondary{ background: var(--bg-soft); color: var(--ink); box-shadow:none; }
+.btn.gold{ background: var(--gold); color:var(--ink); }
+.btn.ghost{ background:transparent; color:var(--accent-dark); box-shadow:none; border:1.5px solid var(--accent-light); }
+.btn.danger{ background: var(--danger); color:var(--white); }
+.btn.block{ width:100%; }
+.btn.small{ padding:9px 14px; font-size:13px; min-height:38px; }
+.btn:disabled{ opacity:0.5; }
+
+/* ---------- Forms ---------- */
+label{ display:block; font-size:13px; font-weight:600; color: var(--ink-soft); margin-bottom:6px; margin-top:12px; }
+label:first-child{ margin-top:0; }
+input[type=text], input[type=number], input[type=time], input[type=date], textarea, select{
+  width:100%; padding:12px 14px; border-radius: var(--radius-sm);
+  border:1.5px solid var(--border-strong); background: var(--bg-soft); color:var(--ink);
+  font-size:15px; outline:none;
+}
+textarea{ min-height:76px; resize:vertical; line-height:1.4; }
+input:focus, textarea:focus, select:focus{ border-color: var(--accent); background:var(--white); }
+.field-row{ display:flex; gap:10px; }
+.field-row > *{ flex:1; }
+.hint{ font-size:12px; color: var(--ink-faint); margin-top:5px; }
+
+/* ---------- Checkbox / toggle rows ---------- */
+.check-row{
+  display:flex; align-items:center; gap:12px; padding:12px 4px;
+  border-bottom: 1px solid var(--border);
+}
+.check-row:last-child{ border-bottom:none; }
+.checkbox{
+  width:26px; height:26px; border-radius:8px; border:2px solid var(--border-strong);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0; background:var(--white);
+  transition: all .15s ease;
+}
+.checkbox.checked{ background: var(--accent); border-color: var(--accent); }
+.checkbox.checked::after{ content:"✓"; color:white; font-size:15px; font-weight:700; }
+.row-title{ font-weight:600; font-size:14.5px; }
+.row-sub{ font-size:12.5px; color: var(--ink-faint); margin-top:2px; }
+.row-actions{ margin-left:auto; display:flex; gap:6px; flex-shrink:0; }
+.icon-btn{
+  width:34px; height:34px; border-radius:50%; background: var(--bg-soft);
+  display:flex; align-items:center; justify-content:center; font-size:15px; color:var(--ink-soft);
+}
+.icon-btn:active{ transform:scale(0.92); }
+
+/* ---------- Switch ---------- */
+.switch{ width:44px; height:26px; border-radius:999px; background: var(--border-strong); position:relative; flex-shrink:0; transition: background .15s; }
+.switch.on{ background: var(--accent); }
+.switch::after{ content:""; position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:white; box-shadow:var(--shadow-sm); transition: left .15s; }
+.switch.on::after{ left:21px; }
+
+/* ---------- Nav ---------- */
+.navbar{
+  position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+  width:100%; max-width: var(--maxw);
+  background: var(--card); border-top:1px solid var(--border);
+  display:flex; justify-content:space-around; align-items:center;
+  padding: 8px 4px calc(8px + env(safe-area-inset-bottom)) 4px;
+  box-shadow: 0 -4px 18px rgba(20,30,45,0.08);
+  z-index:50;
+}
+.nav-item{
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:6px 8px; border-radius:14px; color: var(--ink-faint);
+  min-width:52px; background:none;
+}
+.nav-item.active{ color: var(--accent-dark); }
+.nav-item .nav-icon{ font-size:19px; line-height:1; }
+.nav-item .nav-label{ font-size:10.5px; font-weight:600; }
+
+/* ---------- Progress bar ---------- */
+.progress-track{ height:10px; border-radius:999px; background:var(--bg-soft); overflow:hidden; }
+.progress-fill{ height:100%; background: linear-gradient(90deg, var(--accent), var(--accent-light)); border-radius:999px; transition: width .4s ease; }
+.progress-text{ font-size:12.5px; color:var(--ink-soft); margin-top:6px; }
+
+/* ---------- Goals (vision board) ---------- */
+.goal-card{
+  background: linear-gradient(135deg, var(--card), var(--bg-soft));
+  border-radius: var(--radius-md); padding:16px; margin-bottom:10px;
+  border-left: 5px solid var(--gold); box-shadow: var(--shadow-sm);
+  display:flex; gap:12px; align-items:flex-start;
+}
+.goal-num{ font-size:22px; font-weight:800; color: var(--gold); flex-shrink:0; width:34px; }
+.goal-title{ font-weight:700; font-size:15px; }
+.goal-desc{ font-size:13px; color:var(--ink-soft); margin-top:4px; line-height:1.4; }
+
+/* ---------- Badge / chip ---------- */
+.chip{ display:inline-block; padding:4px 10px; border-radius:999px; font-size:11.5px; font-weight:700; background:var(--accent-soft); color:var(--accent-dark); }
+
+/* ---------- Task item ---------- */
+.task-item{ display:flex; align-items:flex-start; gap:10px; padding:12px 4px; border-bottom:1px solid var(--border); }
+.task-item:last-child{ border-bottom:none; }
+.task-item.done .task-title{ text-decoration: line-through; color: var(--ink-faint); }
+.task-title{ font-weight:600; font-size:14.5px; }
+.task-meta{ font-size:12px; color:var(--ink-faint); margin-top:3px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+
+/* ---------- Section spacing ---------- */
+.section-title{ font-size:17px; font-weight:800; margin: 18px 0 10px 2px; }
+.section-title.first{ margin-top:6px; }
+.muted{ color: var(--ink-soft); font-size:13.5px; line-height:1.5; }
+.small-muted{ color:var(--ink-faint); font-size:12px; }
+
+/* ---------- Capsula ---------- */
+.capsula-frase{ font-size:17px; font-weight:700; line-height:1.4; font-style:italic; color:var(--ink); }
+.capsula-tema{ font-size:11.5px; text-transform:uppercase; letter-spacing:0.06em; color:var(--gold); font-weight:700; margin-bottom:6px; }
+.capsula-q{ margin-top:14px; font-size:14px; font-weight:600; }
+.capsula-a{ margin-top:14px; font-size:14px; font-weight:600; }
+
+/* ---------- Streak ---------- */
+.streak-hero{ display:flex; align-items:center; gap:16px; }
+.streak-num{ font-size:40px; font-weight:800; color:var(--accent-dark); line-height:1; }
+.streak-label{ font-size:12.5px; color:var(--ink-soft); margin-top:2px; }
+.streak-flame{ font-size:30px; }
+
+/* ---------- Modal ---------- */
+.modal-overlay{
+  position:fixed; inset:0; background:rgba(10,14,20,0.5); z-index:200;
+  display:none; align-items:flex-end; justify-content:center;
+}
+.modal-overlay.active{ display:flex; }
+.modal-sheet{
+  background: var(--card); width:100%; max-width: var(--maxw);
+  border-radius: 26px 26px 0 0; padding: 22px 18px calc(22px + env(safe-area-inset-bottom)) 18px;
+  max-height: 86vh; overflow-y:auto;
+  animation: slideup .25s ease;
+  box-shadow: 0 -8px 30px rgba(0,0,0,0.2);
+}
+@keyframes slideup{ from{ transform: translateY(30px); opacity:0;} to{ transform:translateY(0); opacity:1; } }
+.modal-handle{ width:40px; height:4px; background:var(--border-strong); border-radius:999px; margin: 0 auto 14px auto; }
+.modal-close{ position:absolute; top:14px; right:16px; }
+
+/* ---------- Toast ---------- */
+.toast{
+  position:fixed; bottom:96px; left:50%; transform:translateX(-50%) translateY(20px);
+  background: var(--ink); color:var(--white); padding:11px 20px; border-radius:999px;
+  font-size:13.5px; font-weight:600; box-shadow: var(--shadow-md); z-index:300;
+  opacity:0; transition: all .25s ease; pointer-events:none; max-width:90%; text-align:center;
+}
+.toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ---------- Empty state ---------- */
+.empty-state{ text-align:center; padding: 26px 10px; color: var(--ink-faint); }
+.empty-state .em-icon{ font-size:30px; margin-bottom:8px; }
+
+/* ---------- Mode selector ---------- */
+.mode-row{ display:flex; gap:8px; }
+.mode-btn{ flex:1; padding:10px 6px; border-radius:14px; background:var(--bg-soft); text-align:center; font-size:12.5px; font-weight:700; color:var(--ink-soft); }
+.mode-btn.active{ background:var(--accent); color:white; }
+
+/* ---------- Timeline ---------- */
+.tl-item{ display:flex; gap:12px; padding:10px 2px; }
+.tl-dot-col{ display:flex; flex-direction:column; align-items:center; width:14px; flex-shrink:0; }
+.tl-dot{ width:10px; height:10px; border-radius:50%; background:var(--border-strong); margin-top:4px; }
+.tl-dot.done{ background:var(--accent); }
+.tl-dot.now{ background:var(--gold); box-shadow:0 0 0 4px var(--gold-soft); }
+.tl-line{ flex:1; width:2px; background:var(--border); margin-top:2px; }
+.tl-time{ font-size:11.5px; color:var(--ink-faint); font-weight:700; width:44px; flex-shrink:0; }
+.tl-text{ font-size:13.5px; font-weight:600; }
+
+/* ---------- Weekly truth removed per product decision (no "verdades" section in this build) ---------- */
+
+/* ---------- Settings list ---------- */
+.settings-group{ margin-bottom:18px; }
+.settings-group-title{ font-size:12px; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-faint); font-weight:700; margin: 4px 0 8px 4px; }
+.settings-item{ display:flex; align-items:center; gap:12px; padding:14px 4px; border-bottom:1px solid var(--border); }
+.settings-item:last-child{ border-bottom:none; }
+.settings-item .row-actions{ margin-left:auto; }
+
+@media (max-width:340px){
+  .hero .greeting{ font-size:19px; }
+  .enfoque-metas-text{ font-size:17px; }
+  .streak-num{ font-size:32px; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark"><img src="icon.svg" alt="Brújula Interior"></div>
+      <div class="brand-name">Brújula Interior</div>
+    </div>
+    <button class="icon-btn" id="btn-mode-indicator" title="Modo del día">☀️</button>
+  </div>
+
+  <!-- ===================== HOY ===================== -->
+  <section class="screen" id="screen-hoy">
+    <div class="hero">
+      <div class="greeting" id="hoy-greeting">Hola</div>
+      <div class="date" id="hoy-date">—</div>
+    </div>
+
+    <div class="card tight" id="capsula-preview-card">
+      <div class="card-title">🕊️ Cápsula del día</div>
+      <div class="capsula-tema" id="hoy-cap-tema">—</div>
+      <div class="capsula-frase" id="hoy-cap-frase" style="font-size:15px;">—</div>
+      <button class="btn ghost small" style="margin-top:10px;" onclick="go('cápsula')">Abrir cápsula</button>
+    </div>
+
+    <div class="card tight">
+      <div class="card-title">🎯 Mis metas</div>
+      <div id="hoy-metas-mini"></div>
+    </div>
+
+    <div class="card tight">
+      <div class="card-title">🧭 Declaración de identidad</div>
+      <div id="hoy-identidad-text" class="muted">Aún no has escrito tu declaración. Ve a Rutina para crearla.</div>
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        <button class="btn small" id="btn-identidad-manana" onclick="marcarIdentidad('manana')">Ya la dije (mañana)</button>
+        <button class="btn small secondary" id="btn-identidad-noche" onclick="marcarIdentidad('noche')">Ya la dije (noche)</button>
+      </div>
+    </div>
+
+    <div class="enfoque-hero" id="enfoque-card">
+      <div class="enfoque-label">🔭 Enfoque de hoy</div>
+      <div id="enfoque-content"></div>
+    </div>
+
+    <div class="card tight">
+      <div class="card-title">✅ Hábitos de hoy</div>
+      <div id="hoy-habitos-list"></div>
+    </div>
+
+    <div class="card tight">
+      <div class="card-title">📈 Tu progreso</div>
+      <div class="progress-track"><div class="progress-fill" id="hoy-progress-fill" style="width:0%"></div></div>
+      <div class="progress-text" id="hoy-progress-text">0 de 0 elementos completados hoy</div>
+    </div>
+
+    <div class="card tight">
+      <div class="card-title">⏰ Próximo recordatorio</div>
+      <div id="hoy-next-reminder" class="muted">No tienes recordatorios próximos.</div>
+    </div>
+
+    <button class="btn block gold" style="margin-top:6px;" onclick="abrirCierreNocturno()">🌙 Cierre nocturno</button>
+  </section>
+
+  <!-- ===================== METAS ===================== -->
+  <section class="screen" id="screen-metas">
+    <h2 class="section-title first">Mis metas</h2>
+    <p class="muted">Tus 3 a 5 metas principales. Son objetivos de vida importantes: no hace falta cambiarlas seguido. Revísalas idealmente una vez por semana.</p>
+    <div id="metas-list" style="margin-top:14px;"></div>
+    <button class="btn block secondary" style="margin-top:8px;" onclick="editarMetas()">✏️ Editar metas</button>
+  </section>
+
+  <!-- ===================== RUTINA ===================== -->
+  <section class="screen" id="screen-rutina">
+    <h2 class="section-title first">Rutina</h2>
+
+    <div class="mode-row" style="margin-bottom:16px;">
+      <div class="mode-btn" data-mode="completo" onclick="setModoDia('completo')">Día completo</div>
+      <div class="mode-btn" data-mode="ocupado" onclick="setModoDia('ocupado')">Día ocupado</div>
+      <div class="mode-btn" data-mode="minimo" onclick="setModoDia('minimo')">Día mínimo</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🧭 Identidad</div>
+      <textarea id="input-identidad" placeholder="Soy una persona disciplinada, enfocada y constante."></textarea>
+      <button class="btn small" style="margin-top:10px;" onclick="guardarIdentidad()">Guardar</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🙏 Gratitud</div>
+      <textarea id="input-gratitud" placeholder="Hoy agradezco..."></textarea>
+      <button class="btn small" style="margin-top:10px;" onclick="guardarGratitud()">Guardar</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🌅 Visualización</div>
+      <p class="hint" style="margin-top:0; margin-bottom:10px;">Describe tu meta ya lograda, en presente, como si ya estuviera pasando.</p>
+      <textarea id="input-visualizacion" placeholder="Estoy disfrutando de..."></textarea>
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        <button class="btn small" onclick="guardarVisualizacion()">Guardar</button>
+        <button class="btn small ghost" onclick="modoVisualizacion()">Leer en modo foco</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🔭 Enfoque de hoy</div>
+      <p class="muted" style="margin-bottom:4px;">Elige hacia cuál de tus metas quieres avanzar hoy, y qué vas a hacer al respecto.</p>
+      <label>Metas para hoy</label>
+      <input type="text" id="input-enfoque-metas" placeholder="Ej: Avanzar en la propuesta del cliente">
+      <p class="hint">¿Qué te gustaría lograr o avanzar hoy? Puede relacionarse con una de tus metas principales.</p>
+      <label>Razones para alcanzarlas</label>
+      <input type="text" id="input-enfoque-razones" placeholder="Ej: Es clave para mi meta de negocio">
+      <p class="hint">¿Por qué te importa? Te ayuda a recordar tu motivación cuando el día se complique.</p>
+      <label>¿Qué 2 cosas harás hoy para acercarte a esa meta?</label>
+      <input type="text" id="input-enfoque-paso1" placeholder="Paso 1">
+      <input type="text" id="input-enfoque-paso2" placeholder="Paso 2" style="margin-top:8px;">
+      <p class="hint">Dos acciones concretas y realistas que puedas hacer hoy mismo.</p>
+      <button class="btn small" style="margin-top:10px;" onclick="guardarEnfoque()">Guardar enfoque de hoy</button>
+    </div>
+
+    <h3 class="section-title">Otras acciones del día</h3>
+    <div class="card">
+      <label>Nueva acción</label>
+      <input type="text" id="input-task-desc" placeholder="Descripción de la acción">
+      <div class="field-row" style="margin-top:8px;">
+        <div>
+          <label style="margin-top:0;">Hora (opcional)</label>
+          <input type="time" id="input-task-hora">
+        </div>
+        <div>
+          <label style="margin-top:0;">Duración min. (opcional)</label>
+          <input type="number" id="input-task-duracion" placeholder="30">
+        </div>
+      </div>
+      <button class="btn small" style="margin-top:10px;" onclick="agregarTask()">Agregar acción</button>
+    </div>
+    <div class="card" id="tasks-card">
+      <div class="card-title">Acciones de hoy</div>
+      <div id="tasks-list"></div>
+    </div>
+
+    <h3 class="section-title">Hábitos</h3>
+    <div class="card" id="habitos-config-card">
+      <div id="habitos-config-list"></div>
+      <button class="btn ghost small block" style="margin-top:10px;" onclick="agregarHabitoPersonalizado()">+ Agregar hábito nuevo</button>
+    </div>
+
+    <h3 class="section-title">Línea de tiempo del día</h3>
+    <div class="card" id="timeline-card">
+      <div id="timeline-list"></div>
+    </div>
+
+    <h3 class="section-title">Revisión semanal</h3>
+    <div class="card">
+      <p class="muted" style="margin-bottom:8px;">Recomendada una vez por semana. Tus metas principales también pueden revisarse aquí.</p>
+      <button class="btn secondary block" onclick="abrirRevisionSemanal()">Abrir revisión semanal</button>
+    </div>
+  </section>
+
+  <!-- ===================== CAPSULA ===================== -->
+  <section class="screen" id="screen-cápsula">
+    <h2 class="section-title first">Cápsula del día</h2>
+    <div class="card" id="capsula-full-card">
+      <div class="capsula-tema" id="cap-tema">—</div>
+      <div class="capsula-frase" id="cap-frase">—</div>
+      <div class="capsula-q" id="cap-pregunta-label"></div>
+      <div class="muted" id="cap-pregunta" style="margin-top:4px;"></div>
+      <div class="capsula-a" id="cap-accion-label"></div>
+      <div class="muted" id="cap-accion" style="margin-top:4px;"></div>
+      <label style="margin-top:16px;">Tu respuesta / reflexión</label>
+      <textarea id="cap-respuesta" placeholder="Escribe aquí lo que te haga pensar esta cápsula..."></textarea>
+      <button class="btn small" style="margin-top:10px;" onclick="guardarRespuestaCapsula()">Guardar respuesta</button>
+    </div>
+    <div class="card">
+      <div class="card-title">📅 Día del programa</div>
+      <p class="muted" id="cap-dia-info">—</p>
+      <p class="hint" id="cap-repetida-hint" style="display:none;">Ya viste todas las cápsulas disponibles y están repitiéndose desde el Día 1. Si quieres cápsulas nuevas, descarga la próxima actualización de la app cuando esté disponible.</p>
+    </div>
+  </section>
+
+  <!-- ===================== PROGRESO ===================== -->
+  <section class="screen" id="screen-progreso">
+    <h2 class="section-title first">Progreso</h2>
+
+    <div class="card">
+      <div class="card-title">🔥 Racha de continuidad</div>
+      <div class="streak-hero">
+        <div class="streak-flame">🔥</div>
+        <div>
+          <div class="streak-num" id="streak-num">0</div>
+          <div class="streak-label">días consecutivos con actividad registrada</div>
+        </div>
+      </div>
+      <p class="muted" id="streak-msg" style="margin-top:10px;"></p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📅 Resumen semanal</div>
+      <p class="muted">Hábitos completados: <b id="resumen-habitos">0</b></p>
+      <p class="muted" style="margin-top:4px;">Pasos completados: <b id="resumen-pasos">0</b></p>
+      <p class="muted" style="margin-top:4px;">Días con rutina registrada: <b id="resumen-dias">0</b></p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🗓️ Revisión mensual</div>
+      <p class="muted">Se abre automáticamente el día 1 de cada mes. También puedes abrirla manualmente.</p>
+      <button class="btn secondary block" style="margin-top:10px;" onclick="abrirRevisionMensual()">Abrir revisión mensual</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🕰️ Historial reciente</div>
+      <div id="historial-list"></div>
+    </div>
+  </section>
+
+  <!-- ===================== AJUSTES ===================== -->
+  <section class="screen" id="screen-ajustes">
+    <h2 class="section-title first">Ajustes</h2>
+
+    <div class="settings-group">
+      <div class="settings-group-title">Perfil</div>
+      <div class="card">
+        <label>Tu nombre</label>
+        <input type="text" id="input-nombre" placeholder="Ej: Noel">
+        <p class="hint">Se usa para saludarte por tu nombre en la pantalla Hoy. Es opcional.</p>
+        <button class="btn small" style="margin-top:8px;" onclick="guardarNombre()">Guardar</button>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <div class="settings-group-title">Datos</div>
+      <div class="card">
+        <button class="btn block" onclick="exportarDatos()">⬇️ Exportar mis datos (JSON)</button>
+        <button class="btn block secondary" style="margin-top:10px;" onclick="document.getElementById('import-file-input').click()">⬆️ Importar mis datos</button>
+        <input type="file" id="import-file-input" accept="application/json" style="display:none" onchange="importarDatos(event)">
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <div class="settings-group-title">Integración (opcional)</div>
+      <div class="card">
+        <label>URL de webhook n8n (opcional)</label>
+        <input type="text" id="input-webhook" placeholder="https://...">
+        <p class="hint">Si configuras una URL, cada cierre de día se intentará enviar también allí en formato JSON. Es completamente opcional: la app funciona igual sin esto. Nunca se comparte nada sin que tú lo configures aquí.</p>
+        <button class="btn small" style="margin-top:8px;" onclick="guardarWebhook()">Guardar</button>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <div class="settings-group-title">Recordatorios</div>
+      <div class="card">
+        <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+          <input type="checkbox" id="notifyToggle" style="width:18px; height:18px; flex:0 0 auto;">
+          Avisarme aunque no tenga la app abierta
+        </label>
+        <p class="hint" id="notifyStatus" style="margin-top:8px;"></p>
+        <p class="muted" style="margin-top:10px;">Los recordatorios de cada hábito se activan y configuran desde la sección Rutina (hora y días). Aquí puedes probar el aviso.</p>
+        <button class="btn ghost small block" style="margin-top:10px;" onclick="probarRecordatorio()">🔔 Probar recordatorio</button>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <div class="settings-group-title">Acerca de</div>
+      <div class="card">
+        <img class="about-logo" src="logo.svg" alt="Brújula Interior">
+        <p class="muted"><b>Brújula Interior</b> es un acompañante personal para convertir intención en acción: recordar tus metas, definir tu prioridad del día y cerrar el día con conciencia.</p>
+        <p class="muted" style="margin-top:10px;">Esta aplicación no está afiliada a ningún autor, programa o marca externa. El contenido de las cápsulas diarias es original, inspirado libremente en ideas generales y clásicas del desarrollo personal (disciplina, metas, hábitos, gratitud, acción), de dominio público en su espíritu, sin citar ni reproducir textos protegidos de ningún autor o curso específico.</p>
+        <p class="small-muted" style="margin-top:10px;">Versión 1.1 · Datos guardados solo en este dispositivo (localStorage).</p>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <div class="settings-group-title">Zona de riesgo</div>
+      <div class="card">
+        <button class="btn danger block" onclick="confirmarBorrarTodo()">🗑️ Borrar todos mis datos</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="navbar">
+    <button class="nav-item" data-screen="hoy" onclick="go('hoy')"><span class="nav-icon">🏠</span><span class="nav-label">Hoy</span></button>
+    <button class="nav-item" data-screen="metas" onclick="go('metas')"><span class="nav-icon">🎯</span><span class="nav-label">Metas</span></button>
+    <button class="nav-item" data-screen="rutina" onclick="go('rutina')"><span class="nav-icon">🗓️</span><span class="nav-label">Rutina</span></button>
+    <button class="nav-item" data-screen="cápsula" onclick="go('cápsula')"><span class="nav-icon">🕊️</span><span class="nav-label">Cápsula</span></button>
+    <button class="nav-item" data-screen="progreso" onclick="go('progreso')"><span class="nav-icon">📈</span><span class="nav-label">Progreso</span></button>
+    <button class="nav-item" data-screen="ajustes" onclick="go('ajustes')"><span class="nav-icon">⚙️</span><span class="nav-label">Ajustes</span></button>
+  </div>
+</div>
+
+<!-- ===================== MODALS ===================== -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-sheet" id="modal-sheet">
+    <div class="modal-handle"></div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   Brújula Interior — lógica de la aplicación
+   Sin dependencias externas. Todo el estado vive en localStorage.
+   ============================================================ */
+
+const STORAGE_KEY = 'brujulaInterior.v1';
+let N8N_WEBHOOK_URL = ''; // opcional; también configurable desde Ajustes
+
+const PUSH_SUBSCRIBED_KEY = 'brujula_push_subscribed';
+// Clave pública VAPID: no es secreta (así funciona el estándar Web Push,
+// el navegador la usa para verificar que el push viene de este
+// servidor). La clave privada vive solo en el servidor (variable de
+// entorno de Netlify), nunca aquí.
+const VAPID_PUBLIC_KEY = 'BFL4lnw7kWXCu_MjfbZoJQbs3P-GtxiiMDdAP96pes1o8lh4kTgdvvk-8xeHkfZa6Za9lzzomWs2kOphsP3YyK8';
+
+let CAPSULAS = []; // se llena vía fetch('capsulas.json'); si falla, queda vacío y la app sigue funcionando
+
+const DEFAULT_STATE = {
+  version: 1,
+  metas: [],           // {id,numero,titulo,descripcion}
+  metasConfiguradas: false,
+  identidad: { texto: '', historial: {} }, // historial[fecha] = {manana:bool, noche:bool}
+  habitosConfig: [
+    { id:'ejercicio', nombre:'Ejercicio', activo:true, hora:'', duracionRecomendada:30, duracionPersonal:null, dias:[0,1,2,3,4,5,6], recordatorio:false },
+    { id:'lectura', nombre:'Lectura y reflexión', activo:true, hora:'', duracionRecomendada:20, duracionPersonal:null, dias:[0,1,2,3,4,5,6], recordatorio:false, contenidoPersonal:'' },
+    { id:'estudio', nombre:'Estudio', activo:true, hora:'', duracionRecomendada:30, duracionPersonal:null, dias:[0,1,2,3,4,5,6], recordatorio:false }
+  ],
+  modoDia: {},          // modoDia[fecha] = 'completo'|'ocupado'|'minimo'
+  nombre: '',
+  webhookUrl: '',
+  dias: {},             // dias[fecha] = { gratitud, visualizacion, enfoque:{metas,razones,pasos:[{texto,completado}x2]}, tasks:[...], habitos:{id:{completado,duracion}}, cierre:{...}, capsulaRespuesta, capsulaDia }
+  semanaRevisiones: {}, // semanaRevisiones[isoWeekKey] = {...}
+  mesRevisiones: {},    // mesRevisiones['YYYY-MM'] = {...}
+  ultimaAperturaMensual: null
+};
+
+let state = null;
+
+// ---------- Persistencia ----------
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw){ state = JSON.parse(JSON.stringify(DEFAULT_STATE)); return; }
+    const parsed = JSON.parse(raw);
+    // merge superficial para no perder campos nuevos si el usuario tiene datos viejos
+    state = Object.assign(JSON.parse(JSON.stringify(DEFAULT_STATE)), parsed);
+    if(!state.dias) state.dias = {};
+    if(!state.habitosConfig) state.habitosConfig = DEFAULT_STATE.habitosConfig;
+  }catch(e){
+    console.warn('No se pudo leer el estado guardado, iniciando limpio.', e);
+    state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+  }
+}
+function saveState(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }catch(e){
+    console.warn('No se pudo guardar el estado (localStorage no disponible o lleno).', e);
+    showToast('No se pudo guardar. Revisa el espacio de almacenamiento del navegador.');
+  }
+}
+
+// ---------- Utilidades de fecha ----------
+function todayKey(d){
+  const dt = d || new Date();
+  const y = dt.getFullYear();
+  const m = String(dt.getMonth()+1).padStart(2,'0');
+  const day = String(dt.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+function monthKey(d){
+  const dt = d || new Date();
+  return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}`;
+}
+function isoWeekKey(d){
+  const dt = d ? new Date(d) : new Date();
+  const target = new Date(dt.valueOf());
+  const dayNr = (dt.getDay()+6)%7;
+  target.setDate(target.getDate()-dayNr+3);
+  const firstThursday = new Date(target.getFullYear(),0,4);
+  const diff = (target - firstThursday) / 86400000;
+  const week = 1 + Math.floor(diff/7);
+  return `${target.getFullYear()}-W${String(week).padStart(2,'0')}`;
+}
+function formatDateLong(d){
+  const dt = d || new Date();
+  return dt.toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+}
+function ensureDia(fecha){
+  if(!state.dias[fecha]){
+    state.dias[fecha] = {
+      gratitud:'', visualizacion:'',
+      enfoque:{ metas:'', razones:'', pasos:[{texto:'',completado:false},{texto:'',completado:false}] },
+      tasks:[],
+      habitos:{},
+      cierre:null,
+      capsulaRespuesta:'',
+      capsulaDia:null,
+      identidad:{ manana:false, noche:false }
+    };
+  }
+  const dia = state.dias[fecha];
+  // Migración desde el formato antiguo (mpa/A-1) a "enfoque" si un usuario tenía datos previos.
+  if(!dia.enfoque){
+    const old = dia.mpa || {};
+    dia.enfoque = { metas: old.m||'', razones: old.p||'', pasos:[{texto:'',completado:false},{texto:'',completado:false}] };
+    delete dia.mpa;
+  }
+  if(!Array.isArray(dia.enfoque.pasos) || dia.enfoque.pasos.length!==2){
+    dia.enfoque.pasos = [{texto:'',completado:false},{texto:'',completado:false}];
+  }
+  return dia;
+}
+
+// ---------- Navegación ----------
+let currentScreen = 'hoy';
+function go(screen){
+  currentScreen = screen;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const target = document.getElementById('screen-'+screen);
+  if(target) target.classList.add('active');
+  const navBtn = document.querySelector(`.nav-item[data-screen="${screen}"]`);
+  if(navBtn) navBtn.classList.add('active');
+  renderAll();
+  window.scrollTo(0,0);
+}
+
+// ---------- Toast ----------
+let toastTimer=null;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+// ---------- Modal genérico ----------
+function openModal(html){
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('modal-overlay').classList.add('active');
+}
+function closeModal(){
+  document.getElementById('modal-overlay').classList.remove('active');
+}
+document.getElementById('modal-overlay').addEventListener('click', (e)=>{
+  if(e.target.id === 'modal-overlay') closeModal();
+});
+
+// ============================================================
+// CAPSULAS
+// ============================================================
+function loadCapsulas(){
+  fetch('capsulas.json').then(r=>{
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.json();
+  }).then(data=>{
+    if(Array.isArray(data)) CAPSULAS = data;
+    renderAll();
+  }).catch(err=>{
+    console.warn('No se pudieron cargar las cápsulas (capsulas.json). La app sigue funcionando sin ellas.', err);
+    CAPSULAS = [];
+    renderAll();
+  });
+}
+function capsulaDelDia(fecha){
+  if(!CAPSULAS.length) return null;
+  const dia = ensureDia(fecha);
+  if(dia.capsulaDia == null){
+    // Rotación estable: día de programa basado en el número de días desde el primer uso de la app.
+    if(!state._capsulaStartEpoch) state._capsulaStartEpoch = fecha;
+    const start = new Date(state._capsulaStartEpoch);
+    const cur = new Date(fecha);
+    const diffDays = Math.max(0, Math.round((cur - start) / 86400000));
+    const idx = diffDays % CAPSULAS.length;
+    dia.capsulaDia = CAPSULAS[idx].dia;
+    dia.capsulaRepetida = diffDays >= CAPSULAS.length;
+    saveState();
+  }
+  return CAPSULAS.find(c=>c.dia === dia.capsulaDia) || CAPSULAS[0];
+}
+
+// ============================================================
+// RENDER: HOY
+// ============================================================
+function renderHoy(){
+  const fecha = todayKey();
+  const dia = ensureDia(fecha);
+  const hour = new Date().getHours();
+  let saludo = 'Buenos días';
+  if(hour>=12 && hour<19) saludo='Buenas tardes';
+  else if(hour>=19 || hour<5) saludo='Buenas noches';
+  if(state.nombre) saludo += ', ' + state.nombre;
+  document.getElementById('hoy-greeting').textContent = saludo;
+  document.getElementById('hoy-date').textContent = formatDateLong();
+
+  // Cápsula
+  const cap = capsulaDelDia(fecha);
+  if(cap){
+    document.getElementById('hoy-cap-tema').textContent = cap.tema;
+    document.getElementById('hoy-cap-frase').textContent = cap.frase;
+  } else {
+    document.getElementById('hoy-cap-tema').textContent = 'Sin conexión al contenido';
+    document.getElementById('hoy-cap-frase').textContent = 'Las cápsulas no pudieron cargarse ahora mismo. El resto de la app funciona con normalidad.';
+  }
+
+  // Metas mini
+  const metasMini = document.getElementById('hoy-metas-mini');
+  if(!state.metas.length){
+    metasMini.innerHTML = `<div class="muted">Aún no defines tus metas principales. <span style="color:var(--accent-dark); font-weight:700; cursor:pointer;" onclick="go('metas')">Crearlas →</span></div>`;
+  } else {
+    metasMini.innerHTML = state.metas.slice(0,5).map(m=>`<div style="padding:6px 0; font-size:14px;"><b style="color:var(--gold);">${m.numero}</b> · ${escapeHtml(m.titulo)}</div>`).join('');
+  }
+
+  // Identidad
+  const idText = document.getElementById('hoy-identidad-text');
+  if(state.identidad.texto){
+    idText.textContent = '“' + state.identidad.texto + '”';
+    idText.classList.remove('muted');
+  } else {
+    idText.textContent = 'Aún no has escrito tu declaración. Ve a Rutina para crearla.';
+    idText.classList.add('muted');
+  }
+  const btnM = document.getElementById('btn-identidad-manana');
+  const btnN = document.getElementById('btn-identidad-noche');
+  btnM.textContent = dia.identidad.manana ? '✓ Dicha en la mañana' : 'Ya la dije (mañana)';
+  btnN.textContent = dia.identidad.noche ? '✓ Dicha en la noche' : 'Ya la dije (noche)';
+
+  // Enfoque de hoy
+  renderEnfoqueHoy();
+
+  // Hábitos
+  renderHabitosHoy();
+
+  // Progreso del día
+  renderProgresoHoy();
+
+  // Próximo recordatorio
+  renderProximoRecordatorio();
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function renderEnfoqueHoy(){
+  const fecha = todayKey();
+  const dia = ensureDia(fecha);
+  const enfoque = dia.enfoque;
+  const box = document.getElementById('enfoque-content');
+  if(!box) return;
+  if(!enfoque || !enfoque.metas){
+    box.innerHTML = `<div class="enfoque-empty">Todavía no defines tu enfoque de hoy: hacia qué meta quieres avanzar y qué vas a hacer al respecto.</div>
+      <button class="enfoque-cta" onclick="go('rutina')">Definir enfoque de hoy</button>`;
+    return;
+  }
+  const pasosHtml = enfoque.pasos.map((p,i)=>{
+    if(!p.texto) return '';
+    return `<div class="paso-row">
+      <div class="paso-check ${p.completado?'checked':''}" onclick="toggleEnfoquePaso(${i})"></div>
+      <div class="paso-text ${p.completado?'done':''}">${escapeHtml(p.texto)}</div>
+    </div>`;
+  }).join('');
+  box.innerHTML = `
+    <div class="enfoque-metas-text">${escapeHtml(enfoque.metas)}</div>
+    ${enfoque.razones?`<div class="enfoque-razones-text">${escapeHtml(enfoque.razones)}</div>`:''}
+    ${pasosHtml || `<div class="enfoque-razones-text" style="margin-top:12px;">Aún no defines tus 2 pasos de hoy.</div>`}
+  `;
+}
+function toggleEnfoquePaso(idx){
+  const fecha = todayKey();
+  const dia = ensureDia(fecha);
+  const p = dia.enfoque.pasos[idx];
+  if(!p) return;
+  p.completado = !p.completado;
+  saveState();
+  renderAll();
+  if(p.completado) showToast('Paso completado. Bien hecho.');
+}
+
+function renderHabitosHoy(){
+  const fecha = todayKey();
+  const dia = ensureDia(fecha);
+  const list = document.getElementById('hoy-habitos-list');
+  const activos = state.habitosConfig.filter(h=>h.activo);
+  if(!activos.length){
+    list.innerHTML = `<div class="empty-state"><div class="em-icon">🌱</div>No tienes hábitos activos. Actívalos en Rutina.</div>`;
+    return;
+  }
+  list.innerHTML = activos.map(h=>{
+    const hd = dia.habitos[h.id] || { completado:false, duracion:null, omitido:false };
+    const dur = h.duracionPersonal || h.duracionRecomendada;
+    return `<div class="check-row">
+      <div class="checkbox ${hd.completado?'checked':''}" onclick="toggleHabito('${h.id}')"></div>
+      <div>
+        <div class="row-title">${escapeHtml(h.nombre)}</div>
+        <div class="row-sub">${h.hora?h.hora+' · ':''}${dur} min recomendados${hd.omitido?' · omitido hoy':''}</div>
+      </div>
+      <div class="row-actions">
+        <button class="icon-btn" title="Omitir hoy" onclick="omitirHabito('${h.id}')">⏭️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleHabito(id){
+  const fecha = todayKey();
+  const dia = ensureDia(fecha);
+  if(!dia.habitos[id]) dia.habitos[id] = { completado:false, duracion:null, omitido:false };
+  dia.habitos[id].completado = !dia.habitos[id].completado;
+  if(dia.habitos[id].completado) dia.habitos[id].omitido = false;
+  saveState();
+  renderAll();
+}
+function omitirHabito(id){
+  const fecha = todayKey();
+  const dia = ensureDia(fecha);
+  if(!dia.habitos[id]) dia.habitos[id] = { completado:false, duracion:null, omitido:false };
+  dia.habitos[id].omitido = true;
+  dia.habitos[id].completado = false;
+  saveState();
+  renderAll();
+  showToast('Hoy puedes omitirlo. Mañana puedes retomarlo.');
+}
+
+function renderProgresoHoy(){
+  const fecha = todayKey();
+  const dia = ensureDia(fecha);
+  let total = 0, done = 0;
+  // identidad (2), gratitud, visualizacion, enfoque (metas + pasos), habitos activos, cierre
+  total += 2; if(dia.identidad.manana) done++; if(dia.identidad.noche) done++;
+  total += 1; if(dia.gratitud) done++;
+  total += 1; if(dia.visualizacion) done++;
+  total += 1; if(dia.enfoque && dia.enfoque.metas) done++;
+  dia.enfoque.pasos.forEach(p=>{ if(p.texto){ total += 1; if(p.completado) done++; } });
+  const activos = state.habitosConfig.filter(h=>h.activo);
+  activos.forEach(h=>{ total+=1; const hd = dia.habitos[h.id]; if(hd && (hd.completado||hd.omitido)) done++; });
+  total += 1; if(dia.cierre) done++;
+
+  const pct = total? Math.round((done/total)*100) : 0;
+  const fill = document.getElementById('hoy-progress-fill');
+  const text = document.getElementById('hoy-progress-text');
+  if(fill){ fill.style.width = pct+'%'; }
+  if(text){ text.textContent = `${done} de ${total} elementos completados hoy`; }
+}
+
+function renderProximoRecordatorio(){
+  const el = document.getElementById('hoy-next-reminder');
+  if(!el) return;
+  const activos = state.habitosConfig.filter(h=>h.activo && h.recordatorio && h.hora);
+  if(!activos.length){ el.textContent='No tienes recordatorios próximos.'; el.classList.add('muted'); return; }
+  const now = new Date();
+  const nowMin = now.getHours()*60+now.getMinutes();
+  let best = null;
+  activos.forEach(h=>{
+    const [hh,mm] = h.hora.split(':').map(Number);
+    const mins = hh*60+mm;
+    const delta = mins>=nowMin ? mins-nowMin : (1440-nowMin)+mins;
+    if(best===null || delta<best.delta) best = { h, delta };
+  });
+  if(best){
+    el.classList.remove('muted');
+    el.innerHTML = `<b>${escapeHtml(best.h.nombre)}</b> a las ${best.h.hora}`;
+  }
+}
+
+// ============================================================
+// IDENTIDAD / GRATITUD / VISUALIZACION / ENFOQUE DE HOY
+// ============================================================
+function marcarIdentidad(momento){
+  const fecha = todayKey();
+  const dia = ensureDia(fecha);
+  dia.identidad[momento] = !dia.identidad[momento];
+  saveState();
+  renderAll();
+}
+function guardarIdentidad(){
+  const val = document.getElementById('input-identidad').value.trim();
+  state.identidad.texto = val;
+  saveState();
+  showToast('Identidad guardada.');
+  renderAll();
+}
+function guardarGratitud(){
+  const fecha = todayKey();
+  const dia = ensureDia(fecha);
+  dia.gratitud = document.getElementById('input-gratitud').value.trim();
+  saveState();
+  showToast('Gratitud guardada.');
+  renderAll();
+}
+function guardarVisualizacion(){
+  const fecha = todayKey();
+  const dia = ensureDia(fecha);
+  dia.visualizacion = document.getElementById('input-visualizacion').value.trim();
+  saveState();
+  showToast('Visualización guardada.');
+  renderAll();
+}
+function modoVisualizacion(){
+  const fecha = todayKey();
+  const dia = ensureDia(fecha);
+  const texto = dia.visualizacion || 'Aún no escribiste tu visualización.';
+  openModal(`
+    <div style="text-align:center; padding: 30px 10px;">
+      <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold); font-weight:700; margin-bottom:14px;">Modo foco</div>
+      <div style="font-size:19px; line-height:1.6; font-weight:600;">${escapeHtml(texto)}</div>
+      <button class="btn secondary" style="margin-top:26px;" onclick="closeModal()">Cerrar</button>
+    </div>
+  `);
+}
+function guardarEnfoque(){
+  const fecha = todayKey();
+  const dia = ensureDia(fecha);
+  const paso1texto = document.getElementById('input-enfoque-paso1').value.trim();
+  const paso2texto = document.getElementById('input-enfoque-paso2').value.trim();
+  dia.enfoque = {
+    metas: document.getElementById('input-enfoque-metas').value.trim(),
+    razones: document.getElementById('input-enfoque-razones').value.trim(),
+    pasos: [
+      { texto: paso1texto, completado: (dia.enfoque.pasos[0] && dia.enfoque.pasos[0].texto===paso1texto) ? dia.enfoque.pasos[0].completado : false },
+      { texto: paso2texto, completado: (dia.enfoque.pasos[1] && dia.enfoque.pasos[1].texto===paso2texto) ? dia.enfoque.pasos[1].completado : false }
+    ]
+  };
+  saveState();
+  showToast('Enfoque de hoy guardado.');
+  renderAll();
+}
+
+// ============================================================
+// METAS
+// ============================================================
+function renderMetas(){
+  const list = document.getElementById('metas-list');
+  if(!state.metas.length){
+    list.innerHTML = `<div class="empty-state"><div class="em-icon">🎯</div>Aún no tienes metas creadas.</div>`;
+    return;
+  }
+  list.innerHTML = state.metas.map(m=>`
+    <div class="goal-card">
+      <div class="goal-num">${String(m.numero).padStart(2,'0')}</div>
+      <div>
+        <div class="goal-title">${escapeHtml(m.titulo)}</div>
+        ${m.descripcion? `<div class="goal-desc">${escapeHtml(m.descripcion)}</div>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+function editarMetas(){
+  const rows = (state.metas.length? state.metas : [1,2,3].map(n=>({numero:n,titulo:'',descripcion:''})))
+    .map((m,i)=>`
+    <div style="margin-bottom:16px; padding-bottom:14px; border-bottom:1px solid var(--border);">
+      <label style="margin-top:0;">Meta ${i+1} — título</label>
+      <input type="text" class="meta-titulo" data-idx="${i}" value="${escapeHtml(m.titulo||'')}" placeholder="Ej: Libertad financiera">
+      <label>Descripción</label>
+      <textarea class="meta-desc" data-idx="${i}" placeholder="Ej: Construir un negocio rentable...">${escapeHtml(m.descripcion||'')}</textarea>
+    </div>
+  `).join('');
+  openModal(`
+    <h3 style="margin-bottom:14px;">Editar mis metas (3 a 5)</h3>
+    <div id="metas-editor">${rows}</div>
+    <button class="btn ghost small block" onclick="agregarFilaMeta()">+ Agregar otra meta</button>
+    <button class="btn block" style="margin-top:14px;" onclick="guardarMetas()">Guardar metas</button>
+  `);
+}
+function agregarFilaMeta(){
+  const editor = document.getElementById('metas-editor');
+  const idx = editor.querySelectorAll('.meta-titulo').length;
+  if(idx>=5){ showToast('Máximo 5 metas principales.'); return; }
+  const div = document.createElement('div');
+  div.style.marginBottom='16px'; div.style.paddingBottom='14px'; div.style.borderBottom='1px solid var(--border)';
+  div.innerHTML = `
+    <label style="margin-top:0;">Meta ${idx+1} — título</label>
+    <input type="text" class="meta-titulo" data-idx="${idx}" placeholder="Ej: Libertad financiera">
+    <label>Descripción</label>
+    <textarea class="meta-desc" data-idx="${idx}" placeholder="Ej: Construir un negocio rentable..."></textarea>
+  `;
+  editor.appendChild(div);
+}
+function guardarMetas(){
+  const titulos = Array.from(document.querySelectorAll('.meta-titulo'));
+  const descs = Array.from(document.querySelectorAll('.meta-desc'));
+  const nuevas = [];
+  titulos.forEach((inp,i)=>{
+    const t = inp.value.trim();
+    if(t){ nuevas.push({ id:'meta_'+Date.now()+'_'+i, numero: nuevas.length+1, titulo:t, descripcion:(descs[i]?descs[i].value.trim():'') }); }
+  });
+  if(nuevas.length<3){ showToast('Agrega al menos 3 metas.'); return; }
+  state.metas = nuevas.slice(0,5);
+  state.metasConfiguradas = true;
+  saveState();
+  closeModal();
+  showToast('Metas guardadas.');
+  renderAll();
+}
+
+// ============================================================
+// MODO DEL DIA
+// ============================================================
+function setModoDia(modo){
+  const fecha = todayKey();
+  state.modoDia[fecha] = modo;
+  saveState();
+  renderAll();
+}
+function renderModoDia(){
+  const fecha = todayKey();
+  const modo = state.modoDia[fecha] || 'completo';
+  document.querySelectorAll('.mode-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.mode===modo);
+  });
+  const iconMap = { completo:'☀️', ocupado:'⏱️', minimo:'🌱' };
+  const btn = document.getElementById('btn-mode-indicator');
+  if(btn) btn.textContent = iconMap[modo] || '☀️';
+}
+
+// ============================================================
+// TASKS (lista simple, sin categorías)
+// ============================================================
+function agregarTask(){
+  const desc = document.getElementById('input-task-desc').value.trim();
+  if(!desc){ showToast('Escribe una descripción para la acción.'); return; }
+  const hora = document.getElementById('input-task-hora').value;
+  const duracion = document.getElementById('input-task-duracion').value;
+  const fecha = todayKey();
+  const dia = ensureDia(fecha);
+
+  dia.tasks.push({
+    id: 'task_'+Date.now(),
+    desc, hora, duracion: duracion?Number(duracion):null,
+    completado:false
+  });
+  saveState();
+  document.getElementById('input-task-desc').value='';
+  document.getElementById('input-task-hora').value='';
+  document.getElementById('input-task-duracion').value='';
+  showToast('Acción agregada.');
+  renderAll();
+}
+function renderTasks(){
+  const fecha = todayKey();
+  const dia = ensureDia(fecha);
+  const list = document.getElementById('tasks-list');
+  if(!dia.tasks.length){
+    list.innerHTML = `<div class="empty-state"><div class="em-icon">📝</div>Aún no agregas acciones para hoy.</div>`;
+    return;
+  }
+  list.innerHTML = dia.tasks.map(t=>`
+    <div class="task-item ${t.completado?'done':''}">
+      <div class="checkbox ${t.completado?'checked':''}" onclick="toggleTask('${t.id}')"></div>
+      <div style="flex:1;">
+        <div class="task-title">${escapeHtml(t.desc)}</div>
+        <div class="task-meta">
+          ${t.hora?`<span>🕒 ${t.hora}</span>`:''}
+          ${t.duracion?`<span>${t.duracion} min</span>`:''}
+        </div>
+      </div>
+      <div class="row-actions">
+        <button class="icon-btn" title="Eliminar" onclick="eliminarTask('${t.id}')">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+function toggleTask(id){
+  const fecha = todayKey();
+  const dia = ensureDia(fecha);
+  const t = dia.tasks.find(x=>x.id===id);
+  if(!t) return;
+  t.completado = !t.completado;
+  saveState();
+  renderAll();
+}
+function eliminarTask(id){
+  const fecha = todayKey();
+  const dia = ensureDia(fecha);
+  dia.tasks = dia.tasks.filter(t=>t.id!==id);
+  saveState();
+  renderAll();
+}
+
+// ============================================================
+// HABITOS (config)
+// ============================================================
+function renderHabitosConfig(){
+  const list = document.getElementById('habitos-config-list');
+  if(!list) return;
+  list.innerHTML = state.habitosConfig.map(h=>`
+    <div class="settings-item" style="display:block;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div>
+          <div class="row-title">${escapeHtml(h.nombre)}</div>
+          <div class="row-sub">${h.duracionPersonal||h.duracionRecomendada} min · ${h.hora||'sin hora fija'}</div>
+        </div>
+        <div class="row-actions">
+          <div class="switch ${h.activo?'on':''}" onclick="toggleHabitoActivo('${h.id}')"></div>
+        </div>
+      </div>
+      <div style="margin-top:10px;">
+        <div class="field-row">
+          <div>
+            <label style="margin-top:0;">Hora</label>
+            <input type="time" value="${h.hora||''}" onchange="setHabitoField('${h.id}','hora',this.value)">
+          </div>
+          <div>
+            <label style="margin-top:0;">Duración personal (min)</label>
+            <input type="number" value="${h.duracionPersonal||''}" placeholder="${h.duracionRecomendada}" onchange="setHabitoField('${h.id}','duracionPersonal',this.value?Number(this.value):null)">
+          </div>
+        </div>
+        ${h.id==='lectura' ? `<label>Contenido actual (ej: libro que estás leyendo)</label>
+          <input type="text" value="${escapeHtml(h.contenidoPersonal||'')}" placeholder="Ej: Libro actual: ..." onchange="setHabitoField('${h.id}','contenidoPersonal',this.value)">` : ''}
+        <label style="display:flex; align-items:center; gap:8px; margin-top:10px;">
+          <span style="flex:1;">Recordatorio activo</span>
+          <div class="switch ${h.recordatorio?'on':''}" onclick="toggleHabitoRecordatorio('${h.id}')"></div>
+        </label>
+      </div>
+    </div>
+  `).join('');
+}
+function toggleHabitoActivo(id){
+  const h = state.habitosConfig.find(x=>x.id===id);
+  if(h){ h.activo = !h.activo; saveState(); renderAll(); pushScheduleUpdate(); }
+}
+function toggleHabitoRecordatorio(id){
+  const h = state.habitosConfig.find(x=>x.id===id);
+  if(h){ h.recordatorio = !h.recordatorio; saveState(); renderAll(); showToast(h.recordatorio?'Recordatorio activado.':'Recordatorio desactivado.'); pushScheduleUpdate(); }
+}
+function setHabitoField(id, field, value){
+  const h = state.habitosConfig.find(x=>x.id===id);
+  if(h){ h[field] = value; saveState(); renderAll(); if(field==='hora') pushScheduleUpdate(); }
+}
+function agregarHabitoPersonalizado(){
+  openModal(`
+    <h3 style="margin-bottom:14px;">Nuevo hábito</h3>
+    <label style="margin-top:0;">Nombre</label>
+    <input type="text" id="new-habito-nombre" placeholder="Ej: Meditación">
+    <label>Duración recomendada (min)</label>
+    <input type="number" id="new-habito-duracion" placeholder="15">
+    <button class="btn block" style="margin-top:14px;" onclick="guardarHabitoPersonalizado()">Agregar</button>
+  `);
+}
+function guardarHabitoPersonalizado(){
+  const nombre = document.getElementById('new-habito-nombre').value.trim();
+  const duracion = Number(document.getElementById('new-habito-duracion').value) || 15;
+  if(!nombre){ showToast('Escribe un nombre para el hábito.'); return; }
+  state.habitosConfig.push({
+    id: 'habito_'+Date.now(), nombre, activo:true, hora:'', duracionRecomendada:duracion,
+    duracionPersonal:null, dias:[0,1,2,3,4,5,6], recordatorio:false
+  });
+  saveState();
+  closeModal();
+  showToast('Hábito agregado.');
+  renderAll();
+}
+
+// ============================================================
+// TIMELINE
+// ============================================================
+function renderTimeline(){
+  const el = document.getElementById('timeline-list');
+  if(!el) return;
+  const fecha = todayKey();
+  const dia = ensureDia(fecha);
+  const items = [];
+  items.push({ hora:'—', texto:'Identidad (mañana)', done: dia.identidad.manana });
+  state.habitosConfig.filter(h=>h.activo).forEach(h=>{
+    const hd = dia.habitos[h.id];
+    items.push({ hora: h.hora||'—', texto: h.nombre, done: !!(hd&&(hd.completado||hd.omitido)) });
+  });
+  dia.enfoque.pasos.forEach((p,i)=>{
+    if(p.texto) items.push({ hora:'—', texto: `Paso ${i+1}: `+p.texto, done: p.completado });
+  });
+  items.push({ hora:'—', texto:'Identidad (noche)', done: dia.identidad.noche });
+  items.push({ hora:'—', texto:'Cierre nocturno', done: !!dia.cierre });
+
+  const nowMin = new Date().getHours()*60+new Date().getMinutes();
+  let nowAssigned = false;
+  el.innerHTML = items.map((it,i)=>{
+    let cls='';
+    if(it.done) cls='done';
+    else if(!nowAssigned && it.hora!=='—'){
+      const [hh,mm] = it.hora.split(':').map(Number);
+      if(hh*60+mm >= nowMin){ cls='now'; nowAssigned=true; }
+    }
+    return `<div class="tl-item">
+      <div class="tl-time">${it.hora}</div>
+      <div class="tl-dot-col"><div class="tl-dot ${cls}"></div>${i<items.length-1?'<div class="tl-line"></div>':''}</div>
+      <div class="tl-text">${escapeHtml(it.texto)} ${it.done?'✓':(cls==='now'?'→ Ahora':'')}</div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// CIERRE NOCTURNO
+// ============================================================
+function abrirCierreNocturno(){
+  const fecha = todayKey();
+  const dia = ensureDia(fecha);
+  const c = dia.cierre || { logre:'', aprendi:'', agradezco:'' };
+  const activos = state.habitosConfig.filter(h=>h.activo);
+  const pasosConTexto = dia.enfoque.pasos.filter(p=>p.texto);
+  let completados = 0, totalItems = activos.length + pasosConTexto.length;
+  activos.forEach(h=>{ const hd=dia.habitos[h.id]; if(hd&&(hd.completado||hd.omitido)) completados++; });
+  pasosConTexto.forEach(p=>{ if(p.completado) completados++; });
+  openModal(`
+    <h3 style="margin-bottom:6px;">🌙 Cierre nocturno${state.nombre?', '+escapeHtml(state.nombre):''}</h3>
+    <p class="muted" style="margin-bottom:14px;">Hoy completaste ${completados} de ${totalItems} elementos. ${completados<totalItems?'Está bien: mañana puedes retomarlo.':'Buen trabajo hoy.'}</p>
+    <label style="margin-top:0;">¿Qué logré hoy?</label>
+    <textarea id="cierre-logre">${escapeHtml(c.logre)}</textarea>
+    <label>¿Qué aprendí?</label>
+    <textarea id="cierre-aprendi">${escapeHtml(c.aprendi)}</textarea>
+    <label>¿Por qué estoy agradecido?</label>
+    <textarea id="cierre-agradezco">${escapeHtml(c.agradezco)}</textarea>
+    <button class="btn block" style="margin-top:14px;" onclick="guardarCierre()">Guardar cierre</button>
+  `);
+}
+function guardarCierre(){
+  const fecha = todayKey();
+  const dia = ensureDia(fecha);
+  dia.cierre = {
+    logre: document.getElementById('cierre-logre').value.trim(),
+    aprendi: document.getElementById('cierre-aprendi').value.trim(),
+    agradezco: document.getElementById('cierre-agradezco').value.trim(),
+    fecha
+  };
+  saveState();
+  closeModal();
+  showToast('Cierre nocturno guardado. Descansa bien.');
+  enviarWebhook({ tipo:'cierre_nocturno', fecha, data: dia.cierre });
+  renderAll();
+}
+
+// ============================================================
+// REVISION SEMANAL
+// ============================================================
+function abrirRevisionSemanal(){
+  const wk = isoWeekKey();
+  const r = state.semanaRevisiones[wk] || { logre:'', noFunciono:'', aprendi:'', mejorar:'', proximaSemana:'', cambiarHorario:'' };
+  openModal(`
+    <h3 style="margin-bottom:14px;">📅 Revisión semanal</h3>
+    <label style="margin-top:0;">¿Qué logré?</label>
+    <textarea id="rs-logre">${escapeHtml(r.logre)}</textarea>
+    <label>¿Qué no funcionó?</label>
+    <textarea id="rs-noFunciono">${escapeHtml(r.noFunciono)}</textarea>
+    <label>¿Qué aprendí?</label>
+    <textarea id="rs-aprendi">${escapeHtml(r.aprendi)}</textarea>
+    <label>¿Qué quiero mejorar?</label>
+    <textarea id="rs-mejorar">${escapeHtml(r.mejorar)}</textarea>
+    <label>¿Qué será importante la próxima semana?</label>
+    <textarea id="rs-proximaSemana">${escapeHtml(r.proximaSemana)}</textarea>
+    <label>¿Necesito cambiar algún horario?</label>
+    <textarea id="rs-cambiarHorario">${escapeHtml(r.cambiarHorario)}</textarea>
+    <button class="btn block" style="margin-top:14px;" onclick="guardarRevisionSemanal()">Guardar revisión semanal</button>
+  `);
+}
+function guardarRevisionSemanal(){
+  const wk = isoWeekKey();
+  state.semanaRevisiones[wk] = {
+    logre: document.getElementById('rs-logre').value.trim(),
+    noFunciono: document.getElementById('rs-noFunciono').value.trim(),
+    aprendi: document.getElementById('rs-aprendi').value.trim(),
+    mejorar: document.getElementById('rs-mejorar').value.trim(),
+    proximaSemana: document.getElementById('rs-proximaSemana').value.trim(),
+    cambiarHorario: document.getElementById('rs-cambiarHorario').value.trim(),
+    fecha: todayKey()
+  };
+  saveState();
+  closeModal();
+  showToast('Revisión semanal guardada.');
+}
+
+// ============================================================
+// PROGRESO: RACHA / RESUMEN SEMANAL / REVISION MENSUAL
+// ============================================================
+function diaTuvoActividad(fecha){
+  const dia = state.dias[fecha];
+  if(!dia) return false;
+  if(dia.identidad.manana || dia.identidad.noche) return true;
+  if(dia.gratitud) return true;
+  if(dia.visualizacion) return true;
+  if(dia.enfoque && (dia.enfoque.metas || (Array.isArray(dia.enfoque.pasos) && dia.enfoque.pasos.some(p=>p.completado)))) return true;
+  if(!dia.enfoque && dia.mpa && dia.mpa.m) return true; // compatibilidad con datos muy antiguos aún no migrados
+  if(dia.tasks && dia.tasks.some(t=>t.completado)) return true;
+  if(dia.habitos && Object.values(dia.habitos).some(h=>h.completado)) return true;
+  if(dia.cierre) return true;
+  return false;
+}
+function calcularRacha(){
+  let racha = 0;
+  let cursor = new Date();
+  // si hoy aún no tiene actividad, no rompe la racha: se evalúa desde ayer hacia atrás,
+  // y se cuenta hoy aparte si ya tiene algo.
+  const hoyKey = todayKey();
+  if(diaTuvoActividad(hoyKey)){ racha++; }
+  cursor.setDate(cursor.getDate()-1);
+  while(true){
+    const key = todayKey(cursor);
+    if(diaTuvoActividad(key)){ racha++; cursor.setDate(cursor.getDate()-1); }
+    else break;
+    if(racha>3650) break; // salvaguarda
+  }
+  return racha;
+}
+function renderProgreso(){
+  const racha = calcularRacha();
+  document.getElementById('streak-num').textContent = racha;
+  const msg = document.getElementById('streak-msg');
+  if(racha===0){
+    msg.textContent = 'Hoy puedes comenzar tu racha. Cualquier pequeño paso cuenta.';
+  } else {
+    msg.textContent = `Llevas ${racha} día${racha===1?'':'s'} seguidos con algo de actividad registrada. Si algún día se interrumpe, no pasa nada: siempre puedes retomarlo.`;
+  }
+
+  // Resumen semanal: últimos 7 días
+  let habitosCount = 0, pasosCount = 0, diasCount = 0;
+  for(let i=0;i<7;i++){
+    const d = new Date(); d.setDate(d.getDate()-i);
+    const key = todayKey(d);
+    const dia = state.dias[key];
+    if(!dia) continue;
+    let any=false;
+    if(dia.habitos){ Object.values(dia.habitos).forEach(h=>{ if(h.completado){habitosCount++; any=true;} }); }
+    if(dia.enfoque && Array.isArray(dia.enfoque.pasos)){ dia.enfoque.pasos.forEach(p=>{ if(p.completado){ pasosCount++; any=true; } }); }
+    if(diaTuvoActividad(key)) any=true;
+    if(any) diasCount++;
+  }
+  document.getElementById('resumen-habitos').textContent = habitosCount;
+  document.getElementById('resumen-pasos').textContent = pasosCount;
+  document.getElementById('resumen-dias').textContent = diasCount;
+
+  renderHistorial();
+  chequearAperturaMensualAutomatica();
+}
+function renderHistorial(){
+  const el = document.getElementById('historial-list');
+  if(!el) return;
+  const keys = Object.keys(state.dias).sort().reverse().slice(0,10);
+  if(!keys.length){ el.innerHTML = `<div class="empty-state"><div class="em-icon">🕰️</div>Aún no hay historial.</div>`; return; }
+  el.innerHTML = keys.map(k=>{
+    const dia = state.dias[k];
+    const habitosOk = dia.habitos? Object.values(dia.habitos).filter(h=>h.completado).length : 0;
+    const pasosOk = (dia.enfoque && Array.isArray(dia.enfoque.pasos)) ? dia.enfoque.pasos.filter(p=>p.completado).length : 0;
+    return `<div class="check-row">
+      <div>
+        <div class="row-title">${k}</div>
+        <div class="row-sub">${habitosOk} hábito(s) · ${pasosOk} paso(s) completado(s)${dia.cierre?' · cierre hecho':''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function abrirRevisionMensual(){
+  const mk = monthKey();
+  const r = state.mesRevisiones[mk] || { avance:'', estancado:'', corregir:'' };
+  openModal(`
+    <h3 style="margin-bottom:6px;">🗓️ Revisión mensual</h3>
+    <p class="muted" style="margin-bottom:14px;">Correspondiente a ${mk}.</p>
+    <label style="margin-top:0;">¿Qué avancé?</label>
+    <textarea id="rm-avance">${escapeHtml(r.avance)}</textarea>
+    <label>¿Qué se estancó?</label>
+    <textarea id="rm-estancado">${escapeHtml(r.estancado)}</textarea>
+    <label>¿Qué voy a corregir?</label>
+    <textarea id="rm-corregir">${escapeHtml(r.corregir)}</textarea>
+    <button class="btn block" style="margin-top:14px;" onclick="guardarRevisionMensual()">Guardar revisión mensual</button>
+  `);
+}
+function guardarRevisionMensual(){
+  const mk = monthKey();
+  state.mesRevisiones[mk] = {
+    avance: document.getElementById('rm-avance').value.trim(),
+    estancado: document.getElementById('rm-estancado').value.trim(),
+    corregir: document.getElementById('rm-corregir').value.trim(),
+    fecha: todayKey()
+  };
+  state.ultimaAperturaMensual = monthKey();
+  saveState();
+  closeModal();
+  showToast('Revisión mensual guardada.');
+}
+function chequearAperturaMensualAutomatica(){
+  const now = new Date();
+  if(now.getDate()!==1) return;
+  const mk = monthKey();
+  if(state.ultimaAperturaMensual===mk) return;
+  if(state.mesRevisiones[mk]) { state.ultimaAperturaMensual = mk; saveState(); return; }
+  state.ultimaAperturaMensual = mk;
+  saveState();
+  setTimeout(()=>abrirRevisionMensual(), 400);
+}
+
+// ============================================================
+// CAPSULA screen
+// ============================================================
+function renderCapsulaScreen(){
+  const fecha = todayKey();
+  const dia = ensureDia(fecha);
+  const cap = capsulaDelDia(fecha);
+  if(!cap){
+    document.getElementById('cap-tema').textContent = 'Sin conexión al contenido';
+    document.getElementById('cap-frase').textContent = 'No se pudieron cargar las cápsulas (capsulas.json). Intenta de nuevo más tarde; el resto de la app sigue funcionando.';
+    document.getElementById('cap-pregunta-label').textContent='';
+    document.getElementById('cap-pregunta').textContent='';
+    document.getElementById('cap-accion-label').textContent='';
+    document.getElementById('cap-accion').textContent='';
+    document.getElementById('cap-dia-info').textContent='—';
+    return;
+  }
+  document.getElementById('cap-tema').textContent = cap.tema;
+  document.getElementById('cap-frase').textContent = cap.frase;
+  document.getElementById('cap-pregunta-label').textContent = 'Pregunta para ti';
+  document.getElementById('cap-pregunta').textContent = cap.pregunta;
+  document.getElementById('cap-accion-label').textContent = 'Acción práctica';
+  document.getElementById('cap-accion').textContent = cap.accion;
+  document.getElementById('cap-respuesta').value = dia.capsulaRespuesta || '';
+  document.getElementById('cap-dia-info').textContent = `Día ${cap.dia} · Tema: ${cap.tema}`;
+  document.getElementById('cap-repetida-hint').style.display = dia.capsulaRepetida ? 'block' : 'none';
+}
+function guardarRespuestaCapsula(){
+  const fecha = todayKey();
+  const dia = ensureDia(fecha);
+  dia.capsulaRespuesta = document.getElementById('cap-respuesta').value.trim();
+  saveState();
+  showToast('Respuesta guardada.');
+}
+
+// ============================================================
+// EXPORT / IMPORT
+// ============================================================
+function exportarDatos(){
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `brujula-interior-backup-${todayKey()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('Datos exportados.');
+}
+function importarDatos(ev){
+  const file = ev.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      const imported = JSON.parse(e.target.result);
+      if(!imported || typeof imported!=='object'){ throw new Error('Formato inválido'); }
+      state = Object.assign(JSON.parse(JSON.stringify(DEFAULT_STATE)), imported);
+      saveState();
+      showToast('Datos importados correctamente.');
+      renderAll();
+    }catch(err){
+      console.error(err);
+      showToast('No se pudo importar el archivo. Verifica que sea un backup válido.');
+    }
+    ev.target.value = '';
+  };
+  reader.readAsText(file);
+}
+function confirmarBorrarTodo(){
+  openModal(`
+    <h3 style="margin-bottom:10px;">¿Borrar todos tus datos?</h3>
+    <p class="muted">Esta acción no se puede deshacer. Te recomendamos exportar tus datos antes de continuar.</p>
+    <div style="display:flex; gap:10px; margin-top:16px;">
+      <button class="btn secondary block" onclick="closeModal()">Cancelar</button>
+      <button class="btn danger block" onclick="borrarTodo()">Borrar todo</button>
+    </div>
+  `);
+}
+function borrarTodo(){
+  localStorage.removeItem(STORAGE_KEY);
+  state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+  saveState();
+  closeModal();
+  showToast('Datos borrados. Puedes empezar de nuevo cuando quieras.');
+  renderAll();
+}
+
+// ============================================================
+// WEBHOOK (opcional)
+// ============================================================
+function guardarNombre(){
+  const val = document.getElementById('input-nombre').value.trim();
+  state.nombre = val;
+  saveState();
+  showToast(val ? 'Nombre guardado.' : 'Nombre eliminado.');
+  if(currentScreen==='hoy') renderHoy();
+}
+function guardarWebhook(){
+  const val = document.getElementById('input-webhook').value.trim();
+  state.webhookUrl = val;
+  N8N_WEBHOOK_URL = val;
+  saveState();
+  showToast(val ? 'Webhook guardado.' : 'Webhook eliminado.');
+}
+function enviarWebhook(payload){
+  const url = state.webhookUrl || N8N_WEBHOOK_URL;
+  if(!url) return; // opcional: si no está configurado, no hace nada y no bloquea la app
+  try{
+    fetch(url, {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify(payload)
+    }).catch(err=>{ console.warn('Webhook no disponible, continuando localmente.', err); });
+  }catch(e){
+    console.warn('No se pudo enviar al webhook, continuando localmente.', e);
+  }
+}
+function probarRecordatorio(){
+  if('Notification' in window && Notification.permission === 'granted'){
+    try{
+      new Notification('Brújula Interior', { body: 'Así se vería un recordatorio.', tag: 'brujula-prueba' });
+      return;
+    }catch(e){}
+  }
+  showToast('🔔 Así se vería un recordatorio. (Activa las notificaciones arriba para verlo como aviso real.)');
+}
+
+// ============================================================
+// NOTIFICACIONES PUSH REALES (avisan aunque no tengas la app abierta)
+// Requieren estar servidas por HTTPS (Netlify), no funcionan abriendo
+// el archivo local.
+// ============================================================
+
+function urlBase64ToUint8Array(base64String){
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for(let i=0; i<rawData.length; ++i){ outputArray[i] = rawData.charCodeAt(i); }
+  return outputArray;
+}
+
+function deviceTimezone(){
+  try{
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/Caracas';
+  }catch(e){
+    return 'America/Caracas';
+  }
+}
+
+function recordatoriosActivos(){
+  return state.habitosConfig
+    .filter(h => h.activo && h.recordatorio && h.hora)
+    .map(h => ({ habitId: h.id, nombre: h.nombre, hora: h.hora, dias: h.dias || [0,1,2,3,4,5,6] }));
+}
+
+// Manda al servidor la lista completa de recordatorios activos y la
+// zona horaria del dispositivo. Best-effort: si falla (sin conexión,
+// sin suscripción todavía), no rompe nada — la app sigue funcionando
+// igual, solo no se actualiza el aviso remoto.
+function pushScheduleUpdate(){
+  let subscribed = false;
+  try{ subscribed = window.localStorage.getItem(PUSH_SUBSCRIBED_KEY) === '1'; }catch(e){}
+  if(!subscribed) return;
+  if(!('serviceWorker' in navigator)) return;
+
+  navigator.serviceWorker.ready.then(function(registration){
+    return registration.pushManager.getSubscription();
+  }).then(function(subscription){
+    if(!subscription) return;
+    fetch('/.netlify/functions/save-schedule', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        subscription: subscription.toJSON(),
+        timezone: deviceTimezone(),
+        reminders: recordatoriosActivos()
+      })
+    }).catch(function(){});
+  }).catch(function(){});
+}
+
+// Se llama cuando la persona activa el check de notificaciones y ya se
+// le concedió el permiso del navegador. Crea la suscripción push (una
+// sola vez por dispositivo) y manda el horario actual de recordatorios.
+function subscribeToPush(){
+  if(!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+
+  navigator.serviceWorker.ready.then(function(registration){
+    return registration.pushManager.getSubscription().then(function(existing){
+      if(existing) return existing;
+      return registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+      });
+    });
+  }).then(function(subscription){
+    if(!subscription) return;
+    try{ window.localStorage.setItem(PUSH_SUBSCRIBED_KEY, '1'); }catch(e){}
+    fetch('/.netlify/functions/save-schedule', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        subscription: subscription.toJSON(),
+        timezone: deviceTimezone(),
+        reminders: recordatoriosActivos()
+      })
+    }).catch(function(){});
+  }).catch(function(err){
+    console.warn('No se pudo suscribir a notificaciones push.', err);
+  });
+}
+
+function refreshNotifyStatus(){
+  const notifyToggle = document.getElementById('notifyToggle');
+  const notifyStatus = document.getElementById('notifyStatus');
+  if(!notifyToggle || !notifyStatus) return;
+
+  if(!('Notification' in window)){
+    notifyStatus.textContent = 'Tu navegador no soporta notificaciones del sistema.';
+    notifyToggle.disabled = true;
+    return;
+  }
+  if(Notification.permission === 'denied'){
+    notifyStatus.textContent = 'Notificaciones bloqueadas. Actívalas desde los ajustes del navegador si las quieres.';
+  }else if(Notification.permission === 'granted' && notifyToggle.checked){
+    notifyStatus.textContent = 'Te avisaremos aunque no tengas la app abierta.';
+  }else{
+    notifyStatus.textContent = 'Actívalo para recibir tus recordatorios aunque estés en otra app.';
+  }
+}
+
+function syncNotifyUI(){
+  const notifyToggle = document.getElementById('notifyToggle');
+  if(!notifyToggle || !('Notification' in window)) return;
+  let subscribed = false;
+  try{ subscribed = window.localStorage.getItem(PUSH_SUBSCRIBED_KEY) === '1'; }catch(e){}
+  notifyToggle.checked = Notification.permission === 'granted' && subscribed;
+  refreshNotifyStatus();
+}
+
+// ============================================================
+// RENDER GLOBAL
+// ============================================================
+function renderAll(){
+  if(!state) return;
+  try{
+    if(currentScreen==='hoy') renderHoy();
+    if(currentScreen==='metas') renderMetas();
+    if(currentScreen==='rutina'){ renderTasks(); renderHabitosConfig(); renderTimeline(); renderModoDia(); }
+    if(currentScreen==='cápsula') renderCapsulaScreen();
+    if(currentScreen==='progreso') renderProgreso();
+    // Ajustes: rellenar webhook al entrar
+    if(currentScreen==='ajustes'){
+      const inp = document.getElementById('input-webhook');
+      if(inp) inp.value = state.webhookUrl || '';
+      const inpNombre = document.getElementById('input-nombre');
+      if(inpNombre) inpNombre.value = state.nombre || '';
+      syncNotifyUI();
+    }
+    renderModoDia();
+  }catch(e){
+    console.error('Error de render (no crítico):', e);
+  }
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function init(){
+  loadState();
+  // precargar campos de rutina con valores guardados
+  document.getElementById('input-identidad').value = state.identidad.texto || '';
+  const fecha = todayKey();
+  const dia = ensureDia(fecha);
+  document.getElementById('input-gratitud').value = dia.gratitud || '';
+  document.getElementById('input-visualizacion').value = dia.visualizacion || '';
+  document.getElementById('input-enfoque-metas').value = dia.enfoque.metas || '';
+  document.getElementById('input-enfoque-razones').value = dia.enfoque.razones || '';
+  document.getElementById('input-enfoque-paso1').value = (dia.enfoque.pasos[0] && dia.enfoque.pasos[0].texto) || '';
+  document.getElementById('input-enfoque-paso2').value = (dia.enfoque.pasos[1] && dia.enfoque.pasos[1].texto) || '';
+  saveState();
+  go('hoy');
+  loadCapsulas();
+
+  // si es día 1 del mes, revisar apertura automática una vez cargado el estado
+  setTimeout(()=>{ chequearAperturaMensualAutomatica(); }, 600);
+
+  syncNotifyUI();
+  const notifyToggle = document.getElementById('notifyToggle');
+  if(notifyToggle){
+    notifyToggle.addEventListener('change', function(){
+      if(!('Notification' in window)){
+        notifyToggle.checked = false;
+        return;
+      }
+      if(notifyToggle.checked){
+        Notification.requestPermission().then(function(permission){
+          const granted = permission === 'granted';
+          notifyToggle.checked = granted;
+          refreshNotifyStatus();
+          if(granted) subscribeToPush();
+        });
+      }else{
+        try{ window.localStorage.setItem(PUSH_SUBSCRIBED_KEY, '0'); }catch(e){}
+        refreshNotifyStatus();
+      }
+    });
+  }
+  // Si ya había dado el permiso en una sesión anterior, suscribirse a
+  // push también al cargar (por si nunca llegó a completarse antes, o
+  // cambiaron los recordatorios desde la última vez).
+  if(typeof Notification !== 'undefined' && Notification.permission === 'granted'){
+    let subscribed = false;
+    try{ subscribed = window.localStorage.getItem(PUSH_SUBSCRIBED_KEY) === '1'; }catch(e){}
+    if(subscribed) subscribeToPush();
+  }
+}
+document.addEventListener('DOMContentLoaded', init);
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(function () {});
+}
+</script>
+</body>
+</html>
