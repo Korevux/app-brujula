@@ -1,0 +1,32 @@
+// Configuración de Cloudflare Workers para Brújula Interior.
+// Guía paso a paso: CLOUDFLARE.md
+{
+  "name": "brujula-interior",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-09-01",
+  // La app es estática y se sirve desde la raíz del repositorio
+  // (lo que no debe publicarse está en .assetsignore).
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
+  },
+  // Dónde se guardan las suscripciones y horarios de los avisos.
+  // Cloudflare crea el espacio KV la primera vez que se publica.
+  "kv_namespaces": [
+    { "binding": "SCHEDULE" }
+  ],
+  "triggers": {
+    // Cada minuto: avisos. A las 12:00 UTC: mantener activo Supabase.
+    "crons": ["* * * * *", "0 12 * * *"]
+  },
+  "vars": {
+    "VAPID_PUBLIC_KEY": "BFL4lnw7kWXCu_MjfbZoJQbs3P-GtxiiMDdAP96pes1o8lh4kTgdvvk-8xeHkfZa6Za9lzzomWs2kOphsP3YyK8",
+    "VAPID_SUBJECT": "mailto:noel.duran.chile@gmail.com",
+    // Supabase (cuentas): la URL y la clave pública "anon", las mismas de config.js.
+    // Las usa el cron diario que mantiene activo el proyecto gratis.
+    "SUPABASE_URL": "https://rmjprvpqiscuxkjyuokb.supabase.co",
+    "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtanBydnBxaXNjdXhranl1b2tiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTExNTc0NzYsImV4cCI6MjEwNjczMzQ3Nn0.o7Hy67UJpQ9GB6atRLH86nEjSxHxRt75_gqXVPWpto8"
+  },
+  "observability": { "enabled": true }
+}
