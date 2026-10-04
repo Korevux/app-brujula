@@ -539,7 +539,7 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
 
     <div class="card">
       <div class="card-title"><i class="ic" data-ic="compass"></i><span>Mi declaración de identidad</span></div>
-      <p class="hint" style="margin-top:0; margin-bottom:10px;">Quién eres y quieres ser. La lees cada mañana en tu arranque del día.</p>
+      <p class="hint" style="margin-top:0; margin-bottom:10px;">Quién eres y quieres ser. La lees cada mañana y cada noche.</p>
       <div id="identidad-view"></div>
       <button class="btn block secondary" style="margin-top:10px;" onclick="editarTextoFijo('identidad')"><i class="ic" data-ic="pencil"></i> <span id="btn-identidad-edit-label">Editar declaración</span></button>
     </div>
@@ -1747,6 +1747,10 @@ function abrirCierreNocturno(){
     <textarea id="cierre-aprendi">${escapeHtml(c.aprendi)}</textarea>
     <label>¿Por qué estoy agradecido?</label>
     <textarea id="cierre-agradezco">${escapeHtml(c.agradezco)}</textarea>
+    ${state.identidad.texto ? `<div class="ritual-row" style="margin-top:14px;">
+      <button type="button" class="checkbox ${dia.identidad.noche?'checked':''}" id="cierre-identidad" aria-pressed="${!!dia.identidad.noche}" aria-label="Leí mi declaración esta noche" onclick="this.classList.toggle('checked'); this.setAttribute('aria-pressed', this.classList.contains('checked'));"></button>
+      <div class="ritual-body"><div class="row-title">Leí mi declaración esta noche</div><div class="ritual-sub"><span class="quote">“${escapeHtml(state.identidad.texto)}”</span></div></div>
+    </div>` : ''}
     <button class="btn block" style="margin-top:14px;" onclick="guardarCierre()">Guardar cierre</button>
   `);
 }
@@ -1759,6 +1763,8 @@ function guardarCierre(){
     agradezco: document.getElementById('cierre-agradezco').value.trim(),
     fecha
   };
+  const chkId = document.getElementById('cierre-identidad');
+  if(chkId) dia.identidad.noche = chkId.classList.contains('checked');
   saveState();
   closeModal();
   showToast('Cierre nocturno guardado. Descansa bien.');
