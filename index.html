@@ -13,6 +13,9 @@
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <style>
 /* ============================================================
    Brújula Interior — estilos
@@ -46,7 +49,8 @@
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  letter-spacing:-0.005em;
   background: linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
   color: var(--ink);
   min-height:100vh;
@@ -135,7 +139,7 @@ input,textarea,select{ font-family:inherit; }
 .paso-row{ display:flex; align-items:flex-start; gap:10px; margin-top:12px; background: rgba(255,255,255,0.14); border-radius:14px; padding:10px 12px; }
 .paso-check{ padding:0; background:transparent; width:24px; height:24px; border-radius:7px; border:2px solid rgba(255,255,255,0.75); flex-shrink:0; display:flex; align-items:center; justify-content:center; margin-top:1px; transition: all .15s ease; }
 .paso-check.checked{ background: var(--white); border-color: var(--white); }
-.paso-check.checked::after{ content:"✓"; color:var(--accent-dark); font-size:14px; font-weight:800; }
+.paso-check.checked::after{ content:""; width:60%; height:60%; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231d5590' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 5 5 9-10'/%3E%3C/svg%3E") center/contain no-repeat; }
 .paso-text{ font-size:14.5px; font-weight:600; line-height:1.35; }
 .paso-text.done{ text-decoration:line-through; opacity:0.75; }
 
@@ -183,7 +187,7 @@ input:focus, textarea:focus, select:focus{ border-color: var(--accent); backgrou
   transition: all .15s ease;
 }
 .checkbox.checked{ background: var(--accent); border-color: var(--accent); }
-.checkbox.checked::after{ content:"✓"; color:white; font-size:15px; font-weight:700; }
+.checkbox.checked::after{ content:""; width:58%; height:58%; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 5 5 9-10'/%3E%3C/svg%3E") center/contain no-repeat; }
 .row-title{ font-weight:600; font-size:14.5px; }
 .row-sub{ font-size:12.5px; color: var(--ink-faint); margin-top:2px; }
 .row-actions{ margin-left:auto; display:flex; gap:6px; flex-shrink:0; }
@@ -346,6 +350,90 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
 .settings-item:last-child{ border-bottom:none; }
 .settings-item .row-actions{ margin-left:auto; }
 
+/* ============================================================
+   Diseño 2.0: misma paleta, íconos de línea, elementos grandes y cómodos de tocar.
+   Disciplina de color: azul = acciones; dorado = solo logros y rachas.
+   ============================================================ */
+.ic{ display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; line-height:0; }
+.ic svg{ display:block; }
+.card{ border-radius:20px; box-shadow:0 1px 2px rgba(20,30,45,.04); }
+.card-title{ text-transform:none; letter-spacing:0; font-size:16px; color:var(--ink); font-weight:700; display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.card-title .ic{ color:var(--accent); background:var(--accent-soft); padding:6px; border-radius:10px; }
+.card-title .icon{ display:none; }
+.hero .greeting{ font-size:28px; letter-spacing:-0.02em; }
+.hero .date{ text-transform:none; font-size:15px; }
+.next-reminder{ display:inline-flex; align-items:center; gap:6px; background:var(--accent-soft); color:var(--accent-dark); padding:8px 12px; border-radius:999px; margin-top:12px; font-size:13px; }
+.next-reminder:empty{ display:none; }
+.section-title{ font-size:24px; letter-spacing:-0.02em; }
+.enfoque-hero{ border-radius:24px; padding:22px; }
+.enfoque-label{ text-transform:none; letter-spacing:0; font-size:14px; opacity:.85; display:flex; align-items:center; gap:8px; font-weight:600; }
+.enfoque-metas-text{ font-size:21px; letter-spacing:-0.01em; margin-top:8px; }
+.enfoque-empty{ font-size:15.5px; margin-top:6px; }
+.paso-row{ padding:14px; border-radius:16px; min-height:56px; align-items:center; gap:14px; cursor:pointer; }
+.paso-check{ width:30px; height:30px; border-radius:50%; margin-top:0; }
+.paso-text{ font-size:16px; }
+.enfoque-cta{ min-height:52px; border-radius:16px; font-size:15.5px; font-weight:650; display:flex; align-items:center; justify-content:center; gap:8px; }
+#hoy-habitos-list .check-row, #tasks-list .task-item{ background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:12px 12px 12px 14px; margin-bottom:10px; min-height:64px; }
+#hoy-habitos-list .check-row:last-child, #tasks-list .task-item:last-child{ margin-bottom:0; border-bottom:1px solid var(--border); }
+#tasks-list .task-item{ align-items:center; min-height:56px; }
+.checkbox{ border-radius:50%; width:32px; height:32px; border-width:2px; }
+.row-title, .task-title{ font-weight:650; font-size:16px; }
+.row-sub{ font-size:13px; }
+.icon-btn{ width:44px; height:44px; background:var(--card); border:1px solid var(--border); color:var(--ink-soft); }
+.btn{ border-radius:16px; min-height:52px; font-weight:650; font-size:15.5px; gap:8px; }
+.btn.small{ min-height:46px; padding:11px 18px; font-size:15px; border-radius:14px; }
+.btn.gold{ background:var(--accent); color:var(--white); }
+.btn.ghost{ border-width:1.5px; border-color:var(--border-strong); color:var(--accent-dark); }
+input[type=text], input[type=number], input[type=time], input[type=date], input[type=email], textarea, select{ min-height:50px; border-radius:14px; font-size:16px; }
+input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--border-strong); background:var(--bg-soft); color:var(--ink); outline:none; font-family:inherit; }
+.cierre-row{ flex-direction:column; align-items:stretch; gap:12px; }
+.cierre-row .btn{ margin-left:0; width:100%; }
+.progress-track{ height:10px; }
+.progress-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
+.progress-head .card-title{ margin-bottom:0; }
+.streak-chip{ display:inline-flex; align-items:center; gap:6px; background:var(--gold-soft); color:#8a6420; padding:6px 12px; border-radius:999px; font-size:13px; font-weight:700; white-space:nowrap; }
+.streak-chip .ic{ color:var(--gold); }
+.streak-flame{ color:var(--gold); background:var(--gold-soft); width:60px; height:60px; border-radius:18px; display:flex; align-items:center; justify-content:center; }
+.streak-num{ color:var(--ink); }
+.goal-card{ border-left-color:var(--accent); background:var(--card); border:1px solid var(--border); border-left:5px solid var(--accent); }
+.goal-num{ color:var(--accent); }
+.capsula-tema{ color:var(--accent); }
+.tl-dot.now{ background:var(--accent); box-shadow:0 0 0 4px var(--accent-soft); }
+.tab-btn{ min-height:44px; font-size:14.5px; }
+.tl-time:empty{ display:none; }
+.tl-text{ font-size:14.5px; }
+.estilo-btn{ min-height:56px; display:flex; align-items:center; justify-content:center; gap:6px; }
+.settings-group-title{ letter-spacing:0.04em; }
+.empty-state .em-icon{ color:var(--ink-faint); display:flex; justify-content:center; }
+.navbar{ padding-top:10px; }
+.nav-item{ gap:4px; min-width:56px; padding:4px 6px; }
+.nav-item .nav-icon{ padding:4px 14px; border-radius:999px; transition: background .15s; }
+.nav-item .nav-label{ font-size:11.5px; font-weight:600; }
+.nav-item.active{ color:var(--accent); }
+.nav-item.active .nav-icon{ background:var(--accent-soft); }
+.alarma-icon .ic svg{ width:72px; height:72px; }
+.ios-banner{ border-radius:16px; }
+
+/* Microinteracciones */
+@keyframes pop{ 0%{ transform:scale(1);} 40%{ transform:scale(1.22);} 100%{ transform:scale(1);} }
+.pop{ animation: pop .32s ease; }
+
+/* Celebración al completar el día */
+.celebracion{ position:fixed; inset:0; z-index:350; display:none; align-items:center; justify-content:center; background:rgba(10,14,20,0.35); overflow:hidden; }
+.celebracion.active{ display:flex; }
+.celebra-card{ position:relative; z-index:2; background:var(--card); border-radius:28px; padding:30px 26px; text-align:center; width:min(320px, 86vw); box-shadow:var(--shadow-lg); animation: entra .45s cubic-bezier(.2,1.4,.4,1); }
+@keyframes entra{ from{ transform:scale(.7); opacity:0; } to{ transform:scale(1); opacity:1; } }
+.celebra-flame{ width:76px; height:76px; margin:0 auto; border-radius:24px; background:var(--gold-soft); color:var(--gold); display:flex; align-items:center; justify-content:center; }
+.celebra-title{ font-size:24px; font-weight:800; margin-top:16px; letter-spacing:-0.02em; }
+.celebra-sub{ font-size:15px; color:var(--ink-soft); margin-top:6px; line-height:1.5; }
+.celebra-racha{ display:inline-flex; align-items:center; gap:6px; margin-top:16px; background:var(--gold-soft); color:#8a6420; font-weight:800; padding:8px 16px; border-radius:999px; }
+.confeti{ position:absolute; top:-12px; width:9px; height:14px; border-radius:3px; opacity:.95; animation: cae linear forwards; }
+@keyframes cae{ to{ transform: translateY(105vh) rotate(540deg); } }
+@media (prefers-reduced-motion: reduce){
+  .pop, .celebra-card, .confeti, .alarma-icon, .screen{ animation:none !important; }
+  .confeti{ display:none; }
+}
+
 @media (max-width:340px){
   .hero .greeting{ font-size:19px; }
   .enfoque-metas-text{ font-size:17px; }
@@ -374,23 +462,23 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
     </div>
 
     <div class="ios-banner" id="ios-banner" style="display:none;">
-      <div style="flex:1;">📲 Instala la app en tu iPhone para recibir los avisos aunque esté cerrada.</div>
+      <div style="flex:1;">Instala la app en tu iPhone para recibir los avisos aunque esté cerrada.</div>
       <button class="btn small" onclick="verGuiaIphone()">Ver cómo</button>
-      <button class="icon-btn" aria-label="Ocultar aviso" onclick="ocultarBannerIphone()">✕</button>
+      <button class="icon-btn" aria-label="Ocultar aviso" onclick="ocultarBannerIphone()"><i class="ic" data-ic="x"></i></button>
     </div>
 
     <div class="enfoque-hero" id="enfoque-card">
-      <div class="enfoque-label">🎯 1 · Mi objetivo de hoy</div>
+      <div class="enfoque-label"><i class="ic" data-ic="target"></i><span>Mi objetivo de hoy</span></div>
       <div id="enfoque-content"></div>
     </div>
 
     <div class="card tight">
-      <div class="card-title">✅ 2 · Hábitos de hoy</div>
+      <div class="card-title"><i class="ic" data-ic="check"></i><span>Hábitos de hoy</span></div>
       <div id="hoy-habitos-list"></div>
     </div>
 
     <div class="card tight">
-      <div class="card-title">🌙 3 · Cierre del día</div>
+      <div class="card-title"><i class="ic" data-ic="moon"></i><span>Cierre del día</span></div>
       <div class="cierre-row">
         <div class="muted" id="hoy-cierre-estado">Pendiente: 3 preguntas cortas antes de dormir.</div>
         <button class="btn small gold" id="btn-cierre" onclick="abrirCierreNocturno()">Hacer cierre</button>
@@ -398,24 +486,27 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
     </div>
 
     <div class="card tight">
-      <div class="card-title">📈 Tu día</div>
+      <div class="progress-head">
+        <div class="card-title"><i class="ic" data-ic="chart"></i><span>Tu día</span></div>
+        <div class="streak-chip" id="hoy-racha" style="display:none;"></div>
+      </div>
       <div class="progress-track"><div class="progress-fill" id="hoy-progress-fill" style="width:0%"></div></div>
       <div class="progress-text" id="hoy-progress-text">0 de 0 completados hoy</div>
     </div>
 
     <details class="card tight extras" id="extras-card">
-      <summary><div class="card-title">✨ Extras opcionales</div></summary>
+      <summary><div class="card-title"><i class="ic" data-ic="spark"></i><span>Extras opcionales</span></div></summary>
       <p class="hint" style="margin-top:8px;">No cuentan para tu progreso. Úsalos cuando te sumen. Todo se guarda solo.</p>
 
       <div class="extra-block">
-        <div class="card-title">🕊️ Cápsula del día</div>
+        <div class="card-title"><i class="ic" data-ic="feather"></i><span>Cápsula del día</span></div>
         <div class="capsula-tema" id="hoy-cap-tema">—</div>
         <div class="capsula-frase" id="hoy-cap-frase" style="font-size:15px;">—</div>
         <button class="btn ghost small" style="margin-top:10px;" onclick="go('cápsula')">Abrir cápsula</button>
       </div>
 
       <div class="extra-block">
-        <div class="card-title">🧭 Declaración de identidad</div>
+        <div class="card-title"><i class="ic" data-ic="compass"></i><span>Declaración de identidad</span></div>
         <textarea id="input-identidad" placeholder="Soy una persona disciplinada, enfocada y constante."></textarea>
         <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
           <button class="btn small secondary" id="btn-identidad-manana" onclick="marcarIdentidad('manana')">La dije (mañana)</button>
@@ -424,12 +515,12 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
       </div>
 
       <div class="extra-block">
-        <div class="card-title">🙏 Gratitud</div>
+        <div class="card-title"><i class="ic" data-ic="heart"></i><span>Gratitud</span></div>
         <textarea id="input-gratitud" placeholder="Hoy agradezco..."></textarea>
       </div>
 
       <div class="extra-block">
-        <div class="card-title">🌅 Visualización</div>
+        <div class="card-title"><i class="ic" data-ic="eye"></i><span>Visualización</span></div>
         <p class="hint" style="margin-top:0; margin-bottom:8px;">Describe tu meta ya lograda, en presente.</p>
         <textarea id="input-visualizacion" placeholder="Estoy disfrutando de..."></textarea>
         <button class="btn small ghost" style="margin-top:10px;" onclick="modoVisualizacion()">Leer en modo foco</button>
@@ -442,7 +533,7 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
     <h2 class="section-title first">Mis metas</h2>
     <p class="muted">Tus 3 a 5 metas principales. Son objetivos de vida importantes: no hace falta cambiarlas seguido. Revísalas idealmente una vez por semana.</p>
     <div id="metas-list" style="margin-top:14px;"></div>
-    <button class="btn block secondary" style="margin-top:8px;" onclick="editarMetas()">✏️ Editar metas</button>
+    <button class="btn block secondary" style="margin-top:8px;" onclick="editarMetas()"><i class="ic" data-ic="pencil"></i> Editar metas</button>
   </section>
 
   <!-- ===================== RUTINA ===================== -->
@@ -456,13 +547,13 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
 
     <div id="rutina-tab-hoy">
       <div class="card" id="timeline-card">
-        <div class="card-title">🗓️ Lo que toca hoy</div>
+        <div class="card-title"><i class="ic" data-ic="calendar"></i><span>Lo que toca hoy</span></div>
         <div id="timeline-list"></div>
-        <button class="btn ghost small block" style="margin-top:10px;" onclick="abrirEditorEnfoque()">✏️ Editar objetivo de hoy</button>
+        <button class="btn ghost small block" style="margin-top:10px;" onclick="abrirEditorEnfoque()"><i class="ic" data-ic="pencil"></i> Editar objetivo de hoy</button>
       </div>
 
       <div class="card" id="tasks-card">
-        <div class="card-title">📝 Otras acciones de hoy</div>
+        <div class="card-title"><i class="ic" data-ic="list"></i><span>Otras acciones de hoy</span></div>
         <div id="tasks-list"></div>
         <div style="display:flex; gap:8px; margin-top:10px;">
           <input type="text" id="input-task-desc" placeholder="Agregar una acción..." onkeydown="if(event.key==='Enter') agregarTask()">
@@ -484,13 +575,13 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
       </div>
 
       <div class="card">
-        <div class="card-title">📅 Revisión semanal</div>
+        <div class="card-title"><i class="ic" data-ic="calcheck"></i><span>Revisión semanal</span></div>
         <p class="muted" style="margin-bottom:8px;">Una vez por semana, 5 minutos.</p>
         <button class="btn secondary block" onclick="abrirRevisionSemanal()">Abrir revisión semanal</button>
       </div>
 
       <details class="card extras" id="habitos-config-card">
-        <summary><div class="card-title">⚙️ Configurar hábitos</div></summary>
+        <summary><div class="card-title"><i class="ic" data-ic="gear"></i><span>Configurar hábitos</span></div></summary>
         <div id="habitos-config-list" style="margin-top:8px;"></div>
         <button class="btn ghost small block" style="margin-top:10px;" onclick="agregarHabitoPersonalizado()">+ Agregar hábito nuevo</button>
       </details>
@@ -519,7 +610,7 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
       <p class="hint">Se guarda automáticamente.</p>
     </div>
     <div class="card">
-      <div class="card-title">📅 Día del programa</div>
+      <div class="card-title"><i class="ic" data-ic="calendar"></i><span>Día del programa</span></div>
       <p class="muted" id="cap-dia-info">—</p>
       <p class="hint" id="cap-repetida-hint" style="display:none;">Ya viste todas las cápsulas disponibles y están repitiéndose desde el Día 1. Si quieres cápsulas nuevas, descarga la próxima actualización de la app cuando esté disponible.</p>
     </div>
@@ -530,9 +621,9 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
     <h2 class="section-title first">Progreso</h2>
 
     <div class="card">
-      <div class="card-title">🔥 Racha de continuidad</div>
+      <div class="card-title"><i class="ic" data-ic="flame"></i><span>Racha de continuidad</span></div>
       <div class="streak-hero">
-        <div class="streak-flame">🔥</div>
+        <div class="streak-flame"><i class="ic" data-ic="flame" data-size="30"></i></div>
         <div>
           <div class="streak-num" id="streak-num">0</div>
           <div class="streak-label">días consecutivos con actividad registrada</div>
@@ -542,20 +633,20 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
     </div>
 
     <div class="card">
-      <div class="card-title">📅 Resumen semanal</div>
+      <div class="card-title"><i class="ic" data-ic="chart"></i><span>Resumen semanal</span></div>
       <p class="muted">Hábitos completados: <b id="resumen-habitos">0</b></p>
       <p class="muted" style="margin-top:4px;">Pasos completados: <b id="resumen-pasos">0</b></p>
       <p class="muted" style="margin-top:4px;">Días con rutina registrada: <b id="resumen-dias">0</b></p>
     </div>
 
     <div class="card">
-      <div class="card-title">🗓️ Revisión mensual</div>
+      <div class="card-title"><i class="ic" data-ic="calcheck"></i><span>Revisión mensual</span></div>
       <p class="muted">Se abre automáticamente el día 1 de cada mes. También puedes abrirla manualmente.</p>
       <button class="btn secondary block" style="margin-top:10px;" onclick="abrirRevisionMensual()">Abrir revisión mensual</button>
     </div>
 
     <div class="card">
-      <div class="card-title">🕰️ Historial reciente</div>
+      <div class="card-title"><i class="ic" data-ic="history"></i><span>Historial reciente</span></div>
       <div id="historial-list"></div>
     </div>
   </section>
@@ -576,8 +667,8 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
     <div class="settings-group">
       <div class="settings-group-title">Datos</div>
       <div class="card">
-        <button class="btn block" onclick="exportarDatos()">⬇️ Exportar mis datos (JSON)</button>
-        <button class="btn block secondary" style="margin-top:10px;" onclick="document.getElementById('import-file-input').click()">⬆️ Importar mis datos</button>
+        <button class="btn block" onclick="exportarDatos()"><i class="ic" data-ic="download"></i> Exportar mis datos (JSON)</button>
+        <button class="btn block secondary" style="margin-top:10px;" onclick="document.getElementById('import-file-input').click()"><i class="ic" data-ic="upload"></i> Importar mis datos</button>
         <input type="file" id="import-file-input" accept="application/json" style="display:none" onchange="importarDatos(event)">
       </div>
     </div>
@@ -602,27 +693,27 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
 
         <div class="card-title" style="margin-top:16px;">Tipo de aviso</div>
         <div class="estilo-row" role="radiogroup" aria-label="Tipo de aviso">
-          <button type="button" class="estilo-btn" role="radio" data-estilo="notificacion" onclick="setEstiloAviso('notificacion')">🔔 Solo notificación</button>
-          <button type="button" class="estilo-btn" role="radio" data-estilo="alarma" onclick="setEstiloAviso('alarma')">⏰ Notificación + alarma</button>
+          <button type="button" class="estilo-btn" role="radio" data-estilo="notificacion" onclick="setEstiloAviso('notificacion')"><i class="ic" data-ic="bell"></i> Solo notificación</button>
+          <button type="button" class="estilo-btn" role="radio" data-estilo="alarma" onclick="setEstiloAviso('alarma')"><i class="ic" data-ic="alarm"></i> Notificación + alarma</button>
         </div>
         <p class="hint" id="estilo-aviso-hint" style="margin-top:8px;"></p>
 
         <div class="card-title" style="margin-top:16px;">Revisar mi rutina</div>
         <p class="hint" style="margin-top:0;">Dos avisos al día para abrir la app y revisar lo que toca.</p>
         <div id="avisos-revision-list"></div>
- <p class="hint" id="desktop-notify-hint" style="display:none; margin-top:12px;">💻 En computador los avisos llegan aunque cierres la pestaña, siempre que el navegador (Chrome, Edge, Firefox o Safari) siga abierto. Si quieres tenerla como app, usa el ícono de instalar en la barra de direcciones de Chrome o Edge.</p>
+ <p class="hint" id="desktop-notify-hint" style="display:none; margin-top:12px;">En computador los avisos llegan aunque cierres la pestaña, siempre que el navegador (Chrome, Edge, Firefox o Safari) siga abierto. Si quieres tenerla como app, usa el ícono de instalar en la barra de direcciones de Chrome o Edge.</p>
         <div id="ios-install-guide" style="display:none; margin-top:14px; padding:14px; border-radius:var(--radius-md); background:var(--accent-soft);">
-          <div class="card-title" style="margin-bottom:2px;">📲 En iPhone: instala la app primero</div>
+          <div class="card-title" style="margin-bottom:2px;"><i class="ic" data-ic="phone"></i><span>En iPhone: instala la app primero</span></div>
           <p class="hint" style="margin-top:0;">Apple solo permite avisos con la app cerrada si está en tu pantalla de inicio (iOS 16.4 o superior).</p>
           <ol class="install-steps">
             <li>Abre esta página en <b>Safari</b>.</li>
-            <li>Toca el botón <b>Compartir</b> (el cuadrado con la flecha hacia arriba ⬆️).</li>
+            <li>Toca el botón <b>Compartir</b> (el cuadrado con la flecha hacia arriba).</li>
             <li>Elige <b>“Agregar a pantalla de inicio”</b> y toca <b>Agregar</b>.</li>
             <li>Abre <b>Brújula</b> desde el nuevo ícono y vuelve aquí para activar los avisos.</li>
           </ol>
         </div>
         <p class="muted" style="margin-top:10px;">Los recordatorios de cada hábito se configuran en Rutina → Configurar hábitos.</p>
-        <button class="btn ghost small block" style="margin-top:10px;" onclick="probarRecordatorio()">🔔 Probar recordatorio</button>
+        <button class="btn ghost small block" style="margin-top:10px;" onclick="probarRecordatorio()"><i class="ic" data-ic="bell"></i> Probar recordatorio</button>
       </div>
     </div>
 
@@ -639,18 +730,18 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
     <div class="settings-group">
       <div class="settings-group-title">Zona de riesgo</div>
       <div class="card">
-        <button class="btn danger block" onclick="confirmarBorrarTodo()">🗑️ Borrar todos mis datos</button>
+        <button class="btn danger block" onclick="confirmarBorrarTodo()"><i class="ic" data-ic="trash"></i> Borrar todos mis datos</button>
       </div>
     </div>
   </section>
 
   <div class="navbar">
-    <button class="nav-item" data-screen="hoy" onclick="go('hoy')"><span class="nav-icon">🏠</span><span class="nav-label">Hoy</span></button>
-    <button class="nav-item" data-screen="metas" onclick="go('metas')"><span class="nav-icon">🎯</span><span class="nav-label">Metas</span></button>
-    <button class="nav-item" data-screen="rutina" onclick="go('rutina')"><span class="nav-icon">🗓️</span><span class="nav-label">Rutina</span></button>
-    <button class="nav-item" data-screen="cápsula" onclick="go('cápsula')"><span class="nav-icon">🕊️</span><span class="nav-label">Cápsula</span></button>
-    <button class="nav-item" data-screen="progreso" onclick="go('progreso')"><span class="nav-icon">📈</span><span class="nav-label">Progreso</span></button>
-    <button class="nav-item" data-screen="ajustes" onclick="go('ajustes')"><span class="nav-icon">⚙️</span><span class="nav-label">Ajustes</span></button>
+    <button class="nav-item" data-screen="hoy" onclick="go('hoy')"><span class="nav-icon"><i class="ic" data-ic="home"></i></span><span class="nav-label">Hoy</span></button>
+    <button class="nav-item" data-screen="metas" onclick="go('metas')"><span class="nav-icon"><i class="ic" data-ic="target"></i></span><span class="nav-label">Metas</span></button>
+    <button class="nav-item" data-screen="rutina" onclick="go('rutina')"><span class="nav-icon"><i class="ic" data-ic="calendar"></i></span><span class="nav-label">Rutina</span></button>
+    <button class="nav-item" data-screen="cápsula" onclick="go('cápsula')"><span class="nav-icon"><i class="ic" data-ic="feather"></i></span><span class="nav-label">Cápsula</span></button>
+    <button class="nav-item" data-screen="progreso" onclick="go('progreso')"><span class="nav-icon"><i class="ic" data-ic="chart"></i></span><span class="nav-label">Progreso</span></button>
+    <button class="nav-item" data-screen="ajustes" onclick="go('ajustes')"><span class="nav-icon"><i class="ic" data-ic="gear"></i></span><span class="nav-label">Ajustes</span></button>
   </div>
 </div>
 
@@ -664,8 +755,17 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
 
 <div class="toast" id="toast"></div>
 
+<div class="celebracion" id="celebracion" onclick="cerrarCelebracion()" role="dialog" aria-label="Día completo">
+  <div class="celebra-card">
+    <div class="celebra-flame"><i class="ic" data-ic="flame" data-size="40"></i></div>
+    <div class="celebra-title">¡Día completo!</div>
+    <div class="celebra-sub">Cumpliste todo lo de hoy. Así se construye el hábito.</div>
+    <div class="celebra-racha" id="celebra-racha"></div>
+  </div>
+</div>
+
 <div class="alarma-overlay" id="alarma-overlay" role="alertdialog" aria-labelledby="alarma-title">
-  <div class="alarma-icon">⏰</div>
+  <div class="alarma-icon"><i class="ic" data-ic="alarm"></i></div>
   <div class="alarma-title" id="alarma-title">Brújula Interior</div>
   <div class="alarma-body" id="alarma-body"></div>
   <button class="btn" style="margin-top:28px; background:var(--white); color:var(--accent-dark); min-width:200px;" onclick="detenerAlarma(true)">Detener y abrir</button>
@@ -676,6 +776,51 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
    Brújula Interior — lógica de la aplicación
    Sin dependencias externas. Todo el estado vive en localStorage.
    ============================================================ */
+
+// ---------- Íconos de línea (SVG en línea, sin dependencias) ----------
+const ICONS = {
+  home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/>',
+  target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  calcheck:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m9 15 2 2 4-4"/>',
+  feather:'<path d="M20 4c-7 0-13 5-13 13v3"/><path d="M7 17h7c4 0 6-5 6-13"/>',
+  chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+  check:'<rect x="3" y="3" width="18" height="18" rx="5"/><path d="m8 12 3 3 5-6"/>',
+  checked:'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',
+  circle:'<circle cx="12" cy="12" r="9"/>',
+  moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5z"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 17v4M17 19h4"/>',
+  compass:'<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>',
+  heart:'<path d="M12 20s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9z"/>',
+  eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  list:'<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/>',
+  flame:'<path d="M12 22c4 0 7-2.7 7-6.6 0-3.4-2.2-5.5-3.6-7.4-.4 1.8-1.4 3-2.6 3.6.3-3.3-1.2-6.4-4.3-8.6.2 3.2-1.4 5.2-2.8 7C4.6 11.6 5 13 5 15.4 5 19.3 8 22 12 22z"/>',
+  history:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/>',
+  download:'<path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/>',
+  upload:'<path d="M12 21V9M7 14l5-5 5 5"/><path d="M4 3h16"/>',
+  bell:'<path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+  alarm:'<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M5 3 2 6M19 3l3 3"/>',
+  phone:'<rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/>',
+  trash:'<path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15"/>',
+  pencil:'<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="m14 6 4 4"/>',
+  x:'<path d="M6 6l12 12M18 6 6 18"/>',
+  skip:'<path d="m6 5 9 7-9 7z"/><path d="M19 5v14"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  leaf:'<path d="M5 21c0-9 5-15 15-16-1 10-7 15-15 16z"/><path d="M5 21 13 13"/>'
+};
+function ic(nombre, size){
+  const s = size || 18;
+  return `<span class="ic" aria-hidden="true"><svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${ICONS[nombre]||''}</svg></span>`;
+}
+// Convierte los <i class="ic" data-ic="..."> del HTML estático en íconos SVG.
+function hidratarIconos(root){
+  (root || document).querySelectorAll('i.ic[data-ic]').forEach(el=>{
+    const size = Number(el.dataset.size) || (el.closest('.nav-icon') ? 24 : 18);
+    el.outerHTML = ic(el.dataset.ic, size);
+  });
+}
 
 const STORAGE_KEY = 'brujulaInterior.v1';
 let N8N_WEBHOOK_URL = ''; // opcional; también configurable desde Ajustes
@@ -765,7 +910,8 @@ function isoWeekKey(d){
 }
 function formatDateLong(d){
   const dt = d || new Date();
-  return dt.toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  const t = dt.toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long' });
+  return t.charAt(0).toUpperCase() + t.slice(1);
 }
 function ensureDia(fecha){
   if(!state.dias[fecha]){
@@ -886,7 +1032,7 @@ function renderHoy(){
   const cierreEstado = document.getElementById('hoy-cierre-estado');
   const btnCierre = document.getElementById('btn-cierre');
   if(dia.cierre){
-    cierreEstado.innerHTML = '<b style="color:var(--accent-dark);">✓ Cierre hecho.</b> Buen trabajo hoy.';
+    cierreEstado.innerHTML = '<b style="color:var(--accent-dark);">Cierre hecho.</b> Buen trabajo hoy.';
     btnCierre.textContent = 'Ver';
     btnCierre.classList.remove('gold'); btnCierre.classList.add('secondary');
   } else {
@@ -958,7 +1104,7 @@ function renderEnfoqueHoy(){
   const pasosHtml = enfoque.pasos.map((p,i)=>{
     if(!p.texto) return '';
     return `<div class="paso-row">
-      <button type="button" class="paso-check ${p.completado?'checked':''}" aria-pressed="${p.completado}" aria-label="Marcar paso ${i+1}" onclick="toggleEnfoquePaso(${i})"></button>
+      <button type="button" data-pop="paso${i}" class="paso-check ${p.completado?'checked':''}" aria-pressed="${p.completado}" aria-label="Marcar paso ${i+1}" onclick="toggleEnfoquePaso(${i})"></button>
       <div class="paso-text ${p.completado?'done':''}" onclick="toggleEnfoquePaso(${i})">${escapeHtml(p.texto)}</div>
     </div>`;
   }).join('');
@@ -966,8 +1112,15 @@ function renderEnfoqueHoy(){
     <div class="enfoque-metas-text">${escapeHtml(enfoque.metas)}</div>
     ${enfoque.razones?`<div class="enfoque-razones-text">${escapeHtml(enfoque.razones)}</div>`:''}
     ${pasosHtml || `<div class="enfoque-razones-text" style="margin-top:12px;">Aún no defines tus 2 pasos de hoy.</div>`}
-    <button class="enfoque-cta" style="background:rgba(255,255,255,0.16); color:var(--white); box-shadow:none;" onclick="abrirEditorEnfoque()">✏️ Editar</button>
+    <button class="enfoque-cta" style="background:rgba(255,255,255,0.16); color:var(--white); box-shadow:none;" onclick="abrirEditorEnfoque()">${ic('pencil')} Editar</button>
   `;
+}
+let recienMarcado = null; // para animar solo la casilla que se acaba de marcar
+function animarRecienMarcado(){
+  if(!recienMarcado) return;
+  const el = document.querySelector(`[data-pop="${recienMarcado}"]`);
+  recienMarcado = null;
+  if(el){ el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); }
 }
 function toggleEnfoquePaso(idx){
   const fecha = todayKey();
@@ -975,6 +1128,7 @@ function toggleEnfoquePaso(idx){
   const p = dia.enfoque.pasos[idx];
   if(!p) return;
   p.completado = !p.completado;
+  if(p.completado) recienMarcado = 'paso'+idx;
   saveState();
   renderAll();
   if(p.completado) showToast('Paso completado. Bien hecho.');
@@ -986,20 +1140,20 @@ function renderHabitosHoy(){
   const list = document.getElementById('hoy-habitos-list');
   const activos = state.habitosConfig.filter(h=>h.activo);
   if(!activos.length){
-    list.innerHTML = `<div class="empty-state"><div class="em-icon">🌱</div>No tienes hábitos activos. Actívalos en Rutina → Configurar hábitos.</div>`;
+    list.innerHTML = `<div class="empty-state"><div class="em-icon">${ic('leaf',28)}</div>No tienes hábitos activos. Actívalos en Rutina → Configurar hábitos.</div>`;
     return;
   }
   list.innerHTML = activos.map(h=>{
     const hd = dia.habitos[h.id] || { completado:false, duracion:null, omitido:false };
     const dur = h.duracionPersonal || h.duracionRecomendada;
     return `<div class="check-row">
-      <button type="button" class="checkbox ${hd.completado?'checked':''}" aria-pressed="${hd.completado}" aria-label="Marcar ${escapeHtml(h.nombre)}" onclick="toggleHabito('${h.id}')"></button>
+      <button type="button" data-pop="hab${h.id}" class="checkbox ${hd.completado?'checked':''}" aria-pressed="${hd.completado}" aria-label="Marcar ${escapeHtml(h.nombre)}" onclick="toggleHabito('${h.id}')"></button>
       <div onclick="toggleHabito('${h.id}')" style="cursor:pointer;">
         <div class="row-title">${escapeHtml(h.nombre)}</div>
         <div class="row-sub">${h.hora?h.hora+' · ':''}${dur} min recomendados${hd.omitido?' · omitido hoy':''}</div>
       </div>
       <div class="row-actions">
-        <button class="icon-btn" title="Omitir hoy" aria-label="Omitir ${escapeHtml(h.nombre)} hoy" onclick="omitirHabito('${h.id}')">⏭️</button>
+        <button class="icon-btn" title="Omitir hoy" aria-label="Omitir ${escapeHtml(h.nombre)} hoy" onclick="omitirHabito('${h.id}')">${ic('skip',18)}</button>
       </div>
     </div>`;
   }).join('');
@@ -1009,7 +1163,7 @@ function toggleHabito(id){
   const dia = ensureDia(fecha);
   if(!dia.habitos[id]) dia.habitos[id] = { completado:false, duracion:null, omitido:false };
   dia.habitos[id].completado = !dia.habitos[id].completado;
-  if(dia.habitos[id].completado) dia.habitos[id].omitido = false;
+  if(dia.habitos[id].completado){ dia.habitos[id].omitido = false; recienMarcado = 'hab'+id; }
   saveState();
   renderAll();
 }
@@ -1044,6 +1198,48 @@ function renderProgresoHoy(){
   const text = document.getElementById('hoy-progress-text');
   if(fill){ fill.style.width = pct+'%'; }
   if(text){ text.textContent = done===total ? `¡Día completo! ${done} de ${total}.` : `${done} de ${total} completados hoy`; }
+
+  // Racha visible (dorado = logro)
+  const racha = calcularRacha();
+  const chip = document.getElementById('hoy-racha');
+  if(chip){
+    chip.style.display = racha > 0 ? 'inline-flex' : 'none';
+    chip.innerHTML = `${ic('flame',15)} ${racha} día${racha===1?'':'s'}`;
+  }
+
+  // Celebración una sola vez por día al completarlo todo
+  if(total > 0 && done === total && !dia.celebrado){
+    dia.celebrado = true;
+    saveState();
+    setTimeout(()=>celebrar(racha), 250);
+  }
+}
+
+let celebraTimer = null;
+function celebrar(racha){
+  const el = document.getElementById('celebracion');
+  if(!el) return;
+  document.getElementById('celebra-racha').innerHTML = `${ic('flame',16)} Racha: ${racha} día${racha===1?'':'s'}`;
+  el.querySelectorAll('.confeti').forEach(c=>c.remove());
+  const colores = ['#2b6fb8','#4fa3e0','#c9a15a','#f3e6cb','#1d5590'];
+  for(let i=0;i<36;i++){
+    const c = document.createElement('span');
+    c.className = 'confeti';
+    c.style.left = Math.random()*100 + '%';
+    c.style.background = colores[i % colores.length];
+    c.style.animationDuration = (1.8 + Math.random()*1.6) + 's';
+    c.style.animationDelay = (Math.random()*0.5) + 's';
+    el.appendChild(c);
+  }
+  el.classList.add('active');
+  if(navigator.vibrate) navigator.vibrate([40,60,40]);
+  clearTimeout(celebraTimer);
+  celebraTimer = setTimeout(cerrarCelebracion, 3600);
+}
+function cerrarCelebracion(){
+  clearTimeout(celebraTimer);
+  const el = document.getElementById('celebracion');
+  if(el) el.classList.remove('active');
 }
 
 function renderProximoRecordatorio(){
@@ -1060,7 +1256,7 @@ function renderProximoRecordatorio(){
     const delta = mins>=nowMin ? mins-nowMin : (1440-nowMin)+mins;
     if(best===null || delta<best.delta) best = { r, delta };
   });
-  if(best) el.innerHTML = `⏰ Próximo aviso: <b>${escapeHtml(best.r.nombre)}</b> a las ${best.r.hora}`;
+  if(best) el.innerHTML = `${ic('bell',16)} Próximo aviso: <b>${escapeHtml(best.r.nombre)}</b> a las ${best.r.hora}`;
 }
 
 // ============================================================
@@ -1079,7 +1275,7 @@ function modoVisualizacion(){
   const texto = dia.visualizacion || 'Aún no escribiste tu visualización.';
   openModal(`
     <div style="text-align:center; padding: 30px 10px;">
-      <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold); font-weight:700; margin-bottom:14px;">Modo foco</div>
+      <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:var(--accent); font-weight:700; margin-bottom:14px;">Modo foco</div>
       <div style="font-size:19px; line-height:1.6; font-weight:600;">${escapeHtml(texto)}</div>
       <button class="btn secondary" style="margin-top:26px;" onclick="closeModal()">Cerrar</button>
     </div>
@@ -1093,7 +1289,7 @@ function abrirEditorEnfoque(){
        <div class="chip-row">${state.metas.map((m,i)=>`<button type="button" class="chip" onclick="usarMetaEnEnfoque(${i})">${escapeHtml(m.titulo)}</button>`).join('')}</div>`
     : '';
   openModal(`
-    <h3 style="margin-bottom:6px;">🎯 Mi objetivo de hoy</h3>
+    <h3 style="margin-bottom:6px;">Mi objetivo de hoy</h3>
     <p class="muted" style="margin-bottom:6px;">Un objetivo y dos pasos concretos. Nada más.</p>
     <label>¿Qué quieres lograr hoy?</label>
     <input type="text" id="input-enfoque-metas" value="${escapeHtml(e.metas||'')}" placeholder="Ej: Avanzar en la propuesta del cliente">
@@ -1138,7 +1334,7 @@ function guardarEnfoque(){
 function renderMetas(){
   const list = document.getElementById('metas-list');
   if(!state.metas.length){
-    list.innerHTML = `<div class="empty-state"><div class="em-icon">🎯</div>Aún no tienes metas creadas.</div>`;
+    list.innerHTML = `<div class="empty-state"><div class="em-icon">${ic('target',28)}</div>Aún no tienes metas creadas.</div>`;
     return;
   }
   list.innerHTML = state.metas.map(m=>`
@@ -1256,12 +1452,12 @@ function renderTasks(){
       <div style="flex:1;">
         <div class="task-title">${escapeHtml(t.desc)}</div>
         <div class="task-meta">
-          ${t.hora?`<span>🕒 ${t.hora}</span>`:''}
+          ${t.hora?`<span>${ic('clock',14)} ${t.hora}</span>`:''}
           ${t.duracion?`<span>${t.duracion} min</span>`:''}
         </div>
       </div>
       <div class="row-actions">
-        <button class="icon-btn" title="Eliminar" aria-label="Eliminar acción" onclick="eliminarTask('${t.id}')">✕</button>
+        <button class="icon-btn" title="Eliminar" aria-label="Eliminar acción" onclick="eliminarTask('${t.id}')">${ic('x',16)}</button>
       </div>
     </div>
   `).join('');
@@ -1389,7 +1585,7 @@ function renderTimeline(){
     return `<div class="tl-item">
       <div class="tl-time">${it.hora==='—'?'':it.hora}</div>
       <div class="tl-dot-col"><div class="tl-dot ${cls}"></div>${i<items.length-1?'<div class="tl-line"></div>':''}</div>
-      <div class="tl-text">${escapeHtml(it.texto)} ${it.done?'✓':(cls==='now'?'→ Ahora':'')}</div>
+      <div class="tl-text">${escapeHtml(it.texto)} ${it.done?'':(cls==='now'?'<span class="chip">Ahora</span>':'')}</div>
     </div>`;
   }).join('');
 }
@@ -1407,7 +1603,7 @@ function abrirCierreNocturno(){
   activos.forEach(h=>{ const hd=dia.habitos[h.id]; if(hd&&(hd.completado||hd.omitido)) completados++; });
   pasosConTexto.forEach(p=>{ if(p.completado) completados++; });
   openModal(`
-    <h3 style="margin-bottom:6px;">🌙 Cierre nocturno${state.nombre?', '+escapeHtml(state.nombre):''}</h3>
+    <h3 style="margin-bottom:6px;">Cierre del día${state.nombre?', '+escapeHtml(state.nombre):''}</h3>
     <p class="muted" style="margin-bottom:14px;">Hoy completaste ${completados} de ${totalItems} elementos. ${completados<totalItems?'Está bien: mañana puedes retomarlo.':'Buen trabajo hoy.'}</p>
     <label style="margin-top:0;">¿Qué logré hoy?</label>
     <textarea id="cierre-logre">${escapeHtml(c.logre)}</textarea>
@@ -1441,7 +1637,7 @@ function abrirRevisionSemanal(){
   const wk = isoWeekKey();
   const r = state.semanaRevisiones[wk] || { logre:'', noFunciono:'', aprendi:'', mejorar:'', proximaSemana:'', cambiarHorario:'' };
   openModal(`
-    <h3 style="margin-bottom:14px;">📅 Revisión semanal</h3>
+    <h3 style="margin-bottom:14px;">Revisión semanal</h3>
     <label style="margin-top:0;">¿Qué logré?</label>
     <textarea id="rs-logre">${escapeHtml(r.logre)}</textarea>
     <label>¿Qué no funcionó?</label>
@@ -1546,7 +1742,7 @@ function formatDiaCorto(key){
   return txt.charAt(0).toUpperCase() + txt.slice(1);
 }
 function historialHtml(keys){
-  if(!keys.length) return `<div class="empty-state"><div class="em-icon">🕰️</div>Aún no hay días anteriores registrados.</div>`;
+  if(!keys.length) return `<div class="empty-state"><div class="em-icon">${ic('history',28)}</div>Aún no hay días anteriores registrados.</div>`;
   return keys.map(k=>{
     const dia = state.dias[k];
     const habitosOk = dia.habitos? Object.values(dia.habitos).filter(h=>h.completado).length : 0;
@@ -1556,7 +1752,7 @@ function historialHtml(keys){
       <div style="flex:1; min-width:0;">
         <div class="row-title">${formatDiaCorto(k)}</div>
         <div class="row-sub">${objetivo}</div>
-        <div class="row-sub">${habitosOk} hábito(s) · ${pasosOk} paso(s)${dia.cierre?' · cierre ✓':''}</div>
+        <div class="row-sub">${habitosOk} hábito(s) · ${pasosOk} paso(s)${dia.cierre?' · cierre hecho':''}</div>
       </div>
       <span class="small-muted">›</span>
     </button>`;
@@ -1582,25 +1778,25 @@ function verDia(key){
   const bloque = (titulo, cuerpo)=> cuerpo ? `<div style="margin-top:14px;"><div class="card-title">${titulo}</div>${cuerpo}</div>` : '';
   const texto = t => t ? `<p class="muted">${escapeHtml(t)}</p>` : '';
   const e = dia.enfoque || { metas:'', pasos:[] };
-  const pasos = (e.pasos||[]).filter(p=>p.texto).map(p=>`<div class="muted">${p.completado?'✅':'⬜'} ${escapeHtml(p.texto)}</div>`).join('');
+  const pasos = (e.pasos||[]).filter(p=>p.texto).map(p=>`<div class="muted">${p.completado?ic('checked',16):ic('circle',16)} ${escapeHtml(p.texto)}</div>`).join('');
   const habitos = Object.entries(dia.habitos||{}).map(([id,h])=>{
     const cfg = state.habitosConfig.find(x=>x.id===id);
     const nombre = cfg ? cfg.nombre : id;
-    return `<div class="muted">${h.completado?'✅':(h.omitido?'⏭️':'⬜')} ${escapeHtml(nombre)}</div>`;
+    return `<div class="muted">${h.completado?ic('checked',16):(h.omitido?ic('skip',16):ic('circle',16))} ${escapeHtml(nombre)}</div>`;
   }).join('');
-  const tasks = (dia.tasks||[]).map(t=>`<div class="muted">${t.completado?'✅':'⬜'} ${escapeHtml(t.desc)}</div>`).join('');
+  const tasks = (dia.tasks||[]).map(t=>`<div class="muted">${t.completado?ic('checked',16):ic('circle',16)} ${escapeHtml(t.desc)}</div>`).join('');
   const c = dia.cierre;
   const cierre = c ? `${c.logre?`<p class="muted"><b>Logré:</b> ${escapeHtml(c.logre)}</p>`:''}${c.aprendi?`<p class="muted"><b>Aprendí:</b> ${escapeHtml(c.aprendi)}</p>`:''}${c.agradezco?`<p class="muted"><b>Agradezco:</b> ${escapeHtml(c.agradezco)}</p>`:''}` : '';
   openModal(`
     <h3 style="margin-bottom:4px;">${formatDiaCorto(key)}</h3>
     <p class="small-muted">${key}</p>
-    ${bloque('🎯 Objetivo', (e.metas?`<p style="font-weight:700;">${escapeHtml(e.metas)}</p>`:'') + pasos)}
-    ${bloque('✅ Hábitos', habitos)}
-    ${bloque('📝 Otras acciones', tasks)}
-    ${bloque('🌙 Cierre', cierre)}
-    ${bloque('🙏 Gratitud', texto(dia.gratitud))}
-    ${bloque('🌅 Visualización', texto(dia.visualizacion))}
-    ${bloque('🕊️ Respuesta a la cápsula', texto(dia.capsulaRespuesta))}
+    ${bloque(ic('target')+'<span>Objetivo</span>', (e.metas?`<p style="font-weight:700;">${escapeHtml(e.metas)}</p>`:'') + pasos)}
+    ${bloque(ic('check')+'<span>Hábitos</span>', habitos)}
+    ${bloque(ic('list')+'<span>Otras acciones</span>', tasks)}
+    ${bloque(ic('moon')+'<span>Cierre</span>', cierre)}
+    ${bloque(ic('heart')+'<span>Gratitud</span>', texto(dia.gratitud))}
+    ${bloque(ic('eye')+'<span>Visualización</span>', texto(dia.visualizacion))}
+    ${bloque(ic('feather')+'<span>Respuesta a la cápsula</span>', texto(dia.capsulaRespuesta))}
     <button class="btn secondary block" style="margin-top:18px;" onclick="closeModal()">Cerrar</button>
   `);
 }
@@ -1608,7 +1804,7 @@ function abrirRevisionMensual(){
   const mk = monthKey();
   const r = state.mesRevisiones[mk] || { avance:'', estancado:'', corregir:'' };
   openModal(`
-    <h3 style="margin-bottom:6px;">🗓️ Revisión mensual</h3>
+    <h3 style="margin-bottom:6px;">Revisión mensual</h3>
     <p class="muted" style="margin-bottom:14px;">Correspondiente a ${mk}.</p>
     <label style="margin-top:0;">¿Qué avancé?</label>
     <textarea id="rm-avance">${escapeHtml(r.avance)}</textarea>
@@ -1747,7 +1943,7 @@ function probarRecordatorio(){
       new Notification('Brújula Interior', { body: 'Así se vería un recordatorio.', tag: 'brujula-prueba', requireInteraction: esAlarma });
     }catch(e){}
   } else if(!esAlarma){
-    showToast('🔔 Así se vería un recordatorio. (Activa las notificaciones arriba para verlo como aviso real.)');
+    showToast('Así se vería un recordatorio. (Activa las notificaciones arriba para verlo como aviso real.)');
   }
   if(esAlarma) mostrarAlarma('Brújula Interior', 'Así suena la alarma cuando la app está abierta.');
 }
@@ -1869,7 +2065,7 @@ function renderAvisosRevision(){
     const a = state.avisosRevision[k];
     return `<div class="settings-item">
       <div style="flex:1;">
-        <div class="row-title">${k==='manana'?'☀️ Mañana':'🌙 Noche'}</div>
+        <div class="row-title">${k==='manana'?ic('sun',18)+' Mañana':ic('moon',18)+' Noche'}</div>
         <input type="time" value="${a.hora||''}" style="margin-top:6px; max-width:150px;" aria-label="Hora del aviso de la ${k==='manana'?'mañana':'noche'}" onchange="setAvisoRevision('${k}','hora',this.value)">
       </div>
       <button type="button" class="switch ${a.activo?'on':''}" role="switch" aria-checked="${a.activo}" aria-label="Activar aviso de la ${k==='manana'?'mañana':'noche'}" onclick="setAvisoRevision('${k}','activo',${!a.activo})"></button>
@@ -2013,7 +2209,7 @@ function renderAll(){
   if(!state) return;
   try{
     lastRenderedDay = todayKey();
-    if(currentScreen==='hoy'){ renderHoy(); renderBannerIphone(); }
+    if(currentScreen==='hoy'){ renderHoy(); renderBannerIphone(); animarRecienMarcado(); }
     if(currentScreen==='metas') renderMetas();
     if(currentScreen==='rutina') renderRutinaTabs();
     if(currentScreen==='cápsula') renderCapsulaScreen();
@@ -2041,6 +2237,7 @@ setInterval(revisarCambioDeDia, 60000);
 // INIT
 // ============================================================
 function init(){
+  hidratarIconos();
   loadState();
   ensureDia(todayKey());
   saveState();
