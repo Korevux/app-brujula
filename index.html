@@ -427,6 +427,8 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
 .momento-head[aria-expanded="true"] .momento-chev{ transform:rotate(180deg); }
 .momento-body{ padding:0 16px 16px; border-top:1px solid var(--border); padding-top:14px; }
 .momento-body textarea{ margin-top:8px; min-height:56px; }
+.declaracion-leer{ margin-top:8px; font-size:16.5px; line-height:1.5; font-style:italic; font-weight:500; color:var(--ink); background:#fff; border-left:4px solid var(--gold); border-radius:10px; padding:12px 14px; }
+.ritual-sub-nota{ display:block; margin-top:6px; font-size:13.5px; color:var(--ink-soft); }
 .cualidad-line{ display:block; margin-top:6px; font-size:13px; color:var(--ink-soft); }
 .cualidad-line b{ color:#8a6420; }
 .ritual-row{ display:flex; align-items:flex-start; gap:14px; background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:14px; margin-bottom:10px; }
@@ -1188,6 +1190,13 @@ function renderHoy(){
 // ---------- Arranque del día ----------
 // Lo que se define una vez (identidad, visualización) aquí solo se lee y se marca;
 // lo que es diario (gratitud) se escribe aquí mismo.
+// La declaración se escribe una vez en Mi brújula; aquí solo se muestra para leerla.
+function declaracionParaLeer(){
+  const t = state.identidad.texto;
+  return t
+    ? `<div class="declaracion-leer">“${escapeHtml(t)}”</div><span class="ritual-sub-nota">Léela con calma y marca la casilla.</span>`
+    : `Aún no la tienes escrita. <a class="link" onclick="editarTextoFijo('identidad')">Escríbela una sola vez en Mi brújula →</a>`;
+}
 function filaRitual({ id, done, titulo, sub, extra, opcional, onToggle }){
   return `<div class="ritual-row ${done?'done':''}">
     <button type="button" data-pop="rit${id}" class="checkbox ${done?'checked':''}" aria-pressed="${done}" aria-label="Marcar ${escapeHtml(titulo)}" onclick="${onToggle}"></button>
@@ -1283,8 +1292,8 @@ function renderRitual(){
     filaRitual({ id:'bien', done: pasos.bien, titulo:'5. ¿Qué bien haré hoy?',
       extra: `<textarea id="input-bien" rows="2" placeholder="Hoy haré el bien a...">${escapeHtml(dia.bienHare||'')}</textarea>`,
       onToggle:"document.getElementById('input-bien').focus()" }),
-    filaRitual({ id:'ident', done: pasos.identidad, titulo:'6. Declaración de identidad',
-      sub: (identidad ? `<span class="quote">“${escapeHtml(identidad)}”</span>` : `<a class="link" onclick="editarTextoFijo('identidad')">Escríbela una sola vez →</a>`)
+    filaRitual({ id:'ident', done: pasos.identidad, titulo:'6. Lee tu declaración de identidad',
+      sub: declaracionParaLeer()
         + `<span class="cualidad-line">${cualidadActual() ? `Esta semana mejoro: <b>${escapeHtml(cualidadActual())}</b>` : `<a class="link" onclick="elegirCualidad()">Elige tu cualidad de la semana →</a>`}</span>`,
       onToggle:"marcarIdentidad('manana')" }),
     filaRitual({ id:'cap', done: pasos.capsula, titulo:'7. Cápsula del día',
@@ -1950,8 +1959,8 @@ function renderCierre(){
     campo('logre', 1, '¿Qué logré hoy?', c.logre, 'Hoy logré...'),
     campo('aprendi', 2, '¿Qué aprendí?', c.aprendi, 'Hoy aprendí...'),
     campo('agradezco', 3, '¿Por qué estoy agradecido?', c.agradezco, 'Agradezco...'),
-    filaRitual({ id:'cident', done: pasos.identidad, titulo:'4. Declaración de identidad',
-      sub: identidad ? `Léela antes de dormir. <span class="quote">“${escapeHtml(identidad)}”</span>` : `<a class="link" onclick="editarTextoFijo('identidad')">Escríbela una sola vez →</a>`,
+    filaRitual({ id:'cident', done: pasos.identidad, titulo:'4. Lee tu declaración de identidad',
+      sub: declaracionParaLeer(),
       onToggle:"marcarIdentidad('noche')" })
   ].join('') + `<button class="btn block ${hecho?'secondary':'gold'}" id="btn-guardar-cierre" style="margin-top:14px;" onclick="guardarCierre()">${hecho?'Actualizar cierre':'Guardar cierre'}</button>`;
   ['logre','aprendi','agradezco'].forEach(k=>{
