@@ -594,6 +594,7 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
         <div class="card-title" style="margin-top:16px;">Revisar mi rutina</div>
         <p class="hint" style="margin-top:0;">Dos avisos al día para abrir la app y revisar lo que toca.</p>
         <div id="avisos-revision-list"></div>
+ <p class="hint" id="desktop-notify-hint" style="display:none; margin-top:12px;">💻 En computador los avisos llegan aunque cierres la pestaña, siempre que el navegador (Chrome, Edge, Firefox o Safari) siga abierto. Si quieres tenerla como app, usa el ícono de instalar en la barra de direcciones de Chrome o Edge.</p>
         <div id="ios-install-guide" style="display:none; margin-top:14px; padding:14px; border-radius:var(--radius-md); background:var(--accent-soft);">
           <div class="card-title" style="margin-bottom:2px;">📲 En iPhone: instala la app primero</div>
           <p class="hint" style="margin-top:0;">Apple solo permite avisos con la app cerrada si está en tu pantalla de inicio (iOS 16.4 o superior).</p>
@@ -1868,6 +1869,8 @@ function refreshNotifyStatus(){
   if(!notifyToggle || !notifyStatus) return;
   const guia = document.getElementById('ios-install-guide');
   if(guia) guia.style.display = necesitaInstalarIphone() ? 'block' : 'none';
+  const hintPc = document.getElementById('desktop-notify-hint');
+  if(hintPc) hintPc.style.display = (!IS_IOS && !/android|mobile/i.test(navigator.userAgent)) ? 'block' : 'none';
 
   if(necesitaInstalarIphone()){
     notifyStatus.textContent = 'Para recibir avisos en iPhone, primero instala la app en tu pantalla de inicio (pasos abajo).';
