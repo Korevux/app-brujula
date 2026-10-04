@@ -414,6 +414,17 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
 .alarma-icon .ic svg{ width:72px; height:72px; }
 .ios-banner{ border-radius:16px; }
 
+/* Ritual del día */
+.ritual-row{ display:flex; align-items:flex-start; gap:14px; background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:14px; margin-bottom:10px; }
+.ritual-row:last-child{ margin-bottom:0; }
+.ritual-row .checkbox{ margin-top:-2px; }
+.ritual-body{ flex:1; min-width:0; }
+.ritual-sub{ font-size:13.5px; color:var(--ink-soft); margin-top:4px; line-height:1.45; }
+.quote{ font-style:italic; color:var(--ink); }
+.quote-block{ font-size:15.5px; line-height:1.55; font-style:italic; color:var(--ink); background:var(--bg); border-left:4px solid var(--accent); border-radius:10px; padding:12px 14px; }
+.link{ color:var(--accent-dark); font-weight:650; cursor:pointer; white-space:nowrap; }
+.opt-tag{ font-size:11px; font-weight:600; color:var(--ink-faint); background:var(--bg-soft); padding:2px 8px; border-radius:999px; margin-left:4px; vertical-align:middle; }
+
 /* Microinteracciones */
 @keyframes pop{ 0%{ transform:scale(1);} 40%{ transform:scale(1.22);} 100%{ transform:scale(1);} }
 .pop{ animation: pop .32s ease; }
@@ -472,6 +483,12 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
       <div id="enfoque-content"></div>
     </div>
 
+    <!-- Ritual diario: lo que se hace cada día con lo definido una sola vez en "Mi brújula" -->
+    <div class="card tight" id="ritual-card">
+      <div class="card-title"><i class="ic" data-ic="sun"></i><span>Ritual del día</span></div>
+      <div id="ritual-list"></div>
+    </div>
+
     <div class="card tight">
       <div class="card-title"><i class="ic" data-ic="check"></i><span>Hábitos de hoy</span></div>
       <div id="hoy-habitos-list"></div>
@@ -494,46 +511,40 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
       <div class="progress-text" id="hoy-progress-text">0 de 0 completados hoy</div>
     </div>
 
-    <details class="card tight extras" id="extras-card">
-      <summary><div class="card-title"><i class="ic" data-ic="spark"></i><span>Extras opcionales</span></div></summary>
-      <p class="hint" style="margin-top:8px;">No cuentan para tu progreso. Úsalos cuando te sumen. Todo se guarda solo.</p>
-
-      <div class="extra-block">
-        <div class="card-title"><i class="ic" data-ic="feather"></i><span>Cápsula del día</span></div>
-        <div class="capsula-tema" id="hoy-cap-tema">—</div>
-        <div class="capsula-frase" id="hoy-cap-frase" style="font-size:15px;">—</div>
-        <button class="btn ghost small" style="margin-top:10px;" onclick="go('cápsula')">Abrir cápsula</button>
-      </div>
-
-      <div class="extra-block">
-        <div class="card-title"><i class="ic" data-ic="compass"></i><span>Declaración de identidad</span></div>
-        <textarea id="input-identidad" placeholder="Soy una persona disciplinada, enfocada y constante."></textarea>
-        <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
-          <button class="btn small secondary" id="btn-identidad-manana" onclick="marcarIdentidad('manana')">La dije (mañana)</button>
-          <button class="btn small secondary" id="btn-identidad-noche" onclick="marcarIdentidad('noche')">La dije (noche)</button>
-        </div>
-      </div>
-
-      <div class="extra-block">
-        <div class="card-title"><i class="ic" data-ic="heart"></i><span>Gratitud</span></div>
-        <textarea id="input-gratitud" placeholder="Hoy agradezco..."></textarea>
-      </div>
-
-      <div class="extra-block">
-        <div class="card-title"><i class="ic" data-ic="eye"></i><span>Visualización</span></div>
-        <p class="hint" style="margin-top:0; margin-bottom:8px;">Describe tu meta ya lograda, en presente.</p>
-        <textarea id="input-visualizacion" placeholder="Estoy disfrutando de..."></textarea>
-        <button class="btn small ghost" style="margin-top:10px;" onclick="modoVisualizacion()">Leer en modo foco</button>
-      </div>
-    </details>
   </section>
 
   <!-- ===================== METAS ===================== -->
+  <!-- Mi brújula: lo que se define una sola vez y se revisa de vez en cuando -->
   <section class="screen" id="screen-metas">
-    <h2 class="section-title first">Mis metas</h2>
-    <p class="muted">Tus 3 a 5 metas principales. Son objetivos de vida importantes: no hace falta cambiarlas seguido. Revísalas idealmente una vez por semana.</p>
-    <div id="metas-list" style="margin-top:14px;"></div>
-    <button class="btn block secondary" style="margin-top:8px;" onclick="editarMetas()"><i class="ic" data-ic="pencil"></i> Editar metas</button>
+    <h2 class="section-title first">Mi brújula</h2>
+    <p class="muted">Lo que defines una sola vez y guía tus días. En "Hoy" solo lo lees y lo practicas; aquí lo editas cuando quieras.</p>
+
+    <div class="card" style="margin-top:14px;">
+      <div class="card-title"><i class="ic" data-ic="target"></i><span>Mis metas</span></div>
+      <p class="hint" style="margin-top:0; margin-bottom:10px;">3 a 5 objetivos de vida. Revísalas una vez por semana.</p>
+      <div id="metas-list"></div>
+      <button class="btn block secondary" style="margin-top:10px;" onclick="editarMetas()"><i class="ic" data-ic="pencil"></i> Editar metas</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ic" data-ic="compass"></i><span>Mi declaración de identidad</span></div>
+      <p class="hint" style="margin-top:0; margin-bottom:10px;">Quién eres y quieres ser. La lees cada mañana y cada noche.</p>
+      <div id="identidad-view"></div>
+      <button class="btn block secondary" style="margin-top:10px;" onclick="editarTextoFijo('identidad')"><i class="ic" data-ic="pencil"></i> <span id="btn-identidad-edit-label">Editar declaración</span></button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ic" data-ic="eye"></i><span>Mi visualización</span></div>
+      <p class="hint" style="margin-top:0; margin-bottom:10px;">Tu meta ya lograda, descrita en presente. La relees cada día.</p>
+      <div id="visualizacion-view"></div>
+      <button class="btn block secondary" style="margin-top:10px;" onclick="editarTextoFijo('visualizacion')"><i class="ic" data-ic="pencil"></i> <span id="btn-visualizacion-edit-label">Editar visualización</span></button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ic" data-ic="gear"></i><span>Hábitos y horarios</span></div>
+      <p class="hint" style="margin-top:0;">Qué hábitos practicas, a qué hora y sus recordatorios.</p>
+      <button class="btn block secondary" style="margin-top:10px;" onclick="irAConfigurarHabitos()">Configurar hábitos</button>
+    </div>
   </section>
 
   <!-- ===================== RUTINA ===================== -->
@@ -737,7 +748,7 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
 
   <div class="navbar">
     <button class="nav-item" data-screen="hoy" onclick="go('hoy')"><span class="nav-icon"><i class="ic" data-ic="home"></i></span><span class="nav-label">Hoy</span></button>
-    <button class="nav-item" data-screen="metas" onclick="go('metas')"><span class="nav-icon"><i class="ic" data-ic="target"></i></span><span class="nav-label">Metas</span></button>
+    <button class="nav-item" data-screen="metas" onclick="go('metas')"><span class="nav-icon"><i class="ic" data-ic="compass"></i></span><span class="nav-label">Brújula</span></button>
     <button class="nav-item" data-screen="rutina" onclick="go('rutina')"><span class="nav-icon"><i class="ic" data-ic="calendar"></i></span><span class="nav-label">Rutina</span></button>
     <button class="nav-item" data-screen="cápsula" onclick="go('cápsula')"><span class="nav-icon"><i class="ic" data-ic="feather"></i></span><span class="nav-label">Cápsula</span></button>
     <button class="nav-item" data-screen="progreso" onclick="go('progreso')"><span class="nav-icon"><i class="ic" data-ic="chart"></i></span><span class="nav-label">Progreso</span></button>
@@ -856,7 +867,8 @@ const DEFAULT_STATE = {
     manana: { activo:true, hora:'08:00' },
     noche:  { activo:true, hora:'21:00' }
   },
-  estiloAviso: 'notificacion' // 'notificacion' | 'alarma'
+  estiloAviso: 'notificacion', // 'notificacion' | 'alarma'
+  visualizacionTexto: ''       // se escribe una vez (Mi brújula) y se lee cada día
 };
 
 let state = null;
@@ -872,6 +884,11 @@ function loadState(){
     if(!state.dias) state.dias = {};
     if(!state.habitosConfig) state.habitosConfig = DEFAULT_STATE.habitosConfig;
     if(!state.avisosRevision) state.avisosRevision = JSON.parse(JSON.stringify(DEFAULT_STATE.avisosRevision));
+    // Migración: la visualización antes se escribía cada día; ahora es una sola. Se toma la más reciente.
+    if(!state.visualizacionTexto){
+      const conVis = Object.keys(state.dias).sort().reverse().find(k=>state.dias[k] && state.dias[k].visualizacion);
+      if(conVis) state.visualizacionTexto = state.dias[conVis].visualizacion;
+    }
   }catch(e){
     console.warn('No se pudo leer el estado guardado, iniciando limpio.', e);
     state = JSON.parse(JSON.stringify(DEFAULT_STATE));
@@ -1047,26 +1064,97 @@ function renderHoy(){
   // Próximo aviso
   renderProximoRecordatorio();
 
-  // Extras: cápsula
-  const cap = capsulaDelDia(fecha);
-  if(cap){
-    document.getElementById('hoy-cap-tema').textContent = cap.tema;
-    document.getElementById('hoy-cap-frase').textContent = cap.frase;
-  } else {
-    document.getElementById('hoy-cap-tema').textContent = 'Sin conexión al contenido';
-    document.getElementById('hoy-cap-frase').textContent = 'Las cápsulas no pudieron cargarse ahora mismo. El resto de la app funciona con normalidad.';
-  }
+  // Ritual del día
+  renderRitual();
+}
 
-  // Extras: identidad, gratitud, visualización (se rellenan desde el estado; no se pisa lo que estás escribiendo)
-  fillInput('input-identidad', state.identidad.texto);
-  fillInput('input-gratitud', dia.gratitud);
-  fillInput('input-visualizacion', dia.visualizacion);
-  const btnM = document.getElementById('btn-identidad-manana');
-  const btnN = document.getElementById('btn-identidad-noche');
-  btnM.textContent = dia.identidad.manana ? '✓ Dicha en la mañana' : 'La dije (mañana)';
-  btnN.textContent = dia.identidad.noche ? '✓ Dicha en la noche' : 'La dije (noche)';
-  btnM.setAttribute('aria-pressed', dia.identidad.manana ? 'true' : 'false');
-  btnN.setAttribute('aria-pressed', dia.identidad.noche ? 'true' : 'false');
+// ---------- Ritual del día ----------
+// Lo que se define una vez (identidad, visualización) aquí solo se lee y se marca;
+// lo que es diario (gratitud) se escribe aquí mismo.
+function filaRitual({ id, done, titulo, sub, extra, opcional, onToggle }){
+  return `<div class="ritual-row ${done?'done':''}">
+    <button type="button" data-pop="rit${id}" class="checkbox ${done?'checked':''}" aria-pressed="${done}" aria-label="Marcar ${escapeHtml(titulo)}" onclick="${onToggle}"></button>
+    <div class="ritual-body">
+      <div class="row-title">${escapeHtml(titulo)}${opcional?' <span class="opt-tag">opcional</span>':''}</div>
+      ${sub ? `<div class="ritual-sub">${sub}</div>` : ''}
+      ${extra || ''}
+    </div>
+  </div>`;
+}
+function renderRitual(){
+  const el = document.getElementById('ritual-list');
+  if(!el) return;
+  const dia = ensureDia(todayKey());
+  const enfocado = document.activeElement && document.activeElement.id === 'input-gratitud';
+  if(enfocado) return; // no re-dibujar mientras escribes la gratitud
+  const identidad = state.identidad.texto;
+  const vis = state.visualizacionTexto;
+  const cap = capsulaDelDia(todayKey());
+  el.innerHTML = [
+    filaRitual({ id:'ident', done: !!dia.identidad.manana, titulo:'Leer mi declaración',
+      sub: identidad ? `<span class="quote">“${escapeHtml(identidad)}”</span>` : `<a class="link" onclick="editarTextoFijo('identidad')">Escríbela una sola vez →</a>`,
+      onToggle:"marcarIdentidad('manana')" }),
+    filaRitual({ id:'grat', done: !!dia.gratitud, titulo:'Gratitud',
+      extra: `<textarea id="input-gratitud" rows="2" placeholder="Hoy agradezco..." style="margin-top:8px; min-height:56px;">${escapeHtml(dia.gratitud||'')}</textarea>`,
+      onToggle:"document.getElementById('input-gratitud').focus()" }),
+    filaRitual({ id:'vis', done: !!dia.visualizacionLeida, titulo:'Visualizar mi meta lograda', opcional:true,
+      sub: vis ? `<a class="link" onclick="modoVisualizacion()">Leer en modo foco →</a>` : `<a class="link" onclick="editarTextoFijo('visualizacion')">Escríbela una sola vez →</a>`,
+      onToggle:"toggleRitual('visualizacionLeida')" }),
+    filaRitual({ id:'cap', done: !!dia.capsulaLeida, titulo:'Cápsula del día', opcional:true,
+      sub: cap ? `<span class="quote">${escapeHtml(cap.frase)}</span> <a class="link" onclick="abrirCapsulaDesdeHoy()">Abrir →</a>` : 'Las cápsulas no pudieron cargarse ahora.',
+      onToggle:"toggleRitual('capsulaLeida')" })
+  ].join('');
+  bindAutosave('input-gratitud', v=>{
+    const d = ensureDia(todayKey());
+    const antes = !!d.gratitud;
+    d.gratitud = v;
+    if(antes !== !!v){ saveState(); setTimeout(()=>{ if(document.activeElement && document.activeElement.id==='input-gratitud'){ renderProgresoHoy(); actualizarCheckGratitud(); } else renderAll(); }, 0); }
+  });
+}
+function actualizarCheckGratitud(){
+  const dia = ensureDia(todayKey());
+  const btn = document.querySelector('[data-pop="ritgrat"]');
+  if(btn){ btn.classList.toggle('checked', !!dia.gratitud); btn.setAttribute('aria-pressed', !!dia.gratitud); }
+}
+function toggleRitual(campo){
+  const dia = ensureDia(todayKey());
+  dia[campo] = !dia[campo];
+  if(dia[campo]) recienMarcado = campo==='visualizacionLeida' ? 'ritvis' : 'ritcap';
+  saveState();
+  renderAll();
+}
+function abrirCapsulaDesdeHoy(){
+  const dia = ensureDia(todayKey());
+  dia.capsulaLeida = true;
+  saveState();
+  go('cápsula');
+}
+
+// ---------- Mi brújula: textos que se escriben una vez ----------
+function editarTextoFijo(tipo){
+  const esId = tipo === 'identidad';
+  const valor = esId ? state.identidad.texto : state.visualizacionTexto;
+  openModal(`
+    <h3 style="margin-bottom:6px;">${esId ? 'Mi declaración de identidad' : 'Mi visualización'}</h3>
+    <p class="muted" style="margin-bottom:10px;">${esId ? 'Escríbela en presente, como quien ya eres. La escribes una vez; cada día solo la lees.' : 'Describe tu meta ya lograda, en presente y con detalle. La escribes una vez; cada día solo la relees.'}</p>
+    <textarea id="texto-fijo" rows="5" style="min-height:130px;" placeholder="${esId ? 'Soy una persona disciplinada, enfocada y constante.' : 'Estoy disfrutando de...'}">${escapeHtml(valor||'')}</textarea>
+    <button class="btn block" style="margin-top:14px;" onclick="guardarTextoFijo('${tipo}')">Guardar</button>
+  `);
+  setTimeout(()=>{ const t = document.getElementById('texto-fijo'); if(t) t.focus(); }, 250);
+}
+function guardarTextoFijo(tipo){
+  const v = document.getElementById('texto-fijo').value.trim();
+  if(tipo === 'identidad') state.identidad.texto = v; else state.visualizacionTexto = v;
+  saveState();
+  closeModal();
+  showToast('Guardado.');
+  renderAll();
+}
+function irAConfigurarHabitos(){
+  go('rutina');
+  setRutinaTab('hoy');
+  const d = document.getElementById('habitos-config-card');
+  if(d){ d.open = true; setTimeout(()=>d.scrollIntoView({ behavior:'smooth', block:'start' }), 80); }
 }
 
 // Rellena un campo con el valor guardado, salvo que la persona esté escribiendo en él.
@@ -1182,8 +1270,11 @@ function renderProgresoHoy(){
   const fecha = todayKey();
   const dia = ensureDia(fecha);
   let total = 0, done = 0;
-  // Solo lo esencial: objetivo, sus pasos, hábitos activos (los omitidos salen del total) y cierre.
+  // Lo esencial del día: objetivo y pasos, declaración, gratitud, hábitos activos (los omitidos salen) y cierre.
+  // Visualización y cápsula son opcionales y no cuentan.
   total += 1; if(dia.enfoque && dia.enfoque.metas) done++;
+  if(state.identidad.texto){ total += 1; if(dia.identidad.manana) done++; }
+  total += 1; if(dia.gratitud) done++;
   dia.enfoque.pasos.forEach(p=>{ if(p.texto){ total += 1; if(p.completado) done++; } });
   const activos = state.habitosConfig.filter(h=>h.activo);
   activos.forEach(h=>{
@@ -1266,13 +1357,15 @@ function marcarIdentidad(momento){
   const fecha = todayKey();
   const dia = ensureDia(fecha);
   dia.identidad[momento] = !dia.identidad[momento];
+  if(dia.identidad[momento] && momento==='manana') recienMarcado = 'ritident';
   saveState();
   renderAll();
 }
 function modoVisualizacion(){
   const fecha = todayKey();
   const dia = ensureDia(fecha);
-  const texto = dia.visualizacion || 'Aún no escribiste tu visualización.';
+  const texto = state.visualizacionTexto || 'Aún no escribiste tu visualización.';
+  if(state.visualizacionTexto && !dia.visualizacionLeida){ dia.visualizacionLeida = true; saveState(); renderAll(); }
   openModal(`
     <div style="text-align:center; padding: 30px 10px;">
       <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:var(--accent); font-weight:700; margin-bottom:14px;">Modo foco</div>
@@ -1332,6 +1425,12 @@ function guardarEnfoque(){
 // METAS
 // ============================================================
 function renderMetas(){
+  const idv = document.getElementById('identidad-view');
+  if(idv) idv.innerHTML = state.identidad.texto ? `<p class="quote-block">“${escapeHtml(state.identidad.texto)}”</p>` : `<p class="muted">Aún no la escribes.</p>`;
+  const vv = document.getElementById('visualizacion-view');
+  if(vv) vv.innerHTML = state.visualizacionTexto ? `<p class="quote-block">${escapeHtml(state.visualizacionTexto)}</p>` : `<p class="muted">Aún no la escribes.</p>`;
+  const l1 = document.getElementById('btn-identidad-edit-label'); if(l1) l1.textContent = state.identidad.texto ? 'Editar declaración' : 'Escribir declaración';
+  const l2 = document.getElementById('btn-visualizacion-edit-label'); if(l2) l2.textContent = state.visualizacionTexto ? 'Editar visualización' : 'Escribir visualización';
   const list = document.getElementById('metas-list');
   if(!state.metas.length){
     list.innerHTML = `<div class="empty-state"><div class="em-icon">${ic('target',28)}</div>Aún no tienes metas creadas.</div>`;
@@ -1564,6 +1663,8 @@ function renderTimeline(){
   const items = [];
   if(dia.enfoque.metas) items.push({ hora:'—', texto:'Objetivo: '+dia.enfoque.metas, done: true });
   else items.push({ hora:'—', texto:'Definir objetivo de hoy', done: false });
+  if(state.identidad.texto) items.push({ hora:'—', texto:'Leer mi declaración', done: !!dia.identidad.manana });
+  items.push({ hora:'—', texto:'Gratitud', done: !!dia.gratitud });
   state.habitosConfig.filter(h=>h.activo).forEach(h=>{
     const hd = dia.habitos[h.id];
     items.push({ hora: h.hora||'—', texto: h.nombre, done: !!(hd&&(hd.completado||hd.omitido)) });
@@ -1611,6 +1712,10 @@ function abrirCierreNocturno(){
     <textarea id="cierre-aprendi">${escapeHtml(c.aprendi)}</textarea>
     <label>¿Por qué estoy agradecido?</label>
     <textarea id="cierre-agradezco">${escapeHtml(c.agradezco)}</textarea>
+    ${state.identidad.texto ? `<div class="ritual-row" style="margin-top:14px;">
+      <button type="button" class="checkbox ${dia.identidad.noche?'checked':''}" id="cierre-identidad" aria-pressed="${!!dia.identidad.noche}" aria-label="Leí mi declaración esta noche" onclick="this.classList.toggle('checked'); this.setAttribute('aria-pressed', this.classList.contains('checked'));"></button>
+      <div class="ritual-body"><div class="row-title">Leí mi declaración esta noche</div><div class="ritual-sub"><span class="quote">“${escapeHtml(state.identidad.texto)}”</span></div></div>
+    </div>` : ''}
     <button class="btn block" style="margin-top:14px;" onclick="guardarCierre()">Guardar cierre</button>
   `);
 }
@@ -1623,6 +1728,8 @@ function guardarCierre(){
     agradezco: document.getElementById('cierre-agradezco').value.trim(),
     fecha
   };
+  const chkId = document.getElementById('cierre-identidad');
+  if(chkId) dia.identidad.noche = chkId.classList.contains('checked');
   saveState();
   closeModal();
   showToast('Cierre nocturno guardado. Descansa bien.');
@@ -2243,9 +2350,6 @@ function init(){
   saveState();
 
   // Guardado automático de los campos de texto (sin botones "Guardar")
-  bindAutosave('input-identidad', v=>{ state.identidad.texto = v; });
-  bindAutosave('input-gratitud', v=>{ ensureDia(todayKey()).gratitud = v; });
-  bindAutosave('input-visualizacion', v=>{ ensureDia(todayKey()).visualizacion = v; });
   bindAutosave('cap-respuesta', v=>{ ensureDia(todayKey()).capsulaRespuesta = v; });
   bindAutosave('input-nombre', v=>{ state.nombre = v; });
   bindAutosave('input-webhook', v=>{ state.webhookUrl = v; N8N_WEBHOOK_URL = v; });
