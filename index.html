@@ -414,7 +414,7 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
 .alarma-icon .ic svg{ width:72px; height:72px; }
 .ios-banner{ border-radius:16px; }
 
-/* Ritual del día */
+/* Arranque del día */
 .ritual-row{ display:flex; align-items:flex-start; gap:14px; background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:14px; margin-bottom:10px; }
 .ritual-row:last-child{ margin-bottom:0; }
 .ritual-row .checkbox{ margin-top:-2px; }
@@ -424,6 +424,11 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
 .quote-block{ font-size:15.5px; line-height:1.55; font-style:italic; color:var(--ink); background:var(--bg); border-left:4px solid var(--accent); border-radius:10px; padding:12px 14px; }
 .link{ color:var(--accent-dark); font-weight:650; cursor:pointer; white-space:nowrap; }
 .opt-tag{ font-size:11px; font-weight:600; color:var(--ink-faint); background:var(--bg-soft); padding:2px 8px; border-radius:999px; margin-left:4px; vertical-align:middle; }
+
+.arranque-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:6px; }
+.arranque-head .card-title{ margin-bottom:0; }
+.arranque-count{ font-size:13px; font-weight:700; color:var(--accent-dark); background:var(--accent-soft); padding:5px 12px; border-radius:999px; display:inline-flex; align-items:center; gap:5px; }
+.arranque-count.ok{ background:var(--gold-soft); color:#8a6420; }
 
 /* Microinteracciones */
 @keyframes pop{ 0%{ transform:scale(1);} 40%{ transform:scale(1.22);} 100%{ transform:scale(1);} }
@@ -478,19 +483,25 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
       <button class="icon-btn" aria-label="Ocultar aviso" onclick="ocultarBannerIphone()"><i class="ic" data-ic="x"></i></button>
     </div>
 
-    <div class="enfoque-hero" id="enfoque-card">
-      <div class="enfoque-label"><i class="ic" data-ic="target"></i><span>Mi objetivo de hoy</span></div>
-      <div id="enfoque-content"></div>
+    <!-- Arranque del día: primer hábito; usa lo definido una sola vez en "Mi brújula" -->
+    <div class="card tight" id="arranque-card">
+      <div class="arranque-head">
+        <div class="card-title"><i class="ic" data-ic="sun"></i><span>Arranque del día</span></div>
+        <span class="arranque-count" id="arranque-count"></span>
+      </div>
+      <p class="hint" id="arranque-hint" style="margin-top:0; margin-bottom:12px;">Tu primer hábito: déjalo listo antes de seguir con lo demás.</p>
+      <div class="progress-track" style="height:6px; margin-bottom:14px;"><div class="progress-fill" id="arranque-fill" style="width:0%"></div></div>
+      <div id="ritual-list"></div>
     </div>
 
-    <!-- Ritual diario: lo que se hace cada día con lo definido una sola vez en "Mi brújula" -->
-    <div class="card tight" id="ritual-card">
-      <div class="card-title"><i class="ic" data-ic="sun"></i><span>Ritual del día</span></div>
-      <div id="ritual-list"></div>
+    <div class="enfoque-hero" id="enfoque-card" style="display:none;">
+      <div class="enfoque-label"><i class="ic" data-ic="target"></i><span>Mis compromisos de hoy</span></div>
+      <div id="enfoque-content"></div>
     </div>
 
     <div class="card tight">
       <div class="card-title"><i class="ic" data-ic="check"></i><span>Hábitos de hoy</span></div>
+      <p class="hint" id="habitos-hint" style="display:none; margin-top:-4px; margin-bottom:10px;">Primero completa tu arranque del día.</p>
       <div id="hoy-habitos-list"></div>
     </div>
 
@@ -562,7 +573,7 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
       <div class="card" id="timeline-card">
         <div class="card-title"><i class="ic" data-ic="calendar"></i><span>Lo que toca hoy</span></div>
         <div id="timeline-list"></div>
-        <button class="btn ghost small block" style="margin-top:10px;" onclick="abrirEditorEnfoque()"><i class="ic" data-ic="pencil"></i> Editar objetivo de hoy</button>
+        <button class="btn ghost small block" style="margin-top:10px;" onclick="abrirEditorEnfoque()"><i class="ic" data-ic="pencil"></i> Editar objetivo y compromiso</button>
       </div>
 
       <div class="card" id="tasks-card">
@@ -643,7 +654,7 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
     <div class="card">
       <div class="card-title"><i class="ic" data-ic="chart"></i><span>Resumen semanal</span></div>
       <p class="muted">Hábitos completados: <b id="resumen-habitos">0</b></p>
-      <p class="muted" style="margin-top:4px;">Pasos completados: <b id="resumen-pasos">0</b></p>
+      <p class="muted" style="margin-top:4px;">Compromisos cumplidos: <b id="resumen-pasos">0</b></p>
       <p class="muted" style="margin-top:4px;">Días con rutina registrada: <b id="resumen-dias">0</b></p>
     </div>
 
@@ -1061,11 +1072,11 @@ function renderHoy(){
   // Próximo aviso
   renderProximoRecordatorio();
 
-  // Ritual del día
+  // Arranque del día
   renderRitual();
 }
 
-// ---------- Ritual del día ----------
+// ---------- Arranque del día ----------
 // Lo que se define una vez (identidad, visualización) aquí solo se lee y se marca;
 // lo que es diario (gratitud) se escribe aquí mismo.
 function filaRitual({ id, done, titulo, sub, extra, opcional, onToggle }){
@@ -1078,29 +1089,63 @@ function filaRitual({ id, done, titulo, sub, extra, opcional, onToggle }){
     </div>
   </div>`;
 }
+// Arranque del día: el primer hábito. En este orden: gratitud, visualización,
+// objetivo del día, compromiso, declaración de identidad y cápsula. Todo cuenta.
+function pasosArranque(dia){
+  const e = dia.enfoque || { metas:'', pasos:[] };
+  return {
+    gratitud: !!dia.gratitud,
+    visualizacion: !!dia.visualizacionLeida,
+    objetivo: !!e.metas,
+    compromiso: (e.pasos||[]).some(p=>p.texto),
+    identidad: !!dia.identidad.manana,
+    capsula: !!dia.capsulaLeida
+  };
+}
+let arranqueAbierto = false;
 function renderRitual(){
   const el = document.getElementById('ritual-list');
   if(!el) return;
   const dia = ensureDia(todayKey());
   const enfocado = document.activeElement && document.activeElement.id === 'input-gratitud';
   if(enfocado) return; // no re-dibujar mientras escribes la gratitud
+  const pasos = pasosArranque(dia);
+  const hechos = Object.values(pasos).filter(Boolean).length, total = 6;
+  const completo = hechos === total;
+  document.getElementById('arranque-count').innerHTML = completo ? `${ic('checked',16)} Listo` : `${hechos}/${total}`;
+  document.getElementById('arranque-count').classList.toggle('ok', completo);
+  document.getElementById('arranque-fill').style.width = Math.round(hechos/total*100)+'%';
+  document.getElementById('arranque-hint').textContent = completo ? 'Arranque completo. Ahora, a cumplir tus compromisos y hábitos.' : 'Tu primer hábito: déjalo listo antes de seguir con lo demás.';
+  const hh = document.getElementById('habitos-hint'); if(hh) hh.style.display = completo ? 'none' : 'block';
+  if(completo && !arranqueAbierto){
+    el.innerHTML = `<button class="btn ghost small block" onclick="arranqueAbierto=true; renderRitual();">Ver mi arranque</button>`;
+    return;
+  }
   const identidad = state.identidad.texto;
   const vis = state.visualizacionTexto;
   const cap = capsulaDelDia(todayKey());
+  const e = dia.enfoque;
+  const compromisos = (e.pasos||[]).filter(p=>p.texto).map(p=>escapeHtml(p.texto)).join(' · ');
   el.innerHTML = [
-    filaRitual({ id:'ident', done: !!dia.identidad.manana, titulo:'Leer mi declaración',
-      sub: identidad ? `<span class="quote">“${escapeHtml(identidad)}”</span>` : `<a class="link" onclick="editarTextoFijo('identidad')">Escríbela una sola vez →</a>`,
-      onToggle:"marcarIdentidad('manana')" }),
-    filaRitual({ id:'grat', done: !!dia.gratitud, titulo:'Gratitud',
+    filaRitual({ id:'grat', done: pasos.gratitud, titulo:'1. Gratitud',
       extra: `<textarea id="input-gratitud" rows="2" placeholder="Hoy agradezco..." style="margin-top:8px; min-height:56px;">${escapeHtml(dia.gratitud||'')}</textarea>`,
       onToggle:"document.getElementById('input-gratitud').focus()" }),
-    filaRitual({ id:'vis', done: !!dia.visualizacionLeida, titulo:'Visualizar mi meta lograda', opcional:true,
-      sub: vis ? `<a class="link" onclick="modoVisualizacion()">Leer en modo foco →</a>` : `<a class="link" onclick="editarTextoFijo('visualizacion')">Escríbela una sola vez →</a>`,
+    filaRitual({ id:'vis', done: pasos.visualizacion, titulo:'2. Visualización',
+      sub: vis ? `Tu meta ya lograda. <a class="link" onclick="modoVisualizacion()">Leer →</a>` : `<a class="link" onclick="editarTextoFijo('visualizacion')">Escríbela una sola vez →</a>`,
       onToggle:"toggleRitual('visualizacionLeida')" }),
-    filaRitual({ id:'cap', done: !!dia.capsulaLeida, titulo:'Cápsula del día', opcional:true,
+    filaRitual({ id:'obj', done: pasos.objetivo, titulo:'3. Objetivo del día',
+      sub: e.metas ? `<span class="quote">${escapeHtml(e.metas)}</span>` : `<a class="link" onclick="abrirEditorEnfoque()">¿Qué quieres lograr hoy? →</a>`,
+      onToggle:"abrirEditorEnfoque()" }),
+    filaRitual({ id:'comp', done: pasos.compromiso, titulo:'4. Compromiso',
+      sub: compromisos ? `<span class="quote">${compromisos}</span> <a class="link" onclick="abrirEditorEnfoque()">Editar</a>` : `<a class="link" onclick="abrirEditorEnfoque()">Elige 2 acciones concretas →</a>`,
+      onToggle:"abrirEditorEnfoque()" }),
+    filaRitual({ id:'ident', done: pasos.identidad, titulo:'5. Declaración de identidad',
+      sub: identidad ? `<span class="quote">“${escapeHtml(identidad)}”</span>` : `<a class="link" onclick="editarTextoFijo('identidad')">Escríbela una sola vez →</a>`,
+      onToggle:"marcarIdentidad('manana')" }),
+    filaRitual({ id:'cap', done: pasos.capsula, titulo:'6. Cápsula del día',
       sub: cap ? `<span class="quote">${escapeHtml(cap.frase)}</span> <a class="link" onclick="abrirCapsulaDesdeHoy()">Abrir →</a>` : 'Las cápsulas no pudieron cargarse ahora.',
       onToggle:"toggleRitual('capsulaLeida')" })
-  ].join('');
+  ].join('') + (completo ? `<button class="btn ghost small block" style="margin-top:10px;" onclick="arranqueAbierto=false; renderRitual();">Ocultar</button>` : '');
   bindAutosave('input-gratitud', v=>{
     const d = ensureDia(todayKey());
     const antes = !!d.gratitud;
@@ -1180,11 +1225,10 @@ function renderEnfoqueHoy(){
   const enfoque = dia.enfoque;
   const box = document.getElementById('enfoque-content');
   if(!box) return;
-  if(!enfoque || !enfoque.metas){
-    box.innerHTML = `<div class="enfoque-empty">¿Qué quieres lograr hoy? Elige un objetivo y 2 pasos concretos.</div>
-      <button class="enfoque-cta" onclick="abrirEditorEnfoque()">Definir objetivo de hoy</button>`;
-    return;
-  }
+  const card = document.getElementById('enfoque-card');
+  // Se define en el Arranque del día; aquí solo se cumplen los compromisos durante el día.
+  if(!enfoque || !enfoque.metas){ if(card) card.style.display = 'none'; return; }
+  if(card) card.style.display = '';
   const pasosHtml = enfoque.pasos.map((p,i)=>{
     if(!p.texto) return '';
     return `<div class="paso-row">
@@ -1266,11 +1310,8 @@ function renderProgresoHoy(){
   const fecha = todayKey();
   const dia = ensureDia(fecha);
   let total = 0, done = 0;
-  // Lo esencial del día: objetivo y pasos, declaración, gratitud, hábitos activos (los omitidos salen) y cierre.
-  // Visualización y cápsula son opcionales y no cuentan.
-  total += 1; if(dia.enfoque && dia.enfoque.metas) done++;
-  if(state.identidad.texto){ total += 1; if(dia.identidad.manana) done++; }
-  total += 1; if(dia.gratitud) done++;
+  // El día: arranque (6 pasos), cumplir los compromisos, hábitos activos (los omitidos salen) y cierre.
+  Object.values(pasosArranque(dia)).forEach(v=>{ total += 1; if(v) done++; });
   dia.enfoque.pasos.forEach(p=>{ if(p.texto){ total += 1; if(p.completado) done++; } });
   const activos = state.habitosConfig.filter(h=>h.activo);
   activos.forEach(h=>{
@@ -1378,14 +1419,14 @@ function abrirEditorEnfoque(){
        <div class="chip-row">${state.metas.map((m,i)=>`<button type="button" class="chip" onclick="usarMetaEnEnfoque(${i})">${escapeHtml(m.titulo)}</button>`).join('')}</div>`
     : '';
   openModal(`
-    <h3 style="margin-bottom:6px;">Mi objetivo de hoy</h3>
-    <p class="muted" style="margin-bottom:6px;">Un objetivo y dos pasos concretos. Nada más.</p>
-    <label>¿Qué quieres lograr hoy?</label>
+    <h3 style="margin-bottom:6px;">Objetivo y compromiso de hoy</h3>
+    <p class="muted" style="margin-bottom:6px;">Un objetivo y dos acciones concretas a las que te comprometes. Nada más.</p>
+    <label>Objetivo del día: ¿qué quieres lograr hoy?</label>
     <input type="text" id="input-enfoque-metas" value="${escapeHtml(e.metas||'')}" placeholder="Ej: Avanzar en la propuesta del cliente">
     ${chips}
-    <label>Paso 1</label>
+    <label>Compromiso 1: ¿qué harás hoy para lograrlo?</label>
     <input type="text" id="input-enfoque-paso1" value="${escapeHtml((e.pasos[0]&&e.pasos[0].texto)||'')}" placeholder="Ej: Escribir el índice">
-    <label>Paso 2</label>
+    <label>Compromiso 2</label>
     <input type="text" id="input-enfoque-paso2" value="${escapeHtml((e.pasos[1]&&e.pasos[1].texto)||'')}" placeholder="Ej: Enviar el borrador">
     <label>¿Por qué te importa? (opcional)</label>
     <input type="text" id="input-enfoque-razones" value="${escapeHtml(e.razones||'')}" placeholder="Ej: Es clave para mi meta de negocio">
@@ -1657,16 +1698,14 @@ function renderTimeline(){
   const fecha = todayKey();
   const dia = ensureDia(fecha);
   const items = [];
-  if(dia.enfoque.metas) items.push({ hora:'—', texto:'Objetivo: '+dia.enfoque.metas, done: true });
-  else items.push({ hora:'—', texto:'Definir objetivo de hoy', done: false });
-  if(state.identidad.texto) items.push({ hora:'—', texto:'Leer mi declaración', done: !!dia.identidad.manana });
-  items.push({ hora:'—', texto:'Gratitud', done: !!dia.gratitud });
+  const pa = pasosArranque(dia), hechosA = Object.values(pa).filter(Boolean).length;
+  items.push({ hora:'—', texto:`Arranque del día (${hechosA}/6)`, done: hechosA===6 });
   state.habitosConfig.filter(h=>h.activo).forEach(h=>{
     const hd = dia.habitos[h.id];
     items.push({ hora: h.hora||'—', texto: h.nombre, done: !!(hd&&(hd.completado||hd.omitido)) });
   });
   dia.enfoque.pasos.forEach((p,i)=>{
-    if(p.texto) items.push({ hora:'—', texto: `Paso ${i+1}: `+p.texto, done: p.completado });
+    if(p.texto) items.push({ hora:'—', texto: `Compromiso ${i+1}: `+p.texto, done: p.completado });
   });
   items.push({ hora:'—', texto:'Cierre del día', done: !!dia.cierre });
 
@@ -1855,7 +1894,7 @@ function historialHtml(keys){
       <div style="flex:1; min-width:0;">
         <div class="row-title">${formatDiaCorto(k)}</div>
         <div class="row-sub">${objetivo}</div>
-        <div class="row-sub">${habitosOk} hábito(s) · ${pasosOk} paso(s)${dia.cierre?' · cierre hecho':''}</div>
+        <div class="row-sub">${habitosOk} hábito(s) · ${pasosOk} compromiso(s)${dia.cierre?' · cierre hecho':''}</div>
       </div>
       <span class="small-muted">›</span>
     </button>`;
