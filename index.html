@@ -435,6 +435,18 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
 .ciencia[open] summary{ background:var(--accent-soft); border-color:#cfe2f6; }
 .ciencia p{ margin-top:8px; color:var(--ink); line-height:1.5; font-size:14.5px; }
 .ciencia .ciencia-fuente{ font-size:12.5px; color:var(--ink-faint); margin-top:4px; }
+.check-row{ flex-wrap:wrap; }
+.habito-extra{ flex-basis:100%; padding-left:46px; }
+.nota-habito{ margin-top:8px; }
+.nota-habito summary{ cursor:pointer; list-style:none; display:inline-flex; align-items:center; gap:6px; color:var(--ink-soft); font-weight:600; font-size:13.5px; }
+.nota-habito summary::-webkit-details-marker{ display:none; }
+.nota-habito textarea{ margin-top:8px; min-height:56px; }
+.glosario-grupo{ font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:var(--accent-dark); margin:14px 0 6px; }
+.glosario-grupo:first-child{ margin-top:0; }
+.glosario-item{ border:1px solid var(--border); border-radius:14px; padding:12px 14px; margin-bottom:8px; background:var(--bg); }
+.glosario-item summary{ cursor:pointer; font-weight:700; font-size:15.5px; color:var(--ink); }
+.glosario-item p{ margin-top:8px; font-size:14.5px; line-height:1.5; color:var(--ink); }
+.glosario-item .ciencia-fuente{ font-size:12.5px; color:var(--ink-faint); }
 .cualidad-line{ display:block; margin-top:6px; font-size:13px; color:var(--ink-soft); }
 .cualidad-line b{ color:#b8461c; }
 .ritual-row{ display:flex; align-items:flex-start; gap:14px; background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:14px; margin-bottom:10px; }
@@ -694,6 +706,12 @@ label{ font-size:14.5px; }
       <p class="hint" style="margin-top:0; margin-bottom:10px;">Tu meta ya lograda, descrita en presente. La relees cada día.</p>
       <div id="visualizacion-view"></div>
       <button class="btn block secondary" style="margin-top:10px;" onclick="editarTextoFijo('visualizacion')"><i class="ic" data-ic="pencil"></i> <span id="btn-visualizacion-edit-label">Editar visualización</span></button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ic" data-ic="spark"></i><span>La ciencia detrás de tu rutina</span></div>
+      <p class="hint" style="margin-top:0; margin-bottom:10px;">Por qué funciona cada paso, con estudios verificados sobre el cerebro y la conducta. Toca un tema para leerlo.</p>
+      <div id="ciencia-glosario"></div>
     </div>
 
       <details class="card extras" id="habitos-config-card">
@@ -1234,19 +1252,46 @@ const CIENCIA = {
     fuente:'Karns, Moore y Mayr, 2017, Frontiers in Human Neuroscience (resonancia magnética); Diniz y col., 2023, revista Einstein (metaanálisis).' },
   visualizacion: { texto:'En el cerebro: imaginar una acción activa redes motoras y visuales parecidas a las de hacerla, por eso la práctica mental mejora el desempeño. Funciona mejor si te imaginas haciendo los pasos y anticipas el obstáculo con tu plan: soñar solo con la meta lograda puede quitarte energía.',
     fuente:'Metaanálisis de imaginería, Simonsmeier y col., 2021; Pham y Taylor, 1999; Oettingen y Mayer, 2002; metaanálisis del método WOOP, Wang, Wang y Gai, 2021 (15.907 personas).' },
-  objetivo: { texto:'Las metas concretas y desafiantes producen mejor desempeño que proponerse "hacer lo mejor posible" (evidencia de conducta, no de imágenes cerebrales). Hacer primero la tarea más importante es un consejo práctico: no hay un estudio específico que lo mida.',
-    fuente:'Locke y Latham, 2002, American Psychologist (35 años de estudios sobre metas).' },
-  compromiso: { texto:'Decidir de antemano qué harás, cuándo y dónde ("a las 9 escribo el índice") deja la acción lista para dispararse sola y mejora claramente el cumplimiento frente a solo tener la intención (evidencia de conducta).',
-    fuente:'Gollwitzer y Sheeran, 2006: metaanálisis de 94 estudios (efecto medio-alto).' },
-  identidad: { texto:'En el cerebro: leer tus valores activa zonas de recompensa y del "yo" (corteza prefrontal ventromedial y estriado ventral), sobre todo si te imaginas viviéndolos en el futuro. Esa activación predijo cambios reales de conducta.',
-    fuente:'Cascio y col., 2016, Social Cognitive and Affective Neuroscience (resonancia magnética funcional).' },
+  objetivo: { texto:'Las metas concretas y desafiantes producen mejor desempeño que proponerse "hacer lo mejor posible". En deporte, las metas de proceso (lo que harás) mejoraron mucho más el desempeño que las metas de solo resultado. Hacer primero la tarea más importante es un consejo práctico, sin un estudio específico.',
+    fuente:'Metaanálisis de 27 estudios, International Review of Sport and Exercise Psychology, 2024; Locke y Latham, 2002, American Psychologist.',
+    mas:[ 'Efecto sobre el desempeño: metas de proceso d = 1,36; metas de rendimiento d = 0,44; metas de solo resultado d = 0,09.' ] },
+  compromiso: { texto:'Decidir de antemano qué harás, cuándo y dónde ("si son las 9, entonces escribo el índice") deja la acción lista para dispararse sola. El metaanálisis más grande, con 642 pruebas, confirma que mejora la conducta, y funciona mejor con el formato "si..., entonces...".',
+    fuente:'Sheeran, Listrom y Gollwitzer, 2025, European Review of Social Psychology (642 pruebas, d entre 0,27 y 0,66).' },
+  identidad: { texto:'En el cerebro: leer tus valores activa zonas de recompensa y del "yo" (corteza prefrontal ventromedial y estriado ventral), sobre todo si te imaginas viviéndolos en el futuro, y esa activación predice cambios reales de conducta.',
+    fuente:'Cascio y col., 2016, Social Cognitive and Affective Neuroscience (resonancia magnética funcional).',
+    mas:[ 'Quienes afirmaron sus valores procesaron mejor los consejos de salud en la corteza prefrontal ventromedial y redujeron más su sedentarismo el mes siguiente (Falk y col., 2015, PNAS).',
+          'Un metaanálisis de 41 estudios encontró que afirmar tus valores mejora la conducta, no solo la intención (Epton y col., 2015, Health Psychology).',
+          'Escribir sobre los propios valores en clase mejoró las notas y redujo 40% la brecha de rendimiento entre grupos de estudiantes (Cohen y col., 2006, Science).',
+          'Pensarte como "una persona que..." motiva más que "hacer algo": preguntar por "ser votante" en lugar de "votar" aumentó la participación real en elecciones (Bryan y col., 2011, PNAS). Por eso la declaración se escribe en presente: "Soy...".' ] },
   capsula: { texto:'Siendo honestos: este paso no tiene un estudio propio que mida su efecto. Es una idea breve para empezar el día pensando en algo que te inspire.',
     fuente:'Sin fuente científica específica.' },
   reflexion: { texto:'Dedicar 15 minutos al final del día a escribir lo que aprendiste mejoró el desempeño cerca de 23% frente a quienes usaron ese tiempo para seguir trabajando (evidencia de conducta).',
     fuente:'Di Stefano, Gino, Pisano y Staats, Harvard Business School, 2014.' },
-  habitos: { texto:'En el cerebro: al repetir una conducta, su control pasa del estriado dorsomedial (decisiones con intención) al dorsolateral (respuestas automáticas). En la práctica tarda unos dos meses (mediana de 59 a 66 días, con mucha variación), y los hábitos de la mañana resultaron más fuertes.',
-    fuente:'Yin y Knowlton, 2006, Nature Reviews Neuroscience; Singh y col., 2024, revisión sistemática en Healthcare.' }
+  habitos: { texto:'En el cerebro: al repetir una conducta, su control pasa del estriado dorsomedial (decisiones con intención) al dorsolateral (respuestas automáticas). En la práctica tarda unos dos meses (mediana de 59 a 66 días, con mucha variación), y los hábitos de la mañana resultaron más fuertes. Fallar un día suelto no arruina el proceso.',
+    fuente:'Yin y Knowlton, 2006, Nature Reviews Neuroscience; Singh y col., 2024, revisión sistemática en Healthcare; Lally y col., 2010.',
+    mas:[ 'El mito de los 21 días viene del cirujano Maxwell Maltz (Psycho-Cybernetics, 1960): notó que sus pacientes tardaban "un mínimo de unos 21 días" en acostumbrarse a su nueva imagen. Era una observación, no un experimento.',
+          'Cuando se midió: mediana de 66 días, con un rango de 18 a 254, y saltarse un día no afectó la formación del hábito (Lally y col., 2010, European Journal of Social Psychology, 96 personas).' ] },
+  ejercicio: { texto:'En el cerebro: caminar 40 minutos tres veces por semana durante un año aumentó cerca de 2% el hipocampo (la zona de la memoria) en adultos mayores. Y la revisión más grande hasta hoy, con más de 2.700 ensayos, confirma que cualquier ejercicio, incluso suave, mejora la memoria y la capacidad de pensar a cualquier edad.',
+    fuente:'Erickson y col., 2011, PNAS; Singh y col., 2024, British Journal of Sports Medicine (133 revisiones, 2.724 ensayos, 258.279 personas).' },
+  lectura: { texto:'Escribir lo que recuerdas de lo que leíste fija la memoria mucho mejor que releer. Un metaanálisis de 222 estudios con 48.478 estudiantes confirmó un efecto medio a favor de recordar y ponerse a prueba. Por eso conviene anotar tu reflexión.',
+    fuente:'Yang y col., 2021, Psychological Bulletin; Roediger y Karpicke, 2006, Psychological Science (56% frente a 42% recordado a la semana).' },
+  estudio: { texto:'Estudiar en sesiones repartidas en varios días se recuerda mejor que estudiar todo de una vez, y explicar con tus palabras lo aprendido (recordar sin mirar) refuerza la memoria.',
+    fuente:'Cepeda y col., 2006, Psychological Bulletin (práctica espaciada); Yang y col., 2021, Psychological Bulletin (222 estudios).' }
 };
+const CIENCIA_GRUPOS = [
+  { titulo:'Arranque del día', items:[['gratitud','Gratitud'],['visualizacion','Visualización y obstáculo'],['objetivo','Objetivo del día'],['compromiso','Compromiso'],['identidad','Declaración de identidad'],['capsula','Cápsula del día']] },
+  { titulo:'Cierre de la noche', items:[['reflexion','¿Qué aprendí?'],['gratitud','¿Por qué estoy agradecido?'],['identidad','Declaración de identidad']] },
+  { titulo:'Hábitos', items:[['habitos','Cómo se forma un hábito (y el mito de los 21 días)'],['ejercicio','Ejercicio'],['lectura','Lectura y reflexión'],['estudio','Estudio']] }
+];
+function renderGlosarioCiencia(){
+  const el = document.getElementById('ciencia-glosario');
+  if(!el || el.dataset.listo) return;
+  el.dataset.listo = '1';
+  el.innerHTML = CIENCIA_GRUPOS.map(g=>`<div class="glosario-grupo">${escapeHtml(g.titulo)}</div>` + g.items.map(([k,t])=>{
+    const c = CIENCIA[k];
+    return `<details class="glosario-item"><summary>${escapeHtml(t)}</summary><p>${c.texto}</p>${(c.mas||[]).map(m=>`<p>${m}</p>`).join('')}<p class="ciencia-fuente">Fuente: ${c.fuente}</p></details>`;
+  }).join('')).join('');
+}
 function cienciaHtml(clave){
   const c = CIENCIA[clave];
   if(!c) return '';
@@ -1499,6 +1544,7 @@ function renderHabitosHoy(){
   const fecha = todayKey();
   const dia = ensureDia(fecha);
   const list = document.getElementById('hoy-habitos-list');
+  if(escribiendoEn('hoy-habitos-list')) return; // no re-dibujar mientras escribes una reflexión
   const activos = state.habitosConfig.filter(h=>h.activo);
   if(!activos.length){
     list.innerHTML = `<div class="empty-state"><div class="em-icon">${ic('leaf',28)}</div>No tienes hábitos activos. Actívalos en Brújula → Mis hábitos y horarios.</div>`;
@@ -1516,8 +1562,19 @@ function renderHabitosHoy(){
       <div class="row-actions">
         <button class="icon-btn" title="Omitir hoy" aria-label="Omitir ${escapeHtml(h.nombre)} hoy" onclick="omitirHabito('${h.id}')">${ic('skip',18)}</button>
       </div>
+      <div class="habito-extra">
+        <details class="nota-habito"${hd.nota?' open':''}><summary>${ic('pencil',14)} ${hd.nota?'Mi reflexión':'Anotar reflexión'}</summary>
+          <textarea id="nota-${h.id}" rows="2" placeholder="${h.id==='lectura'?'¿Qué aprendí de lo que leí?':h.id==='estudio'?'¿Qué aprendí hoy? Explícalo con tus palabras.':'¿Qué noté o aprendí hoy?'}">${escapeHtml(hd.nota||'')}</textarea>
+        </details>
+        ${CIENCIA[h.id] ? cienciaHtml(h.id) : ''}
+      </div>
     </div>`;
   }).join('');
+  activos.forEach(h=>bindAutosave('nota-'+h.id, v=>{
+    const d = ensureDia(todayKey());
+    if(!d.habitos[h.id]) d.habitos[h.id] = { completado:false, duracion:null, omitido:false };
+    d.habitos[h.id].nota = v;
+  }));
 }
 function toggleHabito(id){
   const fecha = todayKey();
@@ -1701,6 +1758,7 @@ function guardarEnfoque(){
 // METAS
 // ============================================================
 function renderMetas(){
+  renderGlosarioCiencia();
   const cv = document.getElementById('cualidad-view');
   const cual = cualidadActual();
   if(cv) cv.innerHTML = cual ? `<p class="quote-block">${escapeHtml(cual)}</p>` : `<p class="muted">Aún no eliges la de esta semana.</p>`;
@@ -2193,7 +2251,7 @@ function verDia(key){
   const habitos = Object.entries(dia.habitos||{}).map(([id,h])=>{
     const cfg = state.habitosConfig.find(x=>x.id===id);
     const nombre = cfg ? cfg.nombre : id;
-    return `<div class="muted">${h.completado?ic('checked',16):(h.omitido?ic('skip',16):ic('circle',16))} ${escapeHtml(nombre)}</div>`;
+    return `<div class="muted">${h.completado?ic('checked',16):(h.omitido?ic('skip',16):ic('circle',16))} ${escapeHtml(nombre)}</div>${h.nota?`<p class="muted" style="margin:2px 0 6px 22px;"><i>${escapeHtml(h.nota)}</i></p>`:''}`;
   }).join('');
   const tasks = (dia.tasks||[]).map(t=>`<div class="muted">${t.completado?ic('checked',16):ic('circle',16)} ${escapeHtml(t.desc)}</div>`).join('');
   const c = dia.cierre;
