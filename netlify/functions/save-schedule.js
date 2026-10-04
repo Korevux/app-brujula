@@ -1,6 +1,7 @@
 // Recibe desde index.html la suscripción push del dispositivo, su zona
 // horaria, y la lista completa de recordatorios activos (uno por hábito
-// con "Recordatorio activo" encendido y hora fijada). Reemplaza siempre
+// con "Recordatorio activo" encendido y hora fijada, más los dos avisos
+// diarios de "revisar mi rutina", que traen su propio mensaje). Reemplaza siempre
 // la lista completa: más simple que ir sumando/restando y evita que
 // queden recordatorios viejos huérfanos.
 const { getStore } = require("@netlify/blobs");
@@ -45,6 +46,7 @@ exports.handler = async function (event) {
   const reminders = incomingReminders.map((r) => ({
     habitId: r.habitId,
     nombre: r.nombre,
+    mensaje: typeof r.mensaje === "string" ? r.mensaje : null,
     hora: r.hora,
     dias: Array.isArray(r.dias) ? r.dias : [0, 1, 2, 3, 4, 5, 6],
     lastFiredDate: prevByHabit[r.habitId] || null
