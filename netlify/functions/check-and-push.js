@@ -85,7 +85,8 @@ exports.handler = async function () {
 
       const payload = JSON.stringify({
         title: "Brújula Interior",
-        body: reminder.mensaje || (reminder.nombre || "Hábito") + " — es hora."
+        body: reminder.mensaje || (reminder.nombre || "Hábito") + " — es hora.",
+        alarma: device.estiloAviso === "alarma"
       });
 
       try {

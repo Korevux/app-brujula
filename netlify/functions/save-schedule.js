@@ -55,6 +55,7 @@ exports.handler = async function (event) {
   const deviceRecord = {
     subscription: payload.subscription,
     timezone: payload.timezone || "America/Caracas",
+    estiloAviso: payload.estiloAviso === "alarma" ? "alarma" : "notificacion",
     reminders: reminders
   };
 

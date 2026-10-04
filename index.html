@@ -328,6 +328,15 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
 .install-steps li{ margin-bottom:4px; }
 .ios-banner{ display:flex; align-items:center; gap:10px; background:var(--accent-soft); border:1px solid var(--border); border-radius:var(--radius-md); padding:12px 14px; margin-bottom:14px; font-size:13px; color:var(--accent-dark); }
 .ios-banner .btn{ flex-shrink:0; }
+.estilo-row{ display:flex; gap:8px; margin-top:8px; }
+.estilo-btn{ flex:1; padding:12px 8px; border-radius:14px; background:var(--bg-soft); color:var(--ink-soft); font-size:13px; font-weight:700; border:2px solid transparent; text-align:center; }
+.estilo-btn.active{ background:var(--accent-soft); color:var(--accent-dark); border-color:var(--accent); }
+.alarma-overlay{ position:fixed; inset:0; z-index:400; background:linear-gradient(160deg, var(--accent) 0%, var(--accent-dark) 100%); color:var(--white); display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px; }
+.alarma-overlay.active{ display:flex; }
+.alarma-icon{ font-size:64px; animation: sacudir 0.6s ease-in-out infinite; }
+@keyframes sacudir{ 0%,100%{ transform:rotate(0); } 25%{ transform:rotate(-14deg); } 75%{ transform:rotate(14deg); } }
+.alarma-title{ font-size:24px; font-weight:800; margin-top:18px; }
+.alarma-body{ font-size:16px; opacity:0.9; margin-top:10px; line-height:1.5; max-width:320px; }
 .next-reminder{ font-size:12.5px; color:var(--ink-soft); margin-top:6px; }
 
 /* ---------- Settings list ---------- */
@@ -591,6 +600,13 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
         </label>
         <p class="hint" id="notifyStatus" style="margin-top:8px;"></p>
 
+        <div class="card-title" style="margin-top:16px;">Tipo de aviso</div>
+        <div class="estilo-row" role="radiogroup" aria-label="Tipo de aviso">
+          <button type="button" class="estilo-btn" role="radio" data-estilo="notificacion" onclick="setEstiloAviso('notificacion')">🔔 Solo notificación</button>
+          <button type="button" class="estilo-btn" role="radio" data-estilo="alarma" onclick="setEstiloAviso('alarma')">⏰ Notificación + alarma</button>
+        </div>
+        <p class="hint" id="estilo-aviso-hint" style="margin-top:8px;"></p>
+
         <div class="card-title" style="margin-top:16px;">Revisar mi rutina</div>
         <p class="hint" style="margin-top:0;">Dos avisos al día para abrir la app y revisar lo que toca.</p>
         <div id="avisos-revision-list"></div>
@@ -648,6 +664,13 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
 
 <div class="toast" id="toast"></div>
 
+<div class="alarma-overlay" id="alarma-overlay" role="alertdialog" aria-labelledby="alarma-title">
+  <div class="alarma-icon">⏰</div>
+  <div class="alarma-title" id="alarma-title">Brújula Interior</div>
+  <div class="alarma-body" id="alarma-body"></div>
+  <button class="btn" style="margin-top:28px; background:var(--white); color:var(--accent-dark); min-width:200px;" onclick="detenerAlarma(true)">Detener y abrir</button>
+</div>
+
 <script>
 /* ============================================================
    Brújula Interior — lógica de la aplicación
@@ -687,7 +710,8 @@ const DEFAULT_STATE = {
   avisosRevision: {
     manana: { activo:true, hora:'08:00' },
     noche:  { activo:true, hora:'21:00' }
-  }
+  },
+  estiloAviso: 'notificacion' // 'notificacion' | 'alarma'
 };
 
 let state = null;
@@ -1717,14 +1741,90 @@ function enviarWebhook(payload){
   }
 }
 function probarRecordatorio(){
+  const esAlarma = state.estiloAviso === 'alarma';
   if('Notification' in window && Notification.permission === 'granted'){
     try{
-      new Notification('Brújula Interior', { body: 'Así se vería un recordatorio.', tag: 'brujula-prueba' });
-      return;
+      new Notification('Brújula Interior', { body: 'Así se vería un recordatorio.', tag: 'brujula-prueba', requireInteraction: esAlarma });
     }catch(e){}
+  } else if(!esAlarma){
+    showToast('🔔 Así se vería un recordatorio. (Activa las notificaciones arriba para verlo como aviso real.)');
   }
-  showToast('🔔 Así se vería un recordatorio. (Activa las notificaciones arriba para verlo como aviso real.)');
+  if(esAlarma) mostrarAlarma('Brújula Interior', 'Así suena la alarma cuando la app está abierta.');
 }
+
+// ---------- Estilo de aviso: solo notificación o notificación + alarma ----------
+function setEstiloAviso(estilo){
+  state.estiloAviso = estilo;
+  saveState();
+  renderEstiloAviso();
+  pushScheduleUpdate();
+  if(estilo === 'alarma') desbloquearAudio();
+  showToast(estilo === 'alarma' ? 'Avisos con alarma.' : 'Avisos como notificación.');
+}
+function renderEstiloAviso(){
+  const estilo = state.estiloAviso || 'notificacion';
+  document.querySelectorAll('.estilo-btn').forEach(b=>{
+    const on = b.dataset.estilo === estilo;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-checked', on ? 'true' : 'false');
+  });
+  const hint = document.getElementById('estilo-aviso-hint');
+  if(!hint) return;
+  hint.textContent = estilo === 'alarma'
+    ? 'La notificación queda fija en pantalla hasta que la abras y vibra más largo. Si tienes la app abierta, además suena una alarma que se repite hasta que la detengas. Con la app cerrada (y siempre en iPhone) suena con el tono normal de notificaciones: el navegador no permite una alarma de verdad. En Android puedes elegir un tono más fuerte en Ajustes del teléfono → Apps → Chrome → Notificaciones.'
+    : 'Una notificación normal, con el sonido de notificaciones de tu teléfono.';
+}
+
+// Alarma dentro de la app: pitidos que se repiten hasta tocar "Detener".
+let audioCtx = null, alarmaTimer = null, alarmaVibraTimer = null;
+function desbloquearAudio(){
+  try{
+    if(!audioCtx){ const AC = window.AudioContext || window.webkitAudioContext; if(AC) audioCtx = new AC(); }
+    if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  }catch(e){}
+}
+function pitido(){
+  if(!audioCtx) return;
+  try{
+    const t0 = audioCtx.currentTime;
+    [0, 0.25, 0.5].forEach(d=>{
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = 'square'; o.frequency.value = 880;
+      g.gain.setValueAtTime(0.0001, t0+d);
+      g.gain.exponentialRampToValueAtTime(0.25, t0+d+0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0+d+0.18);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(t0+d); o.stop(t0+d+0.2);
+    });
+  }catch(e){}
+}
+function mostrarAlarma(titulo, cuerpo){
+  document.getElementById('alarma-title').textContent = titulo || 'Brújula Interior';
+  document.getElementById('alarma-body').textContent = cuerpo || 'Es hora de revisar tu rutina.';
+  document.getElementById('alarma-overlay').classList.add('active');
+  desbloquearAudio();
+  clearInterval(alarmaTimer); clearInterval(alarmaVibraTimer);
+  pitido();
+  alarmaTimer = setInterval(pitido, 1500);
+  if(navigator.vibrate){ navigator.vibrate([600,300,600]); alarmaVibraTimer = setInterval(()=>navigator.vibrate([600,300,600]), 1500); }
+}
+function detenerAlarma(irAHoy){
+  clearInterval(alarmaTimer); clearInterval(alarmaVibraTimer);
+  alarmaTimer = alarmaVibraTimer = null;
+  if(navigator.vibrate) navigator.vibrate(0);
+  document.getElementById('alarma-overlay').classList.remove('active');
+  if(irAHoy) go('hoy');
+}
+// El service worker avisa a la app abierta cuando llega un aviso con alarma.
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.addEventListener('message', function(ev){
+    const d = ev.data || {};
+    if(d.tipo === 'alarma') mostrarAlarma(d.title, d.body);
+  });
+}
+// El navegador solo deja sonar audio después de un toque: se "desbloquea" con el primero.
+document.addEventListener('pointerdown', function(){ if(state && state.estiloAviso === 'alarma') desbloquearAudio(); }, { passive:true });
+
 
 // ============================================================
 // NOTIFICACIONES PUSH REALES (avisan aunque no tengas la app abierta)
@@ -1805,7 +1905,8 @@ function pushScheduleUpdate(){
       body: JSON.stringify({
         subscription: subscription.toJSON(),
         timezone: deviceTimezone(),
-        reminders: recordatoriosActivos()
+        reminders: recordatoriosActivos(),
+        estiloAviso: state.estiloAviso || 'notificacion'
       })
     }).catch(function(){});
   }).catch(function(){});
@@ -1834,7 +1935,8 @@ function subscribeToPush(){
       body: JSON.stringify({
         subscription: subscription.toJSON(),
         timezone: deviceTimezone(),
-        reminders: recordatoriosActivos()
+        reminders: recordatoriosActivos(),
+        estiloAviso: state.estiloAviso || 'notificacion'
       })
     }).catch(function(){});
   }).catch(function(err){
@@ -1920,6 +2022,7 @@ function renderAll(){
       fillInput('input-webhook', state.webhookUrl);
       fillInput('input-nombre', state.nombre);
       renderAvisosRevision();
+      renderEstiloAviso();
       syncNotifyUI();
     }
   }catch(e){
