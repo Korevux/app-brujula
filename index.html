@@ -540,11 +540,13 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
       <button class="btn block secondary" style="margin-top:10px;" onclick="editarTextoFijo('visualizacion')"><i class="ic" data-ic="pencil"></i> <span id="btn-visualizacion-edit-label">Editar visualización</span></button>
     </div>
 
-    <div class="card">
-      <div class="card-title"><i class="ic" data-ic="gear"></i><span>Hábitos y horarios</span></div>
-      <p class="hint" style="margin-top:0;">Qué hábitos practicas, a qué hora y sus recordatorios.</p>
-      <button class="btn block secondary" style="margin-top:10px;" onclick="irAConfigurarHabitos()">Configurar hábitos</button>
-    </div>
+      <details class="card extras" id="habitos-config-card">
+        <summary><div class="card-title"><i class="ic" data-ic="gear"></i><span>Mis hábitos y horarios</span></div></summary>
+        <p class="hint" style="margin-top:8px;">Qué hábitos practicas, a qué hora y sus recordatorios.</p>
+        <div id="habitos-config-list" style="margin-top:8px;"></div>
+        <button class="btn ghost small block" style="margin-top:10px;" onclick="agregarHabitoPersonalizado()">+ Agregar hábito nuevo</button>
+      </details>
+
   </section>
 
   <!-- ===================== RUTINA ===================== -->
@@ -591,11 +593,6 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
         <button class="btn secondary block" onclick="abrirRevisionSemanal()">Abrir revisión semanal</button>
       </div>
 
-      <details class="card extras" id="habitos-config-card">
-        <summary><div class="card-title"><i class="ic" data-ic="gear"></i><span>Configurar hábitos</span></div></summary>
-        <div id="habitos-config-list" style="margin-top:8px;"></div>
-        <button class="btn ghost small block" style="margin-top:10px;" onclick="agregarHabitoPersonalizado()">+ Agregar hábito nuevo</button>
-      </details>
     </div>
 
     <div id="rutina-tab-historial" style="display:none;">
@@ -723,7 +720,7 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
             <li>Abre <b>Brújula</b> desde el nuevo ícono y vuelve aquí para activar los avisos.</li>
           </ol>
         </div>
-        <p class="muted" style="margin-top:10px;">Los recordatorios de cada hábito se configuran en Rutina → Configurar hábitos.</p>
+        <p class="muted" style="margin-top:10px;">Los recordatorios de cada hábito se configuran en Brújula → Mis hábitos y horarios.</p>
         <button class="btn ghost small block" style="margin-top:10px;" onclick="probarRecordatorio()"><i class="ic" data-ic="bell"></i> Probar recordatorio</button>
       </div>
     </div>
@@ -1151,8 +1148,7 @@ function guardarTextoFijo(tipo){
   renderAll();
 }
 function irAConfigurarHabitos(){
-  go('rutina');
-  setRutinaTab('hoy');
+  go('metas');
   const d = document.getElementById('habitos-config-card');
   if(d){ d.open = true; setTimeout(()=>d.scrollIntoView({ behavior:'smooth', block:'start' }), 80); }
 }
@@ -1228,7 +1224,7 @@ function renderHabitosHoy(){
   const list = document.getElementById('hoy-habitos-list');
   const activos = state.habitosConfig.filter(h=>h.activo);
   if(!activos.length){
-    list.innerHTML = `<div class="empty-state"><div class="em-icon">${ic('leaf',28)}</div>No tienes hábitos activos. Actívalos en Rutina → Configurar hábitos.</div>`;
+    list.innerHTML = `<div class="empty-state"><div class="em-icon">${ic('leaf',28)}</div>No tienes hábitos activos. Actívalos en Brújula → Mis hábitos y horarios.</div>`;
     return;
   }
   list.innerHTML = activos.map(h=>{
@@ -1510,7 +1506,7 @@ function renderRutinaTabs(){
   });
   document.getElementById('rutina-tab-hoy').style.display = rutinaTab==='hoy' ? '' : 'none';
   document.getElementById('rutina-tab-historial').style.display = rutinaTab==='historial' ? '' : 'none';
-  if(rutinaTab==='hoy'){ renderTimeline(); renderTasks(); renderHabitosConfig(); }
+  if(rutinaTab==='hoy'){ renderTimeline(); renderTasks(); }
   else renderHistorialRutina();
 }
 
@@ -2317,7 +2313,7 @@ function renderAll(){
   try{
     lastRenderedDay = todayKey();
     if(currentScreen==='hoy'){ renderHoy(); renderBannerIphone(); animarRecienMarcado(); }
-    if(currentScreen==='metas') renderMetas();
+    if(currentScreen==='metas'){ renderMetas(); renderHabitosConfig(); }
     if(currentScreen==='rutina') renderRutinaTabs();
     if(currentScreen==='cápsula') renderCapsulaScreen();
     if(currentScreen==='progreso') renderProgreso();
