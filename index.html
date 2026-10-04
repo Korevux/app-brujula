@@ -464,6 +464,86 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
   .confeti{ display:none; }
 }
 
+/* ===== v3: más color y letras más grandes (plan de éxito diario) ===== */
+:root{ --sky:#4fa3e0; --sky-soft:#e3f1fc; --gold-deep:#a87a2a; }
+body{ font-size:16px; }
+.hint{ font-size:14px; color:var(--ink-soft); line-height:1.45; }
+.muted{ font-size:15px; }
+.small-muted{ font-size:13.5px; }
+.row-sub{ font-size:14.5px; }
+.row-title{ font-size:16.5px; }
+.ritual-sub{ font-size:15px; }
+.momento-sub{ font-size:14.5px; }
+.cualidad-line{ font-size:14.5px; }
+.progress-text{ font-size:15.5px; font-weight:600; color:var(--ink); margin-top:8px; }
+.task-meta{ font-size:13.5px; }
+.tl-text{ font-size:15px; }
+.tl-time{ font-size:13px; }
+.chip{ font-size:13px; }
+button.chip{ font-size:14px; padding:8px 14px; }
+label{ font-size:14.5px; }
+.nav-item .nav-label{ font-size:12px; }
+.next-reminder{ font-size:14px; }
+.capsula-tema{ font-size:13px; }
+.arranque-count{ font-size:15px; padding:6px 14px; }
+.streak-chip{ font-size:15px; padding:7px 14px; }
+
+/* Saludo con color */
+.hero{ background:linear-gradient(135deg, var(--accent-dark) 0%, var(--accent) 55%, var(--sky) 100%); color:#fff; border-radius:24px; padding:20px 20px 18px; margin-bottom:16px; box-shadow:0 10px 28px rgba(29,85,144,.25); position:relative; overflow:hidden; }
+.hero::after{ content:""; position:absolute; right:-40px; top:-40px; width:150px; height:150px; border-radius:50%; background:radial-gradient(circle, rgba(201,161,90,.55), rgba(201,161,90,0) 70%); }
+.hero .greeting{ color:#fff; }
+.hero .date{ color:rgba(255,255,255,.85); }
+.hero .next-reminder{ background:rgba(255,255,255,.18); color:#fff; position:relative; z-index:1; }
+.hero .next-reminder b{ color:#fff; }
+
+/* Bloques del día con identidad propia */
+.momento-head{ background:linear-gradient(135deg, #fbf3e3 0%, #fffdf8 100%); }
+.momento.noche .momento-head{ background:linear-gradient(135deg, #e6effa 0%, #f8fbff 100%); }
+.momento-icon{ background:linear-gradient(135deg, #d9b26b, var(--gold)); color:#fff; box-shadow:0 4px 12px rgba(201,161,90,.35); }
+.momento.noche .momento-icon{ background:linear-gradient(135deg, var(--accent-light), var(--accent-dark)); color:#fff; box-shadow:0 4px 12px rgba(43,111,184,.3); }
+.momento-title{ font-size:19px; }
+.momento .arranque-count{ background:#fff; box-shadow:0 1px 4px rgba(20,30,45,.08); }
+.momento .arranque-count.ok{ background:var(--gold); color:#fff; }
+.momento #arranque-fill{ background:linear-gradient(90deg, var(--gold), #e2c27f); }
+.ritual-row.done{ background:var(--accent-soft); border-color:#cfe2f6; }
+.momento.noche .ritual-row.done{ background:#eaf1fb; }
+.ritual-row.done .row-title{ color:var(--accent-dark); }
+
+/* Iconos de cada tarjeta con color */
+.card-title{ font-size:17px; }
+.card-title .ic{ background:linear-gradient(135deg, var(--accent-light), var(--accent)); color:#fff; }
+
+/* Tu logro de hoy */
+.logro-card{ border:1px solid #f0e2c4; background:linear-gradient(160deg, #fffaf0 0%, #ffffff 60%); }
+.logro-card .card-title .ic{ background:linear-gradient(135deg, #d9b26b, var(--gold)); }
+.logro-fila{ display:flex; align-items:baseline; gap:12px; margin:4px 0 10px; }
+.logro-pct{ font-size:44px; font-weight:800; line-height:1; letter-spacing:-0.03em; background:linear-gradient(90deg, var(--accent-dark), var(--accent)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.logro-msg{ font-size:17px; font-weight:700; color:var(--ink); }
+.logro-card .progress-track{ height:14px; }
+.logro-card .progress-fill{ background:linear-gradient(90deg, var(--accent), var(--sky), var(--gold)); }
+.logro-card.completo{ background:linear-gradient(160deg, #fbefd6 0%, #fffaf0 70%); }
+.logro-card.completo .logro-pct{ background:linear-gradient(90deg, var(--gold-deep), var(--gold)); -webkit-background-clip:text; background-clip:text; }
+
+/* Compromisos del día */
+.enfoque-hero{ background:linear-gradient(135deg, var(--accent-dark) 0%, var(--accent) 70%, var(--sky) 130%); }
+
+/* Progreso */
+.racha-card{ background:linear-gradient(135deg, #c9a15a 0%, #e0bd78 60%, #f1d9a6 100%); border:none; color:#3d2a08; }
+.racha-card .card-title{ color:#3d2a08; }
+.racha-card .card-title .ic{ background:rgba(255,255,255,.35); color:#fff; }
+.racha-card .streak-flame{ background:rgba(255,255,255,.3); color:#fff; width:72px; height:72px; border-radius:22px; }
+.racha-card .streak-num{ font-size:60px; color:#fff; text-shadow:0 2px 8px rgba(120,80,10,.25); }
+.racha-card .streak-label{ font-size:15.5px; color:#3d2a08; font-weight:600; }
+.racha-card .muted{ color:#4a3410; font-size:15.5px; }
+.stat-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; }
+.stat{ border-radius:18px; padding:14px 10px; text-align:center; }
+.stat-num{ font-size:36px; font-weight:800; line-height:1.05; letter-spacing:-0.02em; }
+.stat-label{ font-size:13.5px; font-weight:600; margin-top:4px; line-height:1.3; }
+.stat.azul{ background:var(--accent-soft); color:var(--accent-dark); }
+.stat.dorado{ background:var(--gold-soft); color:#7a5718; }
+.stat.cielo{ background:var(--sky-soft); color:#1f6aa5; }
+@media (max-width:340px){ .stat-num{ font-size:28px; } .logro-pct{ font-size:36px; } }
+
 @media (max-width:340px){
   .hero .greeting{ font-size:19px; }
   .enfoque-metas-text{ font-size:17px; }
@@ -536,10 +616,14 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
       </div>
     </div>
 
-    <div class="card tight">
+    <div class="card tight logro-card">
       <div class="progress-head">
-        <div class="card-title"><i class="ic" data-ic="chart"></i><span>Tu día</span></div>
+        <div class="card-title"><i class="ic" data-ic="chart"></i><span>Tu logro de hoy</span></div>
         <div class="streak-chip" id="hoy-racha" style="display:none;"></div>
+      </div>
+      <div class="logro-fila">
+        <div class="logro-pct" id="hoy-pct">0%</div>
+        <div class="logro-msg" id="hoy-logro-msg">Cada paso cuenta.</div>
       </div>
       <div class="progress-track"><div class="progress-fill" id="hoy-progress-fill" style="width:0%"></div></div>
       <div class="progress-text" id="hoy-progress-text">0 de 0 completados hoy</div>
@@ -669,7 +753,7 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
   <section class="screen" id="screen-progreso">
     <h2 class="section-title first">Progreso</h2>
 
-    <div class="card">
+    <div class="card racha-card">
       <div class="card-title"><i class="ic" data-ic="flame"></i><span>Racha de continuidad</span></div>
       <div class="streak-hero">
         <div class="streak-flame"><i class="ic" data-ic="flame" data-size="30"></i></div>
@@ -683,9 +767,12 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
 
     <div class="card">
       <div class="card-title"><i class="ic" data-ic="chart"></i><span>Resumen semanal</span></div>
-      <p class="muted">Hábitos completados: <b id="resumen-habitos">0</b></p>
-      <p class="muted" style="margin-top:4px;">Compromisos cumplidos: <b id="resumen-pasos">0</b></p>
-      <p class="muted" style="margin-top:4px;">Días con rutina registrada: <b id="resumen-dias">0</b></p>
+      <p class="hint" style="margin-top:-4px; margin-bottom:12px;">Tus logros de los últimos 7 días.</p>
+      <div class="stat-grid">
+        <div class="stat azul"><div class="stat-num" id="resumen-habitos">0</div><div class="stat-label">hábitos completados</div></div>
+        <div class="stat dorado"><div class="stat-num" id="resumen-pasos">0</div><div class="stat-label">compromisos cumplidos</div></div>
+        <div class="stat cielo"><div class="stat-num" id="resumen-dias">0</div><div class="stat-label">días con rutina</div></div>
+      </div>
     </div>
 
     <div class="card">
@@ -1414,6 +1501,10 @@ function renderProgresoHoy(){
   const text = document.getElementById('hoy-progress-text');
   if(fill){ fill.style.width = pct+'%'; }
   if(text){ text.textContent = done===total ? `¡Día completo! ${done} de ${total}.` : `${done} de ${total} completados hoy`; }
+  const pctEl = document.getElementById('hoy-pct'); if(pctEl) pctEl.textContent = pct+'%';
+  const msgEl = document.getElementById('hoy-logro-msg');
+  if(msgEl) msgEl.textContent = pct===100 ? '¡Ganaste el día!' : pct>=75 ? 'Ya casi. Cierra fuerte.' : pct>=40 ? 'Vas muy bien, sigue así.' : pct>0 ? 'Buen comienzo. Un paso más.' : 'Cada paso cuenta. Empieza ahora.';
+  const card = document.querySelector('.logro-card'); if(card) card.classList.toggle('completo', pct===100);
 
   // Racha visible (dorado = logro)
   const racha = calcularRacha();
@@ -1472,7 +1563,7 @@ function renderProximoRecordatorio(){
     const delta = mins>=nowMin ? mins-nowMin : (1440-nowMin)+mins;
     if(best===null || delta<best.delta) best = { r, delta };
   });
-  if(best) el.innerHTML = `${ic('bell',16)} Próximo aviso: <b>${escapeHtml(best.r.nombre)}</b> a las ${best.r.hora}`;
+  if(best) el.innerHTML = `${ic("bell",16)} <span>Próximo aviso: <b>${escapeHtml(best.r.nombre)}</b> a las ${best.r.hora}</span>`;
 }
 
 // ============================================================
