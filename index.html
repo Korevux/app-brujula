@@ -1238,8 +1238,6 @@ const CIENCIA = {
     fuente:'Locke y Latham, 2002, American Psychologist (35 años de estudios sobre metas).' },
   compromiso: { texto:'Decidir de antemano qué harás, cuándo y dónde ("a las 9 escribo el índice") deja la acción lista para dispararse sola y mejora claramente el cumplimiento frente a solo tener la intención (evidencia de conducta).',
     fuente:'Gollwitzer y Sheeran, 2006: metaanálisis de 94 estudios (efecto medio-alto).' },
-  bien: { texto:'En el cerebro: con solo comprometerse a ser generosas, las personas activaron la unión temporoparietal (zona de lo social) y su conexión con el estriado ventral (felicidad), antes de actuar. En la vida diaria: hacer el bien aumenta tu propio bienestar.',
-    fuente:'Park y col., 2017, Nature Communications (resonancia magnética); Curry y col., 2018, metaanálisis de 27 estudios con 4.045 personas.' },
   identidad: { texto:'En el cerebro: leer tus valores activa zonas de recompensa y del "yo" (corteza prefrontal ventromedial y estriado ventral), sobre todo si te imaginas viviéndolos en el futuro. Esa activación predijo cambios reales de conducta.',
     fuente:'Cascio y col., 2016, Social Cognitive and Affective Neuroscience (resonancia magnética funcional).' },
   capsula: { texto:'Siendo honestos: este paso no tiene un estudio propio que mida su efecto. Es una idea breve para empezar el día pensando en algo que te inspire.',
@@ -1266,7 +1264,7 @@ function filaRitual({ id, done, titulo, sub, extra, opcional, onToggle, ciencia 
   </div>`;
 }
 // Arranque del día: el primer hábito. En este orden: gratitud, visualización,
-// objetivo del día (la rana), compromiso, ¿qué bien haré hoy?, identidad y cápsula. Todo cuenta.
+// objetivo del día (la rana), compromiso, identidad y cápsula. Todo cuenta.
 function pasosArranque(dia){
   const e = dia.enfoque || { metas:'', pasos:[] };
   return {
@@ -1274,7 +1272,6 @@ function pasosArranque(dia){
     visualizacion: !!dia.visualizacionLeida,
     objetivo: !!e.metas,
     compromiso: (e.pasos||[]).some(p=>p.texto),
-    bien: !!dia.bienHare,
     identidad: !!dia.identidad.manana,
     capsula: !!dia.capsulaLeida
   };
@@ -1349,14 +1346,11 @@ function renderRitual(){
     filaRitual({ id:'comp', done: pasos.compromiso, titulo:'4. Compromiso',
       sub: compromisos ? `<span class="quote">${compromisos}</span> <a class="link" onclick="abrirEditorEnfoque()">Editar</a>` : `<a class="link" onclick="abrirEditorEnfoque()">Elige 2 acciones concretas →</a>`,
       onToggle:"abrirEditorEnfoque()", ciencia:'compromiso' }),
-    filaRitual({ id:'bien', done: pasos.bien, titulo:'5. ¿Qué bien haré hoy?',
-      extra: `<textarea id="input-bien" rows="2" placeholder="Hoy haré el bien a...">${escapeHtml(dia.bienHare||'')}</textarea>`,
-      onToggle:"document.getElementById('input-bien').focus()", ciencia:'bien' }),
-    filaRitual({ id:'ident', done: pasos.identidad, titulo:'6. Lee tu declaración de identidad',
+    filaRitual({ id:'ident', done: pasos.identidad, titulo:'5. Lee tu declaración de identidad',
       sub: declaracionParaLeer()
         + `<span class="cualidad-line">${cualidadActual() ? `Esta semana mejoro: <b>${escapeHtml(cualidadActual())}</b>` : `<a class="link" onclick="elegirCualidad()">Elige tu cualidad de la semana →</a>`}</span>`,
       onToggle:"marcarIdentidad('manana')", ciencia:'identidad' }),
-    filaRitual({ id:'cap', done: pasos.capsula, titulo:'7. Cápsula del día',
+    filaRitual({ id:'cap', done: pasos.capsula, titulo:'6. Cápsula del día',
       sub: cap ? `<span class="quote">${escapeHtml(cap.frase)}</span> <a class="link" onclick="abrirCapsulaDesdeHoy()">Abrir →</a>` : 'Las cápsulas no pudieron cargarse ahora.',
       onToggle:"toggleRitual('capsulaLeida')", ciencia:'capsula' })
   ].join('');
@@ -1367,12 +1361,6 @@ function renderRitual(){
     if(antes !== !!v){ saveState(); setTimeout(()=>{ if(escribiendoEn('ritual-list')){ renderProgresoHoy(); actualizarCheckGratitud(); } else renderAll(); }, 0); }
   });
   bindAutosave('input-obstaculo', v=>{ ensureDia(todayKey()).obstaculo = v; });
-  bindAutosave('input-bien', v=>{
-    const d = ensureDia(todayKey());
-    const antes = !!d.bienHare;
-    d.bienHare = v;
-    if(antes !== !!v){ saveState(); setTimeout(()=>{ if(escribiendoEn('ritual-list')){ renderProgresoHoy(); marcarFilaTexto('ritbien', !!v); renderConteoArranque(); } else renderAll(); }, 0); }
-  });
 }
 function actualizarCheckGratitud(){
   marcarFilaTexto('ritgrat', !!ensureDia(todayKey()).gratitud);
@@ -2099,7 +2087,7 @@ function diaTuvoActividad(fecha){
   const dia = state.dias[fecha];
   if(!dia) return false;
   if(dia.identidad.manana || dia.identidad.noche) return true;
-  if(dia.gratitud || dia.bienHare) return true;
+  if(dia.gratitud) return true;
   if(dia.visualizacion) return true;
   if(dia.enfoque && (dia.enfoque.metas || (Array.isArray(dia.enfoque.pasos) && dia.enfoque.pasos.some(p=>p.completado)))) return true;
   if(!dia.enfoque && dia.mpa && dia.mpa.m) return true; // compatibilidad con datos muy antiguos aún no migrados
@@ -2218,7 +2206,6 @@ function verDia(key){
     ${bloque(ic('list')+'<span>Otras acciones</span>', tasks)}
     ${bloque(ic('moon')+'<span>Cierre</span>', cierre)}
     ${bloque(ic('heart')+'<span>Gratitud</span>', texto(dia.gratitud))}
-    ${bloque(ic('spark')+'<span>Bien que haría</span>', texto(dia.bienHare))}
     ${bloque(ic('eye')+'<span>Obstáculo y plan</span>', texto(dia.obstaculo))}
     ${bloque(ic('eye')+'<span>Visualización</span>', texto(dia.visualizacion))}
     ${bloque(ic('feather')+'<span>Respuesta a la cápsula</span>', texto(dia.capsulaRespuesta))}
