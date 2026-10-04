@@ -4,7 +4,8 @@
 // La clave anon es pública por diseño: la seguridad la dan las reglas RLS
 // de supabase/schema.sql (cada persona solo puede leer y escribir sus datos).
 // Si se dejan vacías, la app funciona igual, solo en este dispositivo.
-window.BRUJULA_CONFIG = {
+// También la usa netlify/functions/keep-supabase-alive.js (por eso funciona en el navegador y en Node).
+(typeof window !== 'undefined' ? window : globalThis).BRUJULA_CONFIG = {
   supabaseUrl: '',
   supabaseAnonKey: ''
 };

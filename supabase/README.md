@@ -27,6 +27,14 @@ La app pide un código de 6 dígitos que llega por correo (funciona también den
 
 La clave anon es pública por diseño; nunca uses ni compartas la clave `service_role`.
 
+## 5. Que nunca se pause
+El plan gratis de Supabase pausa el proyecto si pasa una semana sin actividad.
+La función `netlify/functions/keep-supabase-alive.js` hace una consulta mínima
+una vez al día (programada en `netlify.toml`), así que el proyecto queda activo
+aunque nadie abra la app. Usa los mismos datos de `config.js`; no hay que
+configurar nada más. Puedes ver que corre en Netlify → Functions →
+keep-supabase-alive.
+
 Nota: el plan gratuito de Supabase envía pocos correos por hora con su servidor
 de correo de prueba; para más usuarios conviene configurar un SMTP propio en
 **Authentication → Emails → SMTP Settings**.

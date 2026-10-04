@@ -7,3 +7,6 @@
 
 [functions."check-and-push"]
   schedule = "* * * * *"
+
+[functions."keep-supabase-alive"]
+  schedule = "@daily"
