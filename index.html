@@ -854,6 +854,13 @@ label{ font-size:14.5px; }
     </div>
 
     <div class="settings-group">
+      <div class="settings-group-title">Cuenta y sincronización</div>
+      <div class="card" id="cuenta-card">
+        <div id="cuenta-body"></div>
+      </div>
+    </div>
+
+    <div class="settings-group">
       <div class="settings-group-title">Datos</div>
       <div class="card">
         <button class="btn block" onclick="exportarDatos()"><i class="ic" data-ic="download"></i> Exportar mis datos (JSON)</button>
@@ -960,6 +967,16 @@ label{ font-size:14.5px; }
   <button class="btn" style="margin-top:28px; background:var(--white); color:var(--accent-dark); min-width:200px;" onclick="detenerAlarma(true)">Detener y abrir</button>
 </div>
 
+<script src="config.js"></script>
+<script>
+  // Supabase solo se carga si está configurado en config.js; si no carga (sin internet), la app sigue igual.
+  (function(){
+    var c = window.BRUJULA_CONFIG || {};
+    if(c.supabaseUrl && c.supabaseAnonKey){
+      document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"><\/script>');
+    }
+  })();
+</script>
 <script>
 /* ============================================================
    Brújula Interior — lógica de la aplicación
@@ -1056,6 +1073,10 @@ let state = null;
 
 // ---------- Persistencia ----------
 function loadState(){
+  loadStateRaw();
+  tomarSnapshots();
+}
+function loadStateRaw(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
     if(!raw){ state = JSON.parse(JSON.stringify(DEFAULT_STATE)); return; }
@@ -1075,9 +1096,43 @@ function loadState(){
     state = JSON.parse(JSON.stringify(DEFAULT_STATE));
   }
 }
+// Marcas de tiempo para fusionar bien entre aparatos (ver SINCRONIZACIÓN).
+// Solo se marcan cambios reales: abrir la app en un aparato nuevo no debe
+// "ganarle" a los datos que ya tienes en la nube.
+let snapConfig = null, snapDias = {};
+function contenidoConfig(s){
+  const c = Object.assign({}, s);
+  ['dias','_updatedAt','_configAt','_capsulaStartEpoch','ultimaAperturaMensual','semanaRevisiones','mesRevisiones','modoDia','iosBannerOculto'].forEach(k=>delete c[k]);
+  return JSON.stringify(c);
+}
+function contenidoDia(d){
+  const c = Object.assign({}, d);
+  ['_u','capsulaDia','capsulaRepetida'].forEach(k=>delete c[k]);
+  return JSON.stringify(c);
+}
+function tomarSnapshots(){
+  snapConfig = contenidoConfig(state);
+  snapDias = {};
+  Object.keys(state.dias||{}).forEach(k=>{ snapDias[k] = contenidoDia(state.dias[k]); });
+}
+function marcarCambios(){
+  const now = Date.now();
+  const cfg = contenidoConfig(state);
+  if(snapConfig !== null && cfg !== snapConfig) state._configAt = now;
+  snapConfig = cfg;
+  Object.keys(state.dias||{}).forEach(k=>{
+    const c = contenidoDia(state.dias[k]);
+    const cambio = snapDias[k] === undefined ? diaTuvoActividad2(state.dias[k]) : c !== snapDias[k];
+    if(cambio) state.dias[k]._u = now;
+    snapDias[k] = c;
+  });
+  state._updatedAt = now;
+}
 function saveState(){
   try{
+    marcarCambios();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    if(typeof programarSubida === 'function') programarSubida();
   }catch(e){
     console.warn('No se pudo guardar el estado (localStorage no disponible o lleno).', e);
     showToast('No se pudo guardar. Revisa el espacio de almacenamiento del navegador.');
@@ -2386,6 +2441,7 @@ function importarDatos(ev){
       const imported = JSON.parse(e.target.result);
       if(!imported || typeof imported!=='object'){ throw new Error('Formato inválido'); }
       state = Object.assign(JSON.parse(JSON.stringify(DEFAULT_STATE)), imported);
+      state._configAt = Date.now();
       saveState();
       showToast('Datos importados correctamente.');
       renderAll();
@@ -2400,7 +2456,7 @@ function importarDatos(ev){
 function confirmarBorrarTodo(){
   openModal(`
     <h3 style="margin-bottom:10px;">¿Borrar todos tus datos?</h3>
-    <p class="muted">Esta acción no se puede deshacer. Te recomendamos exportar tus datos antes de continuar.</p>
+    <p class="muted">Esta acción no se puede deshacer. Te recomendamos exportar tus datos antes de continuar.${syncUser?' También se borrarán de tu cuenta en la nube.':''}</p>
     <div style="display:flex; gap:10px; margin-top:16px;">
       <button class="btn secondary block" onclick="closeModal()">Cancelar</button>
       <button class="btn danger block" onclick="borrarTodo()">Borrar todo</button>
@@ -2408,6 +2464,7 @@ function confirmarBorrarTodo(){
   `);
 }
 function borrarTodo(){
+  borrarDatosNube();
   localStorage.removeItem(STORAGE_KEY);
   state = JSON.parse(JSON.stringify(DEFAULT_STATE));
   saveState();
@@ -2698,6 +2755,211 @@ function syncNotifyUI(){
 }
 
 // ============================================================
+// CUENTA Y SINCRONIZACIÓN (Supabase, opcional)
+// Un documento JSON por persona en la tabla user_state (ver supabase/schema.sql).
+// La app sigue funcionando sin internet: guarda en localStorage y sincroniza
+// cuando puede. Al juntar datos de dos aparatos no se pierde nada: cada día se
+// queda con su versión más reciente, y la configuración con la más reciente.
+// ============================================================
+let sb = null;            // cliente de Supabase (null si no está configurado)
+let syncUser = null;      // { id, email } cuando hay sesión
+let syncEstado = '';      // texto de estado para Ajustes
+let syncUltima = null;    // Date de la última sincronización correcta
+let syncPasoCodigo = null; // email al que se envió el código
+let subidaTimer = null;
+let descargando = false;
+
+function syncDisponible(){ return !!sb; }
+
+function fusionarEstados(local, remoto){
+  if(!remoto) return local;
+  if(!local) return remoto;
+  // Configuración (metas, hábitos, identidad, avisos...): gana la editada más recientemente.
+  const lu = local._configAt || 0, ru = remoto._configAt || 0;
+  const remotoGana = ru > lu || (ru === lu && !!remoto);
+  const base = JSON.parse(JSON.stringify(remotoGana ? remoto : local));
+  const otro = remotoGana ? local : remoto;
+  // Días: unión; si un día existe en ambos, gana el modificado más recientemente.
+  base.dias = base.dias || {};
+  Object.keys(otro.dias || {}).forEach(k=>{
+    const a = base.dias[k], b = otro.dias[k];
+    if(!a || ((b._u || 0) > (a._u || 0))) base.dias[k] = JSON.parse(JSON.stringify(b));
+    else if(((b._u || 0) === (a._u || 0)) && !diaTuvoActividad2(a) && diaTuvoActividad2(b)) base.dias[k] = JSON.parse(JSON.stringify(b));
+  });
+  // Revisiones semanales y mensuales: unión (gana la del estado más reciente si coinciden).
+  ['semanaRevisiones','mesRevisiones','modoDia'].forEach(campo=>{
+    base[campo] = Object.assign({}, otro[campo] || {}, base[campo] || {});
+  });
+  // Inicio del programa de cápsulas: el más antiguo, para no reiniciar la numeración.
+  if(local._capsulaStartEpoch && remoto._capsulaStartEpoch){
+    base._capsulaStartEpoch = local._capsulaStartEpoch < remoto._capsulaStartEpoch ? local._capsulaStartEpoch : remoto._capsulaStartEpoch;
+  } else {
+    base._capsulaStartEpoch = local._capsulaStartEpoch || remoto._capsulaStartEpoch;
+  }
+  base._configAt = Math.max(lu, ru);
+  base._updatedAt = Math.max(local._updatedAt || 0, remoto._updatedAt || 0);
+  return base;
+}
+function diaTuvoActividad2(d){
+  if(!d) return false;
+  return !!((d.enfoque && d.enfoque.metas) || d.gratitud || d.visualizacion || d.cierre || d.capsulaRespuesta ||
+    (d.tasks && d.tasks.length) || (d.habitos && Object.values(d.habitos).some(h=>h.completado||h.omitido)) ||
+    (d.identidad && (d.identidad.manana || d.identidad.noche)));
+}
+
+function aplicarEstado(nuevo){
+  state = Object.assign(JSON.parse(JSON.stringify(DEFAULT_STATE)), nuevo);
+  if(!state.avisosRevision) state.avisosRevision = JSON.parse(JSON.stringify(DEFAULT_STATE.avisosRevision));
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+  tomarSnapshots();
+}
+
+async function sincronizar(){
+  if(!sb || !syncUser || descargando) return;
+  descargando = true;
+  try{
+    const { data, error } = await sb.from('user_state').select('state').eq('user_id', syncUser.id).maybeSingle();
+    if(error) throw error;
+    const remoto = data ? data.state : null;
+    const antes = JSON.stringify(state);
+    const fusion = fusionarEstados(state, remoto);
+    if(JSON.stringify(fusion) !== antes){
+      aplicarEstado(fusion);
+      renderAll();
+      pushScheduleUpdate();
+    }
+    if(!remoto || JSON.stringify(remoto) !== JSON.stringify(fusion)) await subirAhora();
+    else { syncUltima = new Date(); syncEstado = ''; }
+  }catch(e){
+    console.warn('No se pudo sincronizar.', e);
+    syncEstado = 'Sin conexión: se sincronizará cuando vuelva internet.';
+  }finally{
+    descargando = false;
+    renderCuenta();
+  }
+}
+
+async function subirAhora(){
+  if(!sb || !syncUser) return;
+  clearTimeout(subidaTimer); subidaTimer = null;
+  try{
+    const { error } = await sb.from('user_state').upsert({ user_id: syncUser.id, state, updated_at: new Date().toISOString() });
+    if(error) throw error;
+    syncUltima = new Date(); syncEstado = '';
+  }catch(e){
+    console.warn('No se pudo subir a la nube.', e);
+    syncEstado = 'Sin conexión: se sincronizará cuando vuelva internet.';
+  }
+  renderCuenta();
+}
+
+function programarSubida(){
+  if(!sb || !syncUser || descargando) return;
+  clearTimeout(subidaTimer);
+  subidaTimer = setTimeout(subirAhora, 1500);
+}
+
+function borrarDatosNube(){
+  if(!sb || !syncUser) return;
+  sb.from('user_state').delete().eq('user_id', syncUser.id).then(()=>{}, ()=>{});
+}
+
+async function enviarCodigo(){
+  const email = (document.getElementById('cuenta-email').value || '').trim();
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ showToast('Escribe un correo válido.'); return; }
+  const btn = document.getElementById('btn-enviar-codigo');
+  if(btn){ btn.disabled = true; btn.textContent = 'Enviando...'; }
+  try{
+    const { error } = await sb.auth.signInWithOtp({ email, options:{ shouldCreateUser:true, emailRedirectTo: location.origin + location.pathname } });
+    if(error) throw error;
+    syncPasoCodigo = email;
+    showToast('Te enviamos un código a tu correo.');
+  }catch(e){
+    console.warn(e);
+    showToast('No se pudo enviar el código. Revisa tu conexión e inténtalo de nuevo.');
+  }
+  renderCuenta();
+}
+
+async function verificarCodigo(){
+  const token = (document.getElementById('cuenta-codigo').value || '').replace(/\s/g,'');
+  if(token.length < 6){ showToast('Escribe el código que te llegó por correo.'); return; }
+  const btn = document.getElementById('btn-verificar-codigo');
+  if(btn){ btn.disabled = true; btn.textContent = 'Entrando...'; }
+  try{
+    const { error } = await sb.auth.verifyOtp({ email: syncPasoCodigo, token, type:'email' });
+    if(error) throw error;
+    syncPasoCodigo = null;
+    showToast('¡Listo! Tu cuenta está conectada.');
+  }catch(e){
+    console.warn(e);
+    showToast('Código incorrecto o vencido. Pide uno nuevo.');
+    renderCuenta();
+  }
+}
+
+async function cerrarSesion(){
+  if(!sb) return;
+  await subirAhora();
+  try{ await sb.auth.signOut(); }catch(e){}
+  showToast('Sesión cerrada. Tus datos siguen en este dispositivo.');
+}
+
+function renderCuenta(){
+  const body = document.getElementById('cuenta-body');
+  if(!body) return;
+  if(!syncDisponible()){
+    const configurada = (window.BRUJULA_CONFIG||{}).supabaseUrl;
+    body.innerHTML = configurada
+      ? `<p class="muted">No se pudo conectar con el servicio de cuentas. Revisa tu conexión; tus datos siguen guardados en este dispositivo.</p>`
+      : `<p class="muted">Tus datos se guardan solo en este dispositivo. Para usar la misma cuenta en el celular y la laptop, falta activar la sincronización.</p>`;
+    return;
+  }
+  if(syncUser){
+    body.innerHTML = `
+      <p class="muted">Conectado como <b>${escapeHtml(syncUser.email||'')}</b>.</p>
+      <p class="hint">${syncEstado ? escapeHtml(syncEstado) : (syncUltima ? 'Sincronizado a las ' + syncUltima.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}) + '.' : 'Sincronizando...')}</p>
+      <p class="hint">Entra con este mismo correo en tu otro aparato y verás los mismos datos.</p>
+      <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
+        <button class="btn small" onclick="sincronizar()">Sincronizar ahora</button>
+        <button class="btn small secondary" onclick="cerrarSesion()">Cerrar sesión</button>
+      </div>`;
+    return;
+  }
+  if(syncPasoCodigo){
+    body.innerHTML = `
+      <p class="muted">Escribe el código que enviamos a <b>${escapeHtml(syncPasoCodigo)}</b>.</p>
+      <input type="text" id="cuenta-codigo" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="123456" style="margin-top:10px; letter-spacing:0.2em; font-size:18px;" onkeydown="if(event.key==='Enter') verificarCodigo()">
+      <button class="btn block" id="btn-verificar-codigo" style="margin-top:10px;" onclick="verificarCodigo()">Entrar</button>
+      <button class="btn ghost small block" style="margin-top:8px;" onclick="syncPasoCodigo=null; renderCuenta();">Usar otro correo</button>`;
+    return;
+  }
+  body.innerHTML = `
+    <p class="muted">Entra con tu correo para tener los mismos datos en el celular y la laptop. Sin contraseña: te llega un código.</p>
+    <input type="email" id="cuenta-email" autocomplete="email" placeholder="tu@correo.com" style="margin-top:10px;" onkeydown="if(event.key==='Enter') enviarCodigo()">
+    <button class="btn block" id="btn-enviar-codigo" style="margin-top:10px;" onclick="enviarCodigo()">Enviarme un código</button>
+    <p class="hint">Lo que ya tienes en este dispositivo se sube a tu cuenta, no se pierde.</p>`;
+}
+
+function initSync(){
+  const c = window.BRUJULA_CONFIG || {};
+  if(!c.supabaseUrl || !c.supabaseAnonKey || !window.supabase || !window.supabase.createClient) return;
+  try{
+    sb = window.supabase.createClient(c.supabaseUrl, c.supabaseAnonKey, { auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true } });
+  }catch(e){ console.warn('No se pudo iniciar Supabase.', e); sb = null; return; }
+  sb.auth.onAuthStateChange((_evento, session)=>{
+    const u = session && session.user ? { id: session.user.id, email: session.user.email } : null;
+    const cambio = (u && u.id) !== (syncUser && syncUser.id);
+    syncUser = u;
+    if(!u){ syncUltima = null; syncEstado = ''; }
+    renderCuenta();
+    if(u && cambio) sincronizar();
+  });
+  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) sincronizar(); });
+  window.addEventListener('online', ()=>sincronizar());
+}
+
+// ============================================================
 // RENDER GLOBAL
 // ============================================================
 let lastRenderedDay = null;
@@ -2715,6 +2977,7 @@ function renderAll(){
       fillInput('input-nombre', state.nombre);
       renderAvisosRevision();
       renderEstiloAviso();
+      renderCuenta();
       syncNotifyUI();
     }
   }catch(e){
@@ -2743,6 +3006,7 @@ function init(){
   bindAutosave('input-nombre', v=>{ state.nombre = v; });
   bindAutosave('input-webhook', v=>{ state.webhookUrl = v; N8N_WEBHOOK_URL = v; });
 
+  initSync();
   go('hoy');
   loadCapsulas();
 
