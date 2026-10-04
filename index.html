@@ -1196,7 +1196,7 @@ function renderRitual(){
     filaRitual({ id:'bien', done: pasos.bien, titulo:'5. ¿Qué bien haré hoy?',
       extra: `<textarea id="input-bien" rows="2" placeholder="Hoy haré el bien a...">${escapeHtml(dia.bienHare||'')}</textarea>`,
       onToggle:"document.getElementById('input-bien').focus()" }),
-    filaRitual({ id:'ident', done: pasos.identidad, titulo:'4. Declaración de identidad',
+    filaRitual({ id:'ident', done: pasos.identidad, titulo:'6. Declaración de identidad',
       sub: (identidad ? `<span class="quote">“${escapeHtml(identidad)}”</span>` : `<a class="link" onclick="editarTextoFijo('identidad')">Escríbela una sola vez →</a>`)
         + `<span class="cualidad-line">${cualidadActual() ? `Esta semana mejoro: <b>${escapeHtml(cualidadActual())}</b>` : `<a class="link" onclick="elegirCualidad()">Elige tu cualidad de la semana →</a>`}</span>`,
       onToggle:"marcarIdentidad('manana')" }),
@@ -1859,7 +1859,7 @@ function renderCierre(){
     campo('logre', 1, '¿Qué logré hoy?', c.logre, 'Hoy logré...'),
     campo('aprendi', 2, '¿Qué aprendí?', c.aprendi, 'Hoy aprendí...'),
     campo('agradezco', 3, '¿Por qué estoy agradecido?', c.agradezco, 'Agradezco...'),
-    filaRitual({ id:'cident', done: pasos.identidad, titulo:'6. Declaración de identidad',
+    filaRitual({ id:'cident', done: pasos.identidad, titulo:'4. Declaración de identidad',
       sub: identidad ? `Léela antes de dormir. <span class="quote">“${escapeHtml(identidad)}”</span>` : `<a class="link" onclick="editarTextoFijo('identidad')">Escríbela una sola vez →</a>`,
       onToggle:"marcarIdentidad('noche')" })
   ].join('') + `<button class="btn block ${hecho?'secondary':'gold'}" id="btn-guardar-cierre" style="margin-top:14px;" onclick="guardarCierre()">${hecho?'Actualizar cierre':'Guardar cierre'}</button>`;
