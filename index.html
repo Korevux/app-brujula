@@ -427,6 +427,8 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
 .momento-head[aria-expanded="true"] .momento-chev{ transform:rotate(180deg); }
 .momento-body{ padding:0 16px 16px; border-top:1px solid var(--border); padding-top:14px; }
 .momento-body textarea{ margin-top:8px; min-height:56px; }
+.cualidad-line{ display:block; margin-top:6px; font-size:13px; color:var(--ink-soft); }
+.cualidad-line b{ color:#8a6420; }
 .ritual-row{ display:flex; align-items:flex-start; gap:14px; background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:14px; margin-bottom:10px; }
 .ritual-row:last-child{ margin-bottom:0; }
 .ritual-row .checkbox{ margin-top:-2px; }
@@ -563,6 +565,13 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
       <p class="hint" style="margin-top:0; margin-bottom:10px;">Quién eres y quieres ser. La lees cada mañana y cada noche.</p>
       <div id="identidad-view"></div>
       <button class="btn block secondary" style="margin-top:10px;" onclick="editarTextoFijo('identidad')"><i class="ic" data-ic="pencil"></i> <span id="btn-identidad-edit-label">Editar declaración</span></button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ic" data-ic="spark"></i><span>Cualidad que quiero mejorar esta semana</span></div>
+      <p class="hint" style="margin-top:0; margin-bottom:10px;">Una sola por semana. La ves cada mañana y en la noche marcas si la viviste.</p>
+      <div id="cualidad-view"></div>
+      <button class="btn block secondary" style="margin-top:10px;" onclick="elegirCualidad()"><i class="ic" data-ic="pencil"></i> <span id="btn-cualidad-label">Elegir cualidad</span></button>
     </div>
 
     <div class="card">
@@ -898,7 +907,8 @@ const DEFAULT_STATE = {
     noche:  { activo:true, hora:'21:00' }
   },
   estiloAviso: 'notificacion', // 'notificacion' | 'alarma'
-  visualizacionTexto: ''       // se escribe una vez (Mi brújula) y se lee cada día
+  visualizacionTexto: '',      // se escribe una vez (Mi brújula) y se lee cada día
+  cualidadSemana: null         // { semana:'YYYY-Www', texto } cualidad que quiero mejorar esta semana
 };
 
 let state = null;
@@ -1102,7 +1112,7 @@ function filaRitual({ id, done, titulo, sub, extra, opcional, onToggle }){
   </div>`;
 }
 // Arranque del día: el primer hábito. En este orden: gratitud, visualización,
-// objetivo del día, compromiso, declaración de identidad y cápsula. Todo cuenta.
+// objetivo del día (la rana), compromiso, ¿qué bien haré hoy?, identidad y cápsula. Todo cuenta.
 function pasosArranque(dia){
   const e = dia.enfoque || { metas:'', pasos:[] };
   return {
@@ -1110,6 +1120,7 @@ function pasosArranque(dia){
     visualizacion: !!dia.visualizacionLeida,
     objetivo: !!e.metas,
     compromiso: (e.pasos||[]).some(p=>p.texto),
+    bien: !!dia.bienHare,
     identidad: !!dia.identidad.manana,
     capsula: !!dia.capsulaLeida
   };
@@ -1139,19 +1150,30 @@ function escribiendoEn(listaId){
   const a = document.activeElement;
   return !!(a && a.tagName === 'TEXTAREA' && a.closest('#'+listaId));
 }
-function renderRitual(){
-  const el = document.getElementById('ritual-list');
-  if(!el) return;
-  const dia = ensureDia(todayKey());
-  if(escribiendoEn('ritual-list')) return; // no re-dibujar mientras escribes la gratitud
-  const pasos = pasosArranque(dia);
-  const hechos = Object.values(pasos).filter(Boolean).length, total = 6;
+function renderConteoArranque(){
+  const pasos = pasosArranque(ensureDia(todayKey()));
+  const hechos = Object.values(pasos).filter(Boolean).length, total = Object.keys(pasos).length;
   const completo = hechos === total;
   document.getElementById('arranque-count').innerHTML = completo ? `${ic('checked',16)} Listo` : `${hechos}/${total}`;
   document.getElementById('arranque-count').classList.toggle('ok', completo);
   document.getElementById('arranque-fill').style.width = Math.round(hechos/total*100)+'%';
   document.getElementById('arranque-hint').textContent = completo ? 'Arranque completo. Ahora, a cumplir tus compromisos y hábitos.' : 'Tu primer hábito: déjalo listo antes de seguir con lo demás.';
   const hh = document.getElementById('habitos-hint'); if(hh) hh.style.display = completo ? 'none' : 'block';
+  return completo;
+}
+function marcarFilaTexto(pop, on){
+  const btn = document.querySelector(`[data-pop="${pop}"]`);
+  if(!btn) return;
+  btn.classList.toggle('checked', on); btn.setAttribute('aria-pressed', on);
+  const row = btn.closest('.ritual-row'); if(row) row.classList.toggle('done', on);
+}
+function renderRitual(){
+  const el = document.getElementById('ritual-list');
+  if(!el) return;
+  const dia = ensureDia(todayKey());
+  if(escribiendoEn('ritual-list')) return; // no re-dibujar mientras escribes la gratitud
+  const pasos = pasosArranque(dia);
+  const completo = renderConteoArranque();
   pintarMomento('arranque', momentoEstaAbierto('arranque', completo));
   const identidad = state.identidad.texto;
   const vis = state.visualizacionTexto;
@@ -1166,15 +1188,19 @@ function renderRitual(){
       sub: vis ? `Tu meta ya lograda. <a class="link" onclick="modoVisualizacion()">Leer →</a>` : `<a class="link" onclick="editarTextoFijo('visualizacion')">Escríbela una sola vez →</a>`,
       onToggle:"toggleRitual('visualizacionLeida')" }),
     filaRitual({ id:'obj', done: pasos.objetivo, titulo:'3. Objetivo del día',
-      sub: e.metas ? `<span class="quote">${escapeHtml(e.metas)}</span>` : `<a class="link" onclick="abrirEditorEnfoque()">¿Qué quieres lograr hoy? →</a>`,
+      sub: e.metas ? `<span class="quote">${escapeHtml(e.metas)}</span>` : `Tu tarea más importante o difícil: cómete la rana y hazla primero. <a class="link" onclick="abrirEditorEnfoque()">Elegirla →</a>`,
       onToggle:"abrirEditorEnfoque()" }),
     filaRitual({ id:'comp', done: pasos.compromiso, titulo:'4. Compromiso',
       sub: compromisos ? `<span class="quote">${compromisos}</span> <a class="link" onclick="abrirEditorEnfoque()">Editar</a>` : `<a class="link" onclick="abrirEditorEnfoque()">Elige 2 acciones concretas →</a>`,
       onToggle:"abrirEditorEnfoque()" }),
-    filaRitual({ id:'ident', done: pasos.identidad, titulo:'5. Declaración de identidad',
-      sub: identidad ? `<span class="quote">“${escapeHtml(identidad)}”</span>` : `<a class="link" onclick="editarTextoFijo('identidad')">Escríbela una sola vez →</a>`,
+    filaRitual({ id:'bien', done: pasos.bien, titulo:'5. ¿Qué bien haré hoy?',
+      extra: `<textarea id="input-bien" rows="2" placeholder="Hoy haré el bien a...">${escapeHtml(dia.bienHare||'')}</textarea>`,
+      onToggle:"document.getElementById('input-bien').focus()" }),
+    filaRitual({ id:'ident', done: pasos.identidad, titulo:'6. Declaración de identidad',
+      sub: (identidad ? `<span class="quote">“${escapeHtml(identidad)}”</span>` : `<a class="link" onclick="editarTextoFijo('identidad')">Escríbela una sola vez →</a>`)
+        + `<span class="cualidad-line">${cualidadActual() ? `Esta semana mejoro: <b>${escapeHtml(cualidadActual())}</b>` : `<a class="link" onclick="elegirCualidad()">Elige tu cualidad de la semana →</a>`}</span>`,
       onToggle:"marcarIdentidad('manana')" }),
-    filaRitual({ id:'cap', done: pasos.capsula, titulo:'6. Cápsula del día',
+    filaRitual({ id:'cap', done: pasos.capsula, titulo:'7. Cápsula del día',
       sub: cap ? `<span class="quote">${escapeHtml(cap.frase)}</span> <a class="link" onclick="abrirCapsulaDesdeHoy()">Abrir →</a>` : 'Las cápsulas no pudieron cargarse ahora.',
       onToggle:"toggleRitual('capsulaLeida')" })
   ].join('');
@@ -1182,13 +1208,18 @@ function renderRitual(){
     const d = ensureDia(todayKey());
     const antes = !!d.gratitud;
     d.gratitud = v;
-    if(antes !== !!v){ saveState(); setTimeout(()=>{ if(document.activeElement && document.activeElement.id==='input-gratitud'){ renderProgresoHoy(); actualizarCheckGratitud(); } else renderAll(); }, 0); }
+    if(antes !== !!v){ saveState(); setTimeout(()=>{ if(escribiendoEn('ritual-list')){ renderProgresoHoy(); actualizarCheckGratitud(); } else renderAll(); }, 0); }
+  });
+  bindAutosave('input-bien', v=>{
+    const d = ensureDia(todayKey());
+    const antes = !!d.bienHare;
+    d.bienHare = v;
+    if(antes !== !!v){ saveState(); setTimeout(()=>{ if(escribiendoEn('ritual-list')){ renderProgresoHoy(); marcarFilaTexto('ritbien', !!v); renderConteoArranque(); } else renderAll(); }, 0); }
   });
 }
 function actualizarCheckGratitud(){
-  const dia = ensureDia(todayKey());
-  const btn = document.querySelector('[data-pop="ritgrat"]');
-  if(btn){ btn.classList.toggle('checked', !!dia.gratitud); btn.setAttribute('aria-pressed', !!dia.gratitud); }
+  marcarFilaTexto('ritgrat', !!ensureDia(todayKey()).gratitud);
+  renderConteoArranque();
 }
 function toggleRitual(campo){
   const dia = ensureDia(todayKey());
@@ -1205,6 +1236,42 @@ function abrirCapsulaDesdeHoy(){
 }
 
 // ---------- Mi brújula: textos que se escriben una vez ----------
+// Cualidad que quiero mejorar esta semana (inspirado en las virtudes de Franklin).
+const CUALIDADES_SUGERIDAS = ['Disciplina','Constancia','Orden','Paciencia','Templanza','Serenidad','Humildad','Sinceridad','Generosidad','Escucha','Puntualidad','Gratitud','Determinación'];
+function cualidadActual(){
+  const c = state.cualidadSemana;
+  return c && c.semana === isoWeekKey() ? c.texto : '';
+}
+function elegirCualidad(){
+  const actual = cualidadActual();
+  openModal(`
+    <h3 style="margin-bottom:6px;">Cualidad de esta semana</h3>
+    <p class="muted" style="margin-bottom:10px;">Elige una sola cualidad que quieras mejorar estos 7 días. Toca una sugerencia o escribe la tuya.</p>
+    <div class="chip-row">${CUALIDADES_SUGERIDAS.map(c=>`<button type="button" class="chip" onclick="document.getElementById('input-cualidad').value=this.textContent">${c}</button>`).join('')}</div>
+    <label>Mi cualidad</label>
+    <input type="text" id="input-cualidad" value="${escapeHtml(actual)}" placeholder="Ej: Paciencia">
+    <button class="btn block" style="margin-top:14px;" onclick="guardarCualidad()">Guardar</button>
+  `);
+}
+function guardarCualidad(){
+  const v = document.getElementById('input-cualidad').value.trim();
+  state.cualidadSemana = v ? { semana: isoWeekKey(), texto: v } : null;
+  saveState();
+  closeModal();
+  showToast(v ? 'Cualidad de la semana guardada.' : 'Cualidad borrada.');
+  renderAll();
+}
+function marcarCualidadVivida(){
+  const dia = ensureDia(todayKey());
+  const cual = cualidadActual();
+  if(!cual){ elegirCualidad(); return; }
+  dia.cualidadVivida = !dia.cualidadVivida;
+  dia.cualidad = cual;
+  if(dia.cualidadVivida) recienMarcado = 'ritccual';
+  saveState();
+  renderAll();
+}
+
 function editarTextoFijo(tipo){
   const esId = tipo === 'identidad';
   const valor = esId ? state.identidad.texto : state.visualizacionTexto;
@@ -1453,8 +1520,9 @@ function abrirEditorEnfoque(){
   openModal(`
     <h3 style="margin-bottom:6px;">Objetivo y compromiso de hoy</h3>
     <p class="muted" style="margin-bottom:6px;">Un objetivo y dos acciones concretas a las que te comprometes. Nada más.</p>
-    <label>Objetivo del día: ¿qué quieres lograr hoy?</label>
-    <input type="text" id="input-enfoque-metas" value="${escapeHtml(e.metas||'')}" placeholder="Ej: Avanzar en la propuesta del cliente">
+    <label>Objetivo del día: tu tarea más importante o difícil</label>
+    <p class="hint" style="margin-top:2px;">Cómete la rana: elige la que más impacto tiene y hazla primero.</p>
+    <input type="text" id="input-enfoque-metas" value="${escapeHtml(e.metas||'')}" placeholder="Ej: Terminar la propuesta del cliente">
     ${chips}
     <label>Compromiso 1: ¿qué harás hoy para lograrlo?</label>
     <input type="text" id="input-enfoque-paso1" value="${escapeHtml((e.pasos[0]&&e.pasos[0].texto)||'')}" placeholder="Ej: Escribir el índice">
@@ -1494,6 +1562,10 @@ function guardarEnfoque(){
 // METAS
 // ============================================================
 function renderMetas(){
+  const cv = document.getElementById('cualidad-view');
+  const cual = cualidadActual();
+  if(cv) cv.innerHTML = cual ? `<p class="quote-block">${escapeHtml(cual)}</p>` : `<p class="muted">Aún no eliges la de esta semana.</p>`;
+  const lc = document.getElementById('btn-cualidad-label'); if(lc) lc.textContent = cual ? 'Cambiar cualidad' : 'Elegir cualidad';
   const idv = document.getElementById('identidad-view');
   if(idv) idv.innerHTML = state.identidad.texto ? `<p class="quote-block">“${escapeHtml(state.identidad.texto)}”</p>` : `<p class="muted">Aún no la escribes.</p>`;
   const vv = document.getElementById('visualizacion-view');
@@ -1731,7 +1803,8 @@ function renderTimeline(){
   const dia = ensureDia(fecha);
   const items = [];
   const pa = pasosArranque(dia), hechosA = Object.values(pa).filter(Boolean).length;
-  items.push({ hora:'—', texto:`Arranque del día (${hechosA}/6)`, done: hechosA===6 });
+  const totalA = Object.keys(pasosArranque(dia)).length;
+  items.push({ hora:'—', texto:`Arranque del día (${hechosA}/${totalA})`, done: hechosA===totalA });
   state.habitosConfig.filter(h=>h.activo).forEach(h=>{
     const hd = dia.habitos[h.id];
     items.push({ hora: h.hora||'—', texto: h.nombre, done: !!(hd&&(hd.completado||hd.omitido)) });
@@ -1762,11 +1835,11 @@ function renderTimeline(){
 // CIERRE NOCTURNO
 // ============================================================
 function textosCierre(dia){
-  return dia.cierre || dia.cierreBorrador || { logre:'', aprendi:'', agradezco:'' };
+  return dia.cierre || dia.cierreBorrador || { logre:'', bien:'', aprendi:'', agradezco:'' };
 }
 function pasosCierre(dia){
   const c = textosCierre(dia);
-  return { logre: !!c.logre, aprendi: !!c.aprendi, agradezco: !!c.agradezco, identidad: !!dia.identidad.noche };
+  return { logre: !!c.logre, bien: !!c.bien, aprendi: !!c.aprendi, agradezco: !!c.agradezco, cualidad: !!dia.cualidadVivida, identidad: !!dia.identidad.noche };
 }
 function renderCierre(){
   const el = document.getElementById('cierre-list');
@@ -1775,7 +1848,7 @@ function renderCierre(){
   const dia = ensureDia(todayKey());
   const c = textosCierre(dia);
   const pasos = pasosCierre(dia);
-  const hechos = Object.values(pasos).filter(Boolean).length, total = 4;
+  const hechos = Object.values(pasos).filter(Boolean).length, total = Object.keys(pasos).length;
   const hecho = !!dia.cierre;
   const count = document.getElementById('cierre-count');
   count.innerHTML = hecho ? `${ic('checked',16)} Listo` : `${hechos}/${total}`;
@@ -1795,20 +1868,24 @@ function renderCierre(){
     onToggle:`document.getElementById('cierre-${id}').focus()` });
   el.innerHTML = [
     campo('logre', 1, '¿Qué logré hoy?', c.logre, 'Hoy logré...'),
-    campo('aprendi', 2, '¿Qué aprendí?', c.aprendi, 'Hoy aprendí...'),
-    campo('agradezco', 3, '¿Por qué estoy agradecido?', c.agradezco, 'Agradezco...'),
-    filaRitual({ id:'cident', done: pasos.identidad, titulo:'4. Declaración de identidad',
+    campo('bien', 2, '¿Qué bien hice hoy?', c.bien, 'Hoy hice el bien a...'),
+    campo('aprendi', 3, '¿Qué aprendí?', c.aprendi, 'Hoy aprendí...'),
+    campo('agradezco', 4, '¿Por qué estoy agradecido?', c.agradezco, 'Agradezco...'),
+    filaRitual({ id:'ccual', done: pasos.cualidad, titulo: cualidadActual() ? `5. ¿Viví hoy mi cualidad: ${cualidadActual()}?` : '5. Cualidad de la semana',
+      sub: cualidadActual() ? 'Márcala si hoy la pusiste en práctica.' : `<a class="link" onclick="elegirCualidad()">Elige la cualidad que quieres mejorar esta semana →</a>`,
+      onToggle:"marcarCualidadVivida()" }),
+    filaRitual({ id:'cident', done: pasos.identidad, titulo:'6. Declaración de identidad',
       sub: identidad ? `Léela antes de dormir. <span class="quote">“${escapeHtml(identidad)}”</span>` : `<a class="link" onclick="editarTextoFijo('identidad')">Escríbela una sola vez →</a>`,
       onToggle:"marcarIdentidad('noche')" })
   ].join('') + `<button class="btn block ${hecho?'secondary':'gold'}" id="btn-guardar-cierre" style="margin-top:14px;" onclick="guardarCierre()">${hecho?'Actualizar cierre':'Guardar cierre'}</button>`;
-  ['logre','aprendi','agradezco'].forEach(k=>{
+  ['logre','bien','aprendi','agradezco'].forEach(k=>{
     bindAutosave('cierre-'+k, v=>{
       const d = ensureDia(todayKey());
-      const destino = d.cierre || (d.cierreBorrador = d.cierreBorrador || { logre:'', aprendi:'', agradezco:'' });
+      const destino = d.cierre || (d.cierreBorrador = d.cierreBorrador || { logre:'', bien:'', aprendi:'', agradezco:'' });
       destino[k] = v;
       const btn = document.querySelector(`[data-pop="ritc${k}"]`);
       if(btn){ btn.classList.toggle('checked', !!v); btn.setAttribute('aria-pressed', !!v); btn.closest('.ritual-row').classList.toggle('done', !!v); }
-      if(!d.cierre){ const n = Object.values(pasosCierre(d)).filter(Boolean).length; count.textContent = `${n}/4`; }
+      if(!d.cierre){ const pc = pasosCierre(d); count.textContent = `${Object.values(pc).filter(Boolean).length}/${Object.keys(pc).length}`; }
     });
   });
 }
@@ -1817,6 +1894,7 @@ function guardarCierre(){
   const dia = ensureDia(fecha);
   dia.cierre = {
     logre: document.getElementById('cierre-logre').value.trim(),
+    bien: document.getElementById('cierre-bien').value.trim(),
     aprendi: document.getElementById('cierre-aprendi').value.trim(),
     agradezco: document.getElementById('cierre-agradezco').value.trim(),
     fecha
@@ -1875,7 +1953,7 @@ function diaTuvoActividad(fecha){
   const dia = state.dias[fecha];
   if(!dia) return false;
   if(dia.identidad.manana || dia.identidad.noche) return true;
-  if(dia.gratitud) return true;
+  if(dia.gratitud || dia.bienHare || dia.cualidadVivida) return true;
   if(dia.visualizacion) return true;
   if(dia.enfoque && (dia.enfoque.metas || (Array.isArray(dia.enfoque.pasos) && dia.enfoque.pasos.some(p=>p.completado)))) return true;
   if(!dia.enfoque && dia.mpa && dia.mpa.m) return true; // compatibilidad con datos muy antiguos aún no migrados
@@ -1985,7 +2063,7 @@ function verDia(key){
   }).join('');
   const tasks = (dia.tasks||[]).map(t=>`<div class="muted">${t.completado?ic('checked',16):ic('circle',16)} ${escapeHtml(t.desc)}</div>`).join('');
   const c = dia.cierre;
-  const cierre = c ? `${c.logre?`<p class="muted"><b>Logré:</b> ${escapeHtml(c.logre)}</p>`:''}${c.aprendi?`<p class="muted"><b>Aprendí:</b> ${escapeHtml(c.aprendi)}</p>`:''}${c.agradezco?`<p class="muted"><b>Agradezco:</b> ${escapeHtml(c.agradezco)}</p>`:''}` : '';
+  const cierre = c ? `${c.logre?`<p class="muted"><b>Logré:</b> ${escapeHtml(c.logre)}</p>`:''}${c.bien?`<p class="muted"><b>Bien que hice:</b> ${escapeHtml(c.bien)}</p>`:''}${dia.cualidad?`<p class="muted"><b>Cualidad (${escapeHtml(dia.cualidad)}):</b> ${dia.cualidadVivida?'la viví':'no la marqué'}</p>`:''}${c.aprendi?`<p class="muted"><b>Aprendí:</b> ${escapeHtml(c.aprendi)}</p>`:''}${c.agradezco?`<p class="muted"><b>Agradezco:</b> ${escapeHtml(c.agradezco)}</p>`:''}` : '';
   openModal(`
     <h3 style="margin-bottom:4px;">${formatDiaCorto(key)}</h3>
     <p class="small-muted">${key}</p>
@@ -1994,6 +2072,7 @@ function verDia(key){
     ${bloque(ic('list')+'<span>Otras acciones</span>', tasks)}
     ${bloque(ic('moon')+'<span>Cierre</span>', cierre)}
     ${bloque(ic('heart')+'<span>Gratitud</span>', texto(dia.gratitud))}
+    ${bloque(ic('spark')+'<span>Bien que haría</span>', texto(dia.bienHare))}
     ${bloque(ic('eye')+'<span>Visualización</span>', texto(dia.visualizacion))}
     ${bloque(ic('feather')+'<span>Respuesta a la cápsula</span>', texto(dia.capsulaRespuesta))}
     <button class="btn secondary block" style="margin-top:18px;" onclick="closeModal()">Cerrar</button>
