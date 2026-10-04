@@ -569,7 +569,7 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
 
     <div class="card">
       <div class="card-title"><i class="ic" data-ic="spark"></i><span>Cualidad que quiero mejorar esta semana</span></div>
-      <p class="hint" style="margin-top:0; margin-bottom:10px;">Una sola por semana. La ves cada mañana y en la noche marcas si la viviste.</p>
+      <p class="hint" style="margin-top:0; margin-bottom:10px;">Una sola por semana. La ves cada mañana en tu arranque del día.</p>
       <div id="cualidad-view"></div>
       <button class="btn block secondary" style="margin-top:10px;" onclick="elegirCualidad()"><i class="ic" data-ic="pencil"></i> <span id="btn-cualidad-label">Elegir cualidad</span></button>
     </div>
@@ -1196,7 +1196,7 @@ function renderRitual(){
     filaRitual({ id:'bien', done: pasos.bien, titulo:'5. ¿Qué bien haré hoy?',
       extra: `<textarea id="input-bien" rows="2" placeholder="Hoy haré el bien a...">${escapeHtml(dia.bienHare||'')}</textarea>`,
       onToggle:"document.getElementById('input-bien').focus()" }),
-    filaRitual({ id:'ident', done: pasos.identidad, titulo:'6. Declaración de identidad',
+    filaRitual({ id:'ident', done: pasos.identidad, titulo:'4. Declaración de identidad',
       sub: (identidad ? `<span class="quote">“${escapeHtml(identidad)}”</span>` : `<a class="link" onclick="editarTextoFijo('identidad')">Escríbela una sola vez →</a>`)
         + `<span class="cualidad-line">${cualidadActual() ? `Esta semana mejoro: <b>${escapeHtml(cualidadActual())}</b>` : `<a class="link" onclick="elegirCualidad()">Elige tu cualidad de la semana →</a>`}</span>`,
       onToggle:"marcarIdentidad('manana')" }),
@@ -1261,17 +1261,6 @@ function guardarCualidad(){
   showToast(v ? 'Cualidad de la semana guardada.' : 'Cualidad borrada.');
   renderAll();
 }
-function marcarCualidadVivida(){
-  const dia = ensureDia(todayKey());
-  const cual = cualidadActual();
-  if(!cual){ elegirCualidad(); return; }
-  dia.cualidadVivida = !dia.cualidadVivida;
-  dia.cualidad = cual;
-  if(dia.cualidadVivida) recienMarcado = 'ritccual';
-  saveState();
-  renderAll();
-}
-
 function editarTextoFijo(tipo){
   const esId = tipo === 'identidad';
   const valor = esId ? state.identidad.texto : state.visualizacionTexto;
@@ -1835,11 +1824,11 @@ function renderTimeline(){
 // CIERRE NOCTURNO
 // ============================================================
 function textosCierre(dia){
-  return dia.cierre || dia.cierreBorrador || { logre:'', bien:'', aprendi:'', agradezco:'' };
+  return dia.cierre || dia.cierreBorrador || { logre:'', aprendi:'', agradezco:'' };
 }
 function pasosCierre(dia){
   const c = textosCierre(dia);
-  return { logre: !!c.logre, bien: !!c.bien, aprendi: !!c.aprendi, agradezco: !!c.agradezco, cualidad: !!dia.cualidadVivida, identidad: !!dia.identidad.noche };
+  return { logre: !!c.logre, aprendi: !!c.aprendi, agradezco: !!c.agradezco, identidad: !!dia.identidad.noche };
 }
 function renderCierre(){
   const el = document.getElementById('cierre-list');
@@ -1868,20 +1857,16 @@ function renderCierre(){
     onToggle:`document.getElementById('cierre-${id}').focus()` });
   el.innerHTML = [
     campo('logre', 1, '¿Qué logré hoy?', c.logre, 'Hoy logré...'),
-    campo('bien', 2, '¿Qué bien hice hoy?', c.bien, 'Hoy hice el bien a...'),
-    campo('aprendi', 3, '¿Qué aprendí?', c.aprendi, 'Hoy aprendí...'),
-    campo('agradezco', 4, '¿Por qué estoy agradecido?', c.agradezco, 'Agradezco...'),
-    filaRitual({ id:'ccual', done: pasos.cualidad, titulo: cualidadActual() ? `5. ¿Viví hoy mi cualidad: ${cualidadActual()}?` : '5. Cualidad de la semana',
-      sub: cualidadActual() ? 'Márcala si hoy la pusiste en práctica.' : `<a class="link" onclick="elegirCualidad()">Elige la cualidad que quieres mejorar esta semana →</a>`,
-      onToggle:"marcarCualidadVivida()" }),
+    campo('aprendi', 2, '¿Qué aprendí?', c.aprendi, 'Hoy aprendí...'),
+    campo('agradezco', 3, '¿Por qué estoy agradecido?', c.agradezco, 'Agradezco...'),
     filaRitual({ id:'cident', done: pasos.identidad, titulo:'6. Declaración de identidad',
       sub: identidad ? `Léela antes de dormir. <span class="quote">“${escapeHtml(identidad)}”</span>` : `<a class="link" onclick="editarTextoFijo('identidad')">Escríbela una sola vez →</a>`,
       onToggle:"marcarIdentidad('noche')" })
   ].join('') + `<button class="btn block ${hecho?'secondary':'gold'}" id="btn-guardar-cierre" style="margin-top:14px;" onclick="guardarCierre()">${hecho?'Actualizar cierre':'Guardar cierre'}</button>`;
-  ['logre','bien','aprendi','agradezco'].forEach(k=>{
+  ['logre','aprendi','agradezco'].forEach(k=>{
     bindAutosave('cierre-'+k, v=>{
       const d = ensureDia(todayKey());
-      const destino = d.cierre || (d.cierreBorrador = d.cierreBorrador || { logre:'', bien:'', aprendi:'', agradezco:'' });
+      const destino = d.cierre || (d.cierreBorrador = d.cierreBorrador || { logre:'', aprendi:'', agradezco:'' });
       destino[k] = v;
       const btn = document.querySelector(`[data-pop="ritc${k}"]`);
       if(btn){ btn.classList.toggle('checked', !!v); btn.setAttribute('aria-pressed', !!v); btn.closest('.ritual-row').classList.toggle('done', !!v); }
@@ -1894,7 +1879,6 @@ function guardarCierre(){
   const dia = ensureDia(fecha);
   dia.cierre = {
     logre: document.getElementById('cierre-logre').value.trim(),
-    bien: document.getElementById('cierre-bien').value.trim(),
     aprendi: document.getElementById('cierre-aprendi').value.trim(),
     agradezco: document.getElementById('cierre-agradezco').value.trim(),
     fecha
@@ -1953,7 +1937,7 @@ function diaTuvoActividad(fecha){
   const dia = state.dias[fecha];
   if(!dia) return false;
   if(dia.identidad.manana || dia.identidad.noche) return true;
-  if(dia.gratitud || dia.bienHare || dia.cualidadVivida) return true;
+  if(dia.gratitud || dia.bienHare) return true;
   if(dia.visualizacion) return true;
   if(dia.enfoque && (dia.enfoque.metas || (Array.isArray(dia.enfoque.pasos) && dia.enfoque.pasos.some(p=>p.completado)))) return true;
   if(!dia.enfoque && dia.mpa && dia.mpa.m) return true; // compatibilidad con datos muy antiguos aún no migrados
@@ -2063,7 +2047,7 @@ function verDia(key){
   }).join('');
   const tasks = (dia.tasks||[]).map(t=>`<div class="muted">${t.completado?ic('checked',16):ic('circle',16)} ${escapeHtml(t.desc)}</div>`).join('');
   const c = dia.cierre;
-  const cierre = c ? `${c.logre?`<p class="muted"><b>Logré:</b> ${escapeHtml(c.logre)}</p>`:''}${c.bien?`<p class="muted"><b>Bien que hice:</b> ${escapeHtml(c.bien)}</p>`:''}${dia.cualidad?`<p class="muted"><b>Cualidad (${escapeHtml(dia.cualidad)}):</b> ${dia.cualidadVivida?'la viví':'no la marqué'}</p>`:''}${c.aprendi?`<p class="muted"><b>Aprendí:</b> ${escapeHtml(c.aprendi)}</p>`:''}${c.agradezco?`<p class="muted"><b>Agradezco:</b> ${escapeHtml(c.agradezco)}</p>`:''}` : '';
+  const cierre = c ? `${c.logre?`<p class="muted"><b>Logré:</b> ${escapeHtml(c.logre)}</p>`:''}${c.aprendi?`<p class="muted"><b>Aprendí:</b> ${escapeHtml(c.aprendi)}</p>`:''}${c.agradezco?`<p class="muted"><b>Agradezco:</b> ${escapeHtml(c.agradezco)}</p>`:''}` : '';
   openModal(`
     <h3 style="margin-bottom:4px;">${formatDiaCorto(key)}</h3>
     <p class="small-muted">${key}</p>
