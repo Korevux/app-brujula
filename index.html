@@ -1230,22 +1230,24 @@ function declaracionParaLeer(){
 }
 // Fundamento científico de cada paso, en lenguaje sencillo (fuentes verificadas).
 const CIENCIA = {
-  gratitud: { texto:'Escribir por qué estás agradecido entrena tu atención hacia lo bueno. Un metaanálisis de 64 ensayos clínicos encontró menos ansiedad y depresión, y más satisfacción con la vida, en quienes practican gratitud.',
-    fuente:'Diniz y col., 2023, revista Einstein (São Paulo).' },
-  visualizacion: { texto:'Imaginar una acción activa en el cerebro redes parecidas a las de hacerla, por eso la práctica mental mejora el desempeño. Funciona mejor si además te imaginas haciendo los pasos y anticipas el obstáculo con tu plan: soñar solo con la meta lograda puede quitarte energía.',
+  gratitud: { texto:'En el cerebro: tras 3 semanas escribiendo gratitud, la corteza prefrontal ventromedial (zona de valor y recompensa) respondió más al dar a otros. En la vida diaria: un metaanálisis de 64 ensayos clínicos encontró menos ansiedad y depresión y más satisfacción con la vida.',
+    fuente:'Karns, Moore y Mayr, 2017, Frontiers in Human Neuroscience (resonancia magnética); Diniz y col., 2023, revista Einstein (metaanálisis).' },
+  visualizacion: { texto:'En el cerebro: imaginar una acción activa redes motoras y visuales parecidas a las de hacerla, por eso la práctica mental mejora el desempeño. Funciona mejor si te imaginas haciendo los pasos y anticipas el obstáculo con tu plan: soñar solo con la meta lograda puede quitarte energía.',
     fuente:'Metaanálisis de imaginería, Simonsmeier y col., 2021; Pham y Taylor, 1999; Oettingen y Mayer, 2002; metaanálisis del método WOOP, Wang, Wang y Gai, 2021 (15.907 personas).' },
-  objetivo: { texto:'Las metas concretas y desafiantes producen mejor desempeño que proponerse "hacer lo mejor posible". Hacer primero la tarea más importante evita que el resto del día la desplace.',
+  objetivo: { texto:'Las metas concretas y desafiantes producen mejor desempeño que proponerse "hacer lo mejor posible" (evidencia de conducta, no de imágenes cerebrales). Hacer primero la tarea más importante es un consejo práctico: no hay un estudio específico que lo mida.',
     fuente:'Locke y Latham, 2002, American Psychologist (35 años de estudios sobre metas).' },
-  compromiso: { texto:'Decidir de antemano qué harás, cuándo y dónde ("a las 9 escribo el índice") deja la acción en piloto automático y mejora claramente el cumplimiento frente a solo tener la intención.',
+  compromiso: { texto:'Decidir de antemano qué harás, cuándo y dónde ("a las 9 escribo el índice") deja la acción lista para dispararse sola y mejora claramente el cumplimiento frente a solo tener la intención (evidencia de conducta).',
     fuente:'Gollwitzer y Sheeran, 2006: metaanálisis de 94 estudios (efecto medio-alto).' },
-  bien: { texto:'Hacer algo bueno por otra persona también aumenta tu propio bienestar, en todo tipo de personas y de actos.',
-    fuente:'Curry y col., 2018, Journal of Experimental Social Psychology: 27 estudios, 4.045 personas.' },
-  identidad: { texto:'Leer tus valores activa en el cerebro zonas de recompensa y del "yo" (corteza prefrontal ventromedial y estriado ventral), sobre todo si te imaginas viviéndolos en el futuro. Esa activación predijo cambios reales de conducta.',
+  bien: { texto:'En el cerebro: con solo comprometerse a ser generosas, las personas activaron la unión temporoparietal (zona de lo social) y su conexión con el estriado ventral (felicidad), antes de actuar. En la vida diaria: hacer el bien aumenta tu propio bienestar.',
+    fuente:'Park y col., 2017, Nature Communications (resonancia magnética); Curry y col., 2018, metaanálisis de 27 estudios con 4.045 personas.' },
+  identidad: { texto:'En el cerebro: leer tus valores activa zonas de recompensa y del "yo" (corteza prefrontal ventromedial y estriado ventral), sobre todo si te imaginas viviéndolos en el futuro. Esa activación predijo cambios reales de conducta.',
     fuente:'Cascio y col., 2016, Social Cognitive and Affective Neuroscience (resonancia magnética funcional).' },
-  reflexion: { texto:'Dedicar 15 minutos al final del día a escribir lo que aprendiste mejoró el desempeño cerca de 23% frente a quienes usaron ese tiempo para seguir trabajando.',
+  capsula: { texto:'Siendo honestos: este paso no tiene un estudio propio que mida su efecto. Es una idea breve para empezar el día pensando en algo que te inspire.',
+    fuente:'Sin fuente científica específica.' },
+  reflexion: { texto:'Dedicar 15 minutos al final del día a escribir lo que aprendiste mejoró el desempeño cerca de 23% frente a quienes usaron ese tiempo para seguir trabajando (evidencia de conducta).',
     fuente:'Di Stefano, Gino, Pisano y Staats, Harvard Business School, 2014.' },
-  habitos: { texto:'Un hábito tarda unos dos meses en volverse automático (mediana de 59 a 66 días, con mucha variación entre personas). Ayuda hacerlo cada día a la misma hora; los hábitos de la mañana resultaron más fuertes.',
-    fuente:'Singh y col., 2024, revisión sistemática en Healthcare.' }
+  habitos: { texto:'En el cerebro: al repetir una conducta, su control pasa del estriado dorsomedial (decisiones con intención) al dorsolateral (respuestas automáticas). En la práctica tarda unos dos meses (mediana de 59 a 66 días, con mucha variación), y los hábitos de la mañana resultaron más fuertes.',
+    fuente:'Yin y Knowlton, 2006, Nature Reviews Neuroscience; Singh y col., 2024, revisión sistemática en Healthcare.' }
 };
 function cienciaHtml(clave){
   const c = CIENCIA[clave];
@@ -1356,7 +1358,7 @@ function renderRitual(){
       onToggle:"marcarIdentidad('manana')", ciencia:'identidad' }),
     filaRitual({ id:'cap', done: pasos.capsula, titulo:'7. Cápsula del día',
       sub: cap ? `<span class="quote">${escapeHtml(cap.frase)}</span> <a class="link" onclick="abrirCapsulaDesdeHoy()">Abrir →</a>` : 'Las cápsulas no pudieron cargarse ahora.',
-      onToggle:"toggleRitual('capsulaLeida')" })
+      onToggle:"toggleRitual('capsulaLeida')", ciencia:'capsula' })
   ].join('');
   bindAutosave('input-gratitud', v=>{
     const d = ensureDia(todayKey());
