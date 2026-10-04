@@ -1264,7 +1264,7 @@ function filaRitual({ id, done, titulo, sub, extra, opcional, onToggle, ciencia 
   </div>`;
 }
 // Arranque del día: el primer hábito. En este orden: gratitud, visualización,
-// objetivo del día (la rana), compromiso, identidad y cápsula. Todo cuenta.
+// objetivo del día (tarea más importante), compromiso, identidad y cápsula. Todo cuenta.
 function pasosArranque(dia){
   const e = dia.enfoque || { metas:'', pasos:[] };
   return {
@@ -1341,7 +1341,7 @@ function renderRitual(){
       extra: `<label for="input-obstaculo" style="margin-top:10px;">¿Qué obstáculo puede aparecer hoy y qué harás?</label><textarea id="input-obstaculo" rows="2" placeholder="Si aparece..., entonces haré...">${escapeHtml(dia.obstaculo||'')}</textarea>`,
       onToggle:"toggleRitual('visualizacionLeida')", ciencia:'visualizacion' }),
     filaRitual({ id:'obj', done: pasos.objetivo, titulo:'3. Objetivo del día',
-      sub: e.metas ? `<span class="quote">${escapeHtml(e.metas)}</span>` : `Tu tarea más importante o difícil: cómete la rana y hazla primero. <a class="link" onclick="abrirEditorEnfoque()">Elegirla →</a>`,
+      sub: e.metas ? `<span class="quote">${escapeHtml(e.metas)}</span>` : `Elige tu tarea más importante y hazla primero. <a class="link" onclick="abrirEditorEnfoque()">Elegirla →</a>`,
       onToggle:"abrirEditorEnfoque()", ciencia:'objetivo' }),
     filaRitual({ id:'comp', done: pasos.compromiso, titulo:'4. Compromiso',
       sub: compromisos ? `<span class="quote">${compromisos}</span> <a class="link" onclick="abrirEditorEnfoque()">Editar</a>` : `<a class="link" onclick="abrirEditorEnfoque()">Elige 2 acciones concretas →</a>`,
@@ -1660,7 +1660,7 @@ function abrirEditorEnfoque(){
     <h3 style="margin-bottom:6px;">Objetivo y compromiso de hoy</h3>
     <p class="muted" style="margin-bottom:6px;">Un objetivo y dos acciones concretas a las que te comprometes. Nada más.</p>
     <label>Objetivo del día: tu tarea más importante o difícil</label>
-    <p class="hint" style="margin-top:2px;">Cómete la rana: elige la que más impacto tiene y hazla primero.</p>
+    <p class="hint" style="margin-top:2px;">Elige la que más impacto tiene y hazla primero.</p>
     <input type="text" id="input-enfoque-metas" value="${escapeHtml(e.metas||'')}" placeholder="Ej: Terminar la propuesta del cliente">
     ${chips}
     <label>Compromiso 1: ¿qué harás hoy para lograrlo?</label>
