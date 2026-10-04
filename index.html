@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Brújula Interior">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="icon" type="image/svg+xml" href="icon.svg">
-<link rel="apple-touch-icon" href="icon.svg">
+<link rel="apple-touch-icon" href="icon-180.png">
 <link rel="manifest" href="manifest.webmanifest">
 <style>
 /* ============================================================
@@ -324,6 +324,10 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
 /* ---------- Estado del cierre ---------- */
 .cierre-row{ display:flex; align-items:center; gap:12px; }
 .cierre-row .btn{ margin-left:auto; }
+.install-steps{ margin:8px 0 0 0; padding-left:20px; font-size:13.5px; line-height:1.6; color:var(--ink); }
+.install-steps li{ margin-bottom:4px; }
+.ios-banner{ display:flex; align-items:center; gap:10px; background:var(--accent-soft); border:1px solid var(--border); border-radius:var(--radius-md); padding:12px 14px; margin-bottom:14px; font-size:13px; color:var(--accent-dark); }
+.ios-banner .btn{ flex-shrink:0; }
 .next-reminder{ font-size:12.5px; color:var(--ink-soft); margin-top:6px; }
 
 /* ---------- Settings list ---------- */
@@ -358,6 +362,12 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
       <div class="greeting" id="hoy-greeting">Hola</div>
       <div class="date" id="hoy-date">—</div>
       <div class="next-reminder" id="hoy-next-reminder"></div>
+    </div>
+
+    <div class="ios-banner" id="ios-banner" style="display:none;">
+      <div style="flex:1;">📲 Instala la app en tu iPhone para recibir los avisos aunque esté cerrada.</div>
+      <button class="btn small" onclick="verGuiaIphone()">Ver cómo</button>
+      <button class="icon-btn" aria-label="Ocultar aviso" onclick="ocultarBannerIphone()">✕</button>
     </div>
 
     <div class="enfoque-hero" id="enfoque-card">
@@ -584,7 +594,16 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
         <div class="card-title" style="margin-top:16px;">Revisar mi rutina</div>
         <p class="hint" style="margin-top:0;">Dos avisos al día para abrir la app y revisar lo que toca.</p>
         <div id="avisos-revision-list"></div>
-        <p class="hint" style="margin-top:10px;">En iPhone los avisos con la app cerrada necesitan iOS 16.4 o superior y tener la app agregada a la pantalla de inicio (Compartir → Agregar a inicio).</p>
+        <div id="ios-install-guide" style="display:none; margin-top:14px; padding:14px; border-radius:var(--radius-md); background:var(--accent-soft);">
+          <div class="card-title" style="margin-bottom:2px;">📲 En iPhone: instala la app primero</div>
+          <p class="hint" style="margin-top:0;">Apple solo permite avisos con la app cerrada si está en tu pantalla de inicio (iOS 16.4 o superior).</p>
+          <ol class="install-steps">
+            <li>Abre esta página en <b>Safari</b>.</li>
+            <li>Toca el botón <b>Compartir</b> (el cuadrado con la flecha hacia arriba ⬆️).</li>
+            <li>Elige <b>“Agregar a pantalla de inicio”</b> y toca <b>Agregar</b>.</li>
+            <li>Abre <b>Brújula</b> desde el nuevo ícono y vuelve aquí para activar los avisos.</li>
+          </ol>
+        </div>
         <p class="muted" style="margin-top:10px;">Los recordatorios de cada hábito se configuran en Rutina → Configurar hábitos.</p>
         <button class="btn ghost small block" style="margin-top:10px;" onclick="probarRecordatorio()">🔔 Probar recordatorio</button>
       </div>
@@ -1822,10 +1841,40 @@ function subscribeToPush(){
   });
 }
 
+// iPhone/iPad: los avisos push solo funcionan con la app instalada en la pantalla de inicio (iOS 16.4+).
+const IS_IOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+function isStandalone(){
+  try{ return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true; }
+  catch(e){ return false; }
+}
+function necesitaInstalarIphone(){ return IS_IOS && !isStandalone(); }
+function verGuiaIphone(){
+  go('ajustes');
+  setTimeout(()=>{ const g = document.getElementById('ios-install-guide'); if(g) g.scrollIntoView({ behavior:'smooth', block:'center' }); }, 100);
+}
+function ocultarBannerIphone(){
+  state.iosBannerOculto = true;
+  saveState();
+  renderAll();
+}
+function renderBannerIphone(){
+  const el = document.getElementById('ios-banner');
+  if(el) el.style.display = (necesitaInstalarIphone() && !state.iosBannerOculto) ? 'flex' : 'none';
+}
+
 function refreshNotifyStatus(){
   const notifyToggle = document.getElementById('notifyToggle');
   const notifyStatus = document.getElementById('notifyStatus');
   if(!notifyToggle || !notifyStatus) return;
+  const guia = document.getElementById('ios-install-guide');
+  if(guia) guia.style.display = necesitaInstalarIphone() ? 'block' : 'none';
+
+  if(necesitaInstalarIphone()){
+    notifyStatus.textContent = 'Para recibir avisos en iPhone, primero instala la app en tu pantalla de inicio (pasos abajo).';
+    notifyToggle.disabled = true;
+    notifyToggle.checked = false;
+    return;
+  }
 
   if(!('Notification' in window)){
     notifyStatus.textContent = 'Tu navegador no soporta notificaciones del sistema.';
@@ -1843,6 +1892,7 @@ function refreshNotifyStatus(){
 
 function syncNotifyUI(){
   const notifyToggle = document.getElementById('notifyToggle');
+  if(notifyToggle && necesitaInstalarIphone()){ refreshNotifyStatus(); return; }
   if(!notifyToggle || !('Notification' in window)) return;
   let subscribed = false;
   try{ subscribed = window.localStorage.getItem(PUSH_SUBSCRIBED_KEY) === '1'; }catch(e){}
@@ -1858,7 +1908,7 @@ function renderAll(){
   if(!state) return;
   try{
     lastRenderedDay = todayKey();
-    if(currentScreen==='hoy') renderHoy();
+    if(currentScreen==='hoy'){ renderHoy(); renderBannerIphone(); }
     if(currentScreen==='metas') renderMetas();
     if(currentScreen==='rutina') renderRutinaTabs();
     if(currentScreen==='cápsula') renderCapsulaScreen();
