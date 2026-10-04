@@ -415,7 +415,18 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
 .ios-banner{ border-radius:16px; }
 
 /* Arranque del día */
-.arranque-lema{ margin:2px 0 8px; font-size:16px; font-weight:600; color:var(--ink); letter-spacing:-0.01em; border-left:3px solid var(--gold); padding-left:10px; }
+.card.momento, .card.tight.momento{ padding:0; overflow:hidden; }
+.momento-head{ all:unset; box-sizing:border-box; width:100%; display:flex; align-items:center; gap:12px; padding:16px; cursor:pointer; min-height:76px; -webkit-tap-highlight-color:transparent; }
+.momento-head:focus-visible{ outline:3px solid var(--accent-light); outline-offset:-3px; border-radius:var(--radius-lg); }
+.momento-icon{ flex-shrink:0; width:44px; height:44px; border-radius:14px; display:flex; align-items:center; justify-content:center; background:var(--gold-soft); color:#8a6420; }
+.momento.noche .momento-icon{ background:var(--accent-soft); color:var(--accent-dark); }
+.momento-text{ flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+.momento-title{ font-size:18px; font-weight:700; color:var(--ink); letter-spacing:-0.01em; }
+.momento-sub{ font-size:13.5px; font-weight:500; color:var(--ink-soft); line-height:1.35; }
+.momento-chev{ flex-shrink:0; color:var(--ink-faint); display:flex; transition:transform .2s; }
+.momento-head[aria-expanded="true"] .momento-chev{ transform:rotate(180deg); }
+.momento-body{ padding:0 16px 16px; border-top:1px solid var(--border); padding-top:14px; }
+.momento-body textarea{ margin-top:8px; min-height:56px; }
 .ritual-row{ display:flex; align-items:flex-start; gap:14px; background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:14px; margin-bottom:10px; }
 .ritual-row:last-child{ margin-bottom:0; }
 .ritual-row .checkbox{ margin-top:-2px; }
@@ -485,15 +496,18 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
     </div>
 
     <!-- Arranque del día: primer hábito; usa lo definido una sola vez en "Mi brújula" -->
-    <div class="card tight" id="arranque-card">
-      <div class="arranque-head">
-        <div class="card-title"><i class="ic" data-ic="sun"></i><span>Arranque del día</span></div>
+    <div class="card tight momento" id="arranque-card">
+      <button type="button" class="momento-head" id="arranque-toggle" aria-expanded="false" aria-controls="arranque-body" onclick="toggleMomento('arranque')">
+        <span class="momento-icon"><i class="ic" data-ic="sun" data-size="22"></i></span>
+        <span class="momento-text"><span class="momento-title">Arranque del día</span><span class="momento-sub">Empieza con propósito. Gana el día con disciplina.</span></span>
         <span class="arranque-count" id="arranque-count"></span>
+        <span class="momento-chev"><i class="ic" data-ic="chevron" data-size="20"></i></span>
+      </button>
+      <div class="momento-body" id="arranque-body" hidden>
+        <p class="hint" id="arranque-hint" style="margin-top:0; margin-bottom:12px;">Tu primer hábito: déjalo listo antes de seguir con lo demás.</p>
+        <div class="progress-track" style="height:6px; margin-bottom:14px;"><div class="progress-fill" id="arranque-fill" style="width:0%"></div></div>
+        <div id="ritual-list"></div>
       </div>
-      <p class="arranque-lema">Empieza con propósito. Gana el día con disciplina.</p>
-      <p class="hint" id="arranque-hint" style="margin-top:0; margin-bottom:12px;">Tu primer hábito: déjalo listo antes de seguir con lo demás.</p>
-      <div class="progress-track" style="height:6px; margin-bottom:14px;"><div class="progress-fill" id="arranque-fill" style="width:0%"></div></div>
-      <div id="ritual-list"></div>
     </div>
 
     <div class="enfoque-hero" id="enfoque-card" style="display:none;">
@@ -507,11 +521,16 @@ input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--borde
       <div id="hoy-habitos-list"></div>
     </div>
 
-    <div class="card tight">
-      <div class="card-title"><i class="ic" data-ic="moon"></i><span>Cierre del día</span></div>
-      <div class="cierre-row">
-        <div class="muted" id="hoy-cierre-estado">Pendiente: 3 preguntas cortas antes de dormir.</div>
-        <button class="btn small gold" id="btn-cierre" onclick="abrirCierreNocturno()">Hacer cierre</button>
+    <div class="card tight momento noche" id="cierre-card">
+      <button type="button" class="momento-head" id="cierre-toggle" aria-expanded="false" aria-controls="cierre-body" onclick="toggleMomento('cierre')">
+        <span class="momento-icon"><i class="ic" data-ic="moon" data-size="22"></i></span>
+        <span class="momento-text"><span class="momento-title">Cierre de la noche</span><span class="momento-sub">Revisa tu día y vuelve a quién eres.</span></span>
+        <span class="arranque-count" id="cierre-count"></span>
+        <span class="momento-chev"><i class="ic" data-ic="chevron" data-size="20"></i></span>
+      </button>
+      <div class="momento-body" id="cierre-body" hidden>
+        <p class="hint" id="cierre-hint" style="margin-top:0; margin-bottom:12px;"></p>
+        <div id="cierre-list"></div>
       </div>
     </div>
 
@@ -829,6 +848,7 @@ const ICONS = {
   x:'<path d="M6 6l12 12M18 6 6 18"/>',
   skip:'<path d="m6 5 9 7-9 7z"/><path d="M19 5v14"/>',
   clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  chevron:'<path d="m6 9 6 6 6-6"/>',
   leaf:'<path d="M5 21c0-9 5-15 15-16-1 10-7 15-15 16z"/><path d="M5 21 13 13"/>'
 };
 function ic(nombre, size){
@@ -1055,18 +1075,8 @@ function renderHoy(){
   // 2 · Hábitos
   renderHabitosHoy();
 
-  // 3 · Cierre
-  const cierreEstado = document.getElementById('hoy-cierre-estado');
-  const btnCierre = document.getElementById('btn-cierre');
-  if(dia.cierre){
-    cierreEstado.innerHTML = '<b style="color:var(--accent-dark);">Cierre hecho.</b> Buen trabajo hoy.';
-    btnCierre.textContent = 'Ver';
-    btnCierre.classList.remove('gold'); btnCierre.classList.add('secondary');
-  } else {
-    cierreEstado.textContent = 'Pendiente: 3 preguntas cortas antes de dormir.';
-    btnCierre.textContent = 'Hacer cierre';
-    btnCierre.classList.add('gold'); btnCierre.classList.remove('secondary');
-  }
+  // 3 · Cierre de la noche
+  renderCierre();
 
   // Progreso del día
   renderProgresoHoy();
@@ -1104,13 +1114,36 @@ function pasosArranque(dia){
     capsula: !!dia.capsulaLeida
   };
 }
-let arranqueAbierto = false;
+// Dos bloques que se despliegan: Arranque (mañana) y Cierre (noche).
+// null = automático: se abre el que toca según la hora y si falta por hacer.
+const momentoAbierto = { arranque:null, cierre:null };
+function momentoEstaAbierto(cual, completo){
+  if(momentoAbierto[cual] !== null) return momentoAbierto[cual];
+  const h = new Date().getHours();
+  return cual === 'arranque' ? (!completo && h < 18) : (!completo && h >= 18);
+}
+function pintarMomento(cual, abierto){
+  const btn = document.getElementById(cual+'-toggle');
+  const body = document.getElementById(cual+'-body');
+  if(!btn || !body) return;
+  btn.setAttribute('aria-expanded', abierto);
+  body.hidden = !abierto;
+}
+function toggleMomento(cual){
+  const btn = document.getElementById(cual+'-toggle');
+  const abierto = btn && btn.getAttribute('aria-expanded') === 'true';
+  momentoAbierto[cual] = !abierto;
+  pintarMomento(cual, !abierto);
+}
+function escribiendoEn(listaId){
+  const a = document.activeElement;
+  return !!(a && a.tagName === 'TEXTAREA' && a.closest('#'+listaId));
+}
 function renderRitual(){
   const el = document.getElementById('ritual-list');
   if(!el) return;
   const dia = ensureDia(todayKey());
-  const enfocado = document.activeElement && document.activeElement.id === 'input-gratitud';
-  if(enfocado) return; // no re-dibujar mientras escribes la gratitud
+  if(escribiendoEn('ritual-list')) return; // no re-dibujar mientras escribes la gratitud
   const pasos = pasosArranque(dia);
   const hechos = Object.values(pasos).filter(Boolean).length, total = 6;
   const completo = hechos === total;
@@ -1119,10 +1152,7 @@ function renderRitual(){
   document.getElementById('arranque-fill').style.width = Math.round(hechos/total*100)+'%';
   document.getElementById('arranque-hint').textContent = completo ? 'Arranque completo. Ahora, a cumplir tus compromisos y hábitos.' : 'Tu primer hábito: déjalo listo antes de seguir con lo demás.';
   const hh = document.getElementById('habitos-hint'); if(hh) hh.style.display = completo ? 'none' : 'block';
-  if(completo && !arranqueAbierto){
-    el.innerHTML = `<button class="btn ghost small block" onclick="arranqueAbierto=true; renderRitual();">Ver mi arranque</button>`;
-    return;
-  }
+  pintarMomento('arranque', momentoEstaAbierto('arranque', completo));
   const identidad = state.identidad.texto;
   const vis = state.visualizacionTexto;
   const cap = capsulaDelDia(todayKey());
@@ -1147,7 +1177,7 @@ function renderRitual(){
     filaRitual({ id:'cap', done: pasos.capsula, titulo:'6. Cápsula del día',
       sub: cap ? `<span class="quote">${escapeHtml(cap.frase)}</span> <a class="link" onclick="abrirCapsulaDesdeHoy()">Abrir →</a>` : 'Las cápsulas no pudieron cargarse ahora.',
       onToggle:"toggleRitual('capsulaLeida')" })
-  ].join('') + (completo ? `<button class="btn ghost small block" style="margin-top:10px;" onclick="arranqueAbierto=false; renderRitual();">Ocultar</button>` : '');
+  ].join('');
   bindAutosave('input-gratitud', v=>{
     const d = ensureDia(todayKey());
     const antes = !!d.gratitud;
@@ -1396,7 +1426,7 @@ function marcarIdentidad(momento){
   const fecha = todayKey();
   const dia = ensureDia(fecha);
   dia.identidad[momento] = !dia.identidad[momento];
-  if(dia.identidad[momento] && momento==='manana') recienMarcado = 'ritident';
+  if(dia.identidad[momento]) recienMarcado = momento==='manana' ? 'ritident' : 'ritcident';
   saveState();
   renderAll();
 }
@@ -1709,7 +1739,7 @@ function renderTimeline(){
   dia.enfoque.pasos.forEach((p,i)=>{
     if(p.texto) items.push({ hora:'—', texto: `Compromiso ${i+1}: `+p.texto, done: p.completado });
   });
-  items.push({ hora:'—', texto:'Cierre del día', done: !!dia.cierre });
+  items.push({ hora:'—', texto:'Cierre de la noche', done: !!dia.cierre });
 
   const nowMin = new Date().getHours()*60+new Date().getMinutes();
   let nowAssigned = false;
@@ -1731,30 +1761,56 @@ function renderTimeline(){
 // ============================================================
 // CIERRE NOCTURNO
 // ============================================================
-function abrirCierreNocturno(){
-  const fecha = todayKey();
-  const dia = ensureDia(fecha);
-  const c = dia.cierre || { logre:'', aprendi:'', agradezco:'' };
+function textosCierre(dia){
+  return dia.cierre || dia.cierreBorrador || { logre:'', aprendi:'', agradezco:'' };
+}
+function pasosCierre(dia){
+  const c = textosCierre(dia);
+  return { logre: !!c.logre, aprendi: !!c.aprendi, agradezco: !!c.agradezco, identidad: !!dia.identidad.noche };
+}
+function renderCierre(){
+  const el = document.getElementById('cierre-list');
+  if(!el) return;
+  if(escribiendoEn('cierre-list')) return; // no re-dibujar mientras escribes
+  const dia = ensureDia(todayKey());
+  const c = textosCierre(dia);
+  const pasos = pasosCierre(dia);
+  const hechos = Object.values(pasos).filter(Boolean).length, total = 4;
+  const hecho = !!dia.cierre;
+  const count = document.getElementById('cierre-count');
+  count.innerHTML = hecho ? `${ic('checked',16)} Listo` : `${hechos}/${total}`;
+  count.classList.toggle('ok', hecho);
   const activos = state.habitosConfig.filter(h=>h.activo);
   const pasosConTexto = dia.enfoque.pasos.filter(p=>p.texto);
-  let completados = 0, totalItems = activos.length + pasosConTexto.length;
-  activos.forEach(h=>{ const hd=dia.habitos[h.id]; if(hd&&(hd.completado||hd.omitido)) completados++; });
+  let completados = 0; const totalItems = activos.length + pasosConTexto.length;
+  activos.forEach(h=>{ const hd=dia.habitos[h.id]; if(hd&&hd.completado) completados++; });
   pasosConTexto.forEach(p=>{ if(p.completado) completados++; });
-  openModal(`
-    <h3 style="margin-bottom:6px;">Cierre del día${state.nombre?', '+escapeHtml(state.nombre):''}</h3>
-    <p class="muted" style="margin-bottom:14px;">Hoy completaste ${completados} de ${totalItems} elementos. ${completados<totalItems?'Está bien: mañana puedes retomarlo.':'Buen trabajo hoy.'}</p>
-    <label style="margin-top:0;">¿Qué logré hoy?</label>
-    <textarea id="cierre-logre">${escapeHtml(c.logre)}</textarea>
-    <label>¿Qué aprendí?</label>
-    <textarea id="cierre-aprendi">${escapeHtml(c.aprendi)}</textarea>
-    <label>¿Por qué estoy agradecido?</label>
-    <textarea id="cierre-agradezco">${escapeHtml(c.agradezco)}</textarea>
-    ${state.identidad.texto ? `<div class="ritual-row" style="margin-top:14px;">
-      <button type="button" class="checkbox ${dia.identidad.noche?'checked':''}" id="cierre-identidad" aria-pressed="${!!dia.identidad.noche}" aria-label="Leí mi declaración esta noche" onclick="this.classList.toggle('checked'); this.setAttribute('aria-pressed', this.classList.contains('checked'));"></button>
-      <div class="ritual-body"><div class="row-title">Leí mi declaración esta noche</div><div class="ritual-sub"><span class="quote">“${escapeHtml(state.identidad.texto)}”</span></div></div>
-    </div>` : ''}
-    <button class="btn block" style="margin-top:14px;" onclick="guardarCierre()">Guardar cierre</button>
-  `);
+  document.getElementById('cierre-hint').textContent = hecho
+    ? 'Cierre hecho. Descansa bien; puedes editarlo si quieres.'
+    : `Antes de dormir. Hoy completaste ${completados} de ${totalItems} hábitos y compromisos. ${completados<totalItems?'Está bien: mañana puedes retomarlo.':'Buen trabajo hoy.'}`;
+  pintarMomento('cierre', momentoEstaAbierto('cierre', hecho));
+  const identidad = state.identidad.texto;
+  const campo = (id, n, titulo, valor, ph) => filaRitual({ id:'c'+id, done: !!valor, titulo:`${n}. ${titulo}`,
+    extra: `<textarea id="cierre-${id}" rows="2" placeholder="${ph}">${escapeHtml(valor||'')}</textarea>`,
+    onToggle:`document.getElementById('cierre-${id}').focus()` });
+  el.innerHTML = [
+    campo('logre', 1, '¿Qué logré hoy?', c.logre, 'Hoy logré...'),
+    campo('aprendi', 2, '¿Qué aprendí?', c.aprendi, 'Hoy aprendí...'),
+    campo('agradezco', 3, '¿Por qué estoy agradecido?', c.agradezco, 'Agradezco...'),
+    filaRitual({ id:'cident', done: pasos.identidad, titulo:'4. Declaración de identidad',
+      sub: identidad ? `Léela antes de dormir. <span class="quote">“${escapeHtml(identidad)}”</span>` : `<a class="link" onclick="editarTextoFijo('identidad')">Escríbela una sola vez →</a>`,
+      onToggle:"marcarIdentidad('noche')" })
+  ].join('') + `<button class="btn block ${hecho?'secondary':'gold'}" id="btn-guardar-cierre" style="margin-top:14px;" onclick="guardarCierre()">${hecho?'Actualizar cierre':'Guardar cierre'}</button>`;
+  ['logre','aprendi','agradezco'].forEach(k=>{
+    bindAutosave('cierre-'+k, v=>{
+      const d = ensureDia(todayKey());
+      const destino = d.cierre || (d.cierreBorrador = d.cierreBorrador || { logre:'', aprendi:'', agradezco:'' });
+      destino[k] = v;
+      const btn = document.querySelector(`[data-pop="ritc${k}"]`);
+      if(btn){ btn.classList.toggle('checked', !!v); btn.setAttribute('aria-pressed', !!v); btn.closest('.ritual-row').classList.toggle('done', !!v); }
+      if(!d.cierre){ const n = Object.values(pasosCierre(d)).filter(Boolean).length; count.textContent = `${n}/4`; }
+    });
+  });
 }
 function guardarCierre(){
   const fecha = todayKey();
@@ -1765,10 +1821,9 @@ function guardarCierre(){
     agradezco: document.getElementById('cierre-agradezco').value.trim(),
     fecha
   };
-  const chkId = document.getElementById('cierre-identidad');
-  if(chkId) dia.identidad.noche = chkId.classList.contains('checked');
+  delete dia.cierreBorrador;
+  momentoAbierto.cierre = false;
   saveState();
-  closeModal();
   showToast('Cierre nocturno guardado. Descansa bien.');
   enviarWebhook({ tipo:'cierre_nocturno', fecha, data: dia.cierre });
   renderAll();
