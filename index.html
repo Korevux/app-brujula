@@ -793,6 +793,7 @@ label{ font-size:14.5px; }
       <label style="margin-top:16px;">Tu respuesta / reflexión</label>
       <textarea id="cap-respuesta" placeholder="Escribe aquí lo que te haga pensar esta cápsula..."></textarea>
       <p class="hint">Se guarda automáticamente.</p>
+      <button id="cap-leida-btn" class="btn block" style="margin-top:12px;" onclick="marcarCapsulaLeida()">Ya la leí</button>
     </div>
     <div class="card">
       <div class="card-title"><i class="ic" data-ic="calendar"></i><span>Día del programa</span></div>
@@ -1422,10 +1423,8 @@ function toggleRitual(campo){
   saveState();
   renderAll();
 }
+// Abrir la cápsula no la marca: el paso se marca solo con la casilla.
 function abrirCapsulaDesdeHoy(){
-  const dia = ensureDia(todayKey());
-  dia.capsulaLeida = true;
-  saveState();
   go('cápsula');
 }
 
@@ -1703,13 +1702,14 @@ function modoVisualizacion(){
   const fecha = todayKey();
   const dia = ensureDia(fecha);
   const texto = state.visualizacionTexto || 'Aún no escribiste tu visualización.';
-  if(state.visualizacionTexto && !dia.visualizacionLeida){ dia.visualizacionLeida = true; saveState(); renderAll(); }
   openModal(`
     <div style="text-align:center; padding: 30px 10px;">
       <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:var(--accent); font-weight:700; margin-bottom:14px;">Modo foco</div>
       <div style="font-size:19px; line-height:1.6; font-weight:600;">${escapeHtml(texto)}</div>
       <p class="muted" style="margin-top:18px; font-size:14.5px; line-height:1.5;">Ahora cierra los ojos un minuto. Mira la escena: dónde estás, qué haces, cómo te sientes. Después mírate haciendo hoy los pasos que te acercan.</p>
-      <button class="btn secondary" style="margin-top:22px;" onclick="closeModal()">Cerrar</button>
+      ${state.visualizacionTexto && !dia.visualizacionLeida
+        ? `<button class="btn" style="margin-top:22px;" onclick="toggleRitual('visualizacionLeida'); closeModal();">Ya lo visualicé</button><br><button class="btn secondary small" style="margin-top:10px;" onclick="closeModal()">Cerrar</button>`
+        : `<button class="btn secondary" style="margin-top:22px;" onclick="closeModal()">Cerrar</button>`}
     </div>
   `);
 }
@@ -2342,6 +2342,15 @@ function renderCapsulaScreen(){
   fillInput('cap-respuesta', dia.capsulaRespuesta);
   document.getElementById('cap-dia-info').textContent = `Día ${cap.dia} · Tema: ${cap.tema}`;
   document.getElementById('cap-repetida-hint').style.display = dia.capsulaRepetida ? 'block' : 'none';
+  const lb = document.getElementById('cap-leida-btn');
+  if(lb){ lb.innerHTML = dia.capsulaLeida ? ic('checked',16)+' Leída hoy' : 'Ya la leí'; lb.classList.toggle('secondary', !!dia.capsulaLeida); }
+}
+function marcarCapsulaLeida(){
+  const dia = ensureDia(todayKey());
+  dia.capsulaLeida = !dia.capsulaLeida;
+  if(dia.capsulaLeida) recienMarcado = 'ritcap';
+  saveState();
+  renderAll();
 }
 // ============================================================
 // EXPORT / IMPORT
