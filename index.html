@@ -3205,7 +3205,8 @@ function renderCuenta(){
     body.innerHTML = `
       <p class="muted">Conectado como <b>${escapeHtml(syncUser.email||'')}</b>.</p>
       <p class="hint">${syncEstado ? escapeHtml(syncEstado) : (syncUltima ? 'Sincronizado a las ' + syncUltima.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}) + '.' : 'Sincronizando...')}</p>
-      <p class="hint">Entra con este mismo correo en tu otro aparato y verás los mismos datos.</p>
+      <p class="hint">Mientras tengas la sesión abierta, cada cosa que anotas se guarda sola en tu cuenta. No tienes que hacer nada más.</p>
+      <p class="hint">Si cambias de teléfono (hoy o dentro de un año), entra con este mismo correo y contraseña y aparece todo lo que tenías hasta ese día.</p>
       <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
         <button class="btn small" onclick="sincronizar()">Sincronizar ahora</button>
         <button class="btn small secondary" onclick="cerrarSesion()">Cerrar sesión</button>
@@ -3235,7 +3236,7 @@ function renderCuenta(){
     <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-top:4px;">
       ${crear ? enlace('entrar','¿Ya tienes cuenta? Entrar') : enlace('crear','¿Primera vez? Crear cuenta') + enlace('olvide','Olvidé mi contraseña')}
     </div>
-    <p class="hint">Lo que ya tienes en este dispositivo se sube a tu cuenta, no se pierde.</p>`;
+    <p class="hint">Lo que ya tienes en este dispositivo se sube a tu cuenta, no se pierde. Desde ese momento todo lo que anotes se guarda solo, así que si algún día cambias de teléfono lo recuperas entero.</p>`;
 }
 
 function initSync(){
