@@ -12,9 +12,9 @@
     "run_worker_first": ["/api/*"]
   },
   // Dónde se guardan las suscripciones y horarios de los avisos.
-  // Cloudflare crea el espacio KV la primera vez que se publica.
+  // Espacio KV "brujula-schedule", creado a mano en el panel de Cloudflare.
   "kv_namespaces": [
-    { "binding": "SCHEDULE" }
+    { "binding": "SCHEDULE", "id": "b8f355991f0b43a8877501f262be7c8d" }
   ],
   "triggers": {
     // Cada minuto: avisos. A las 12:00 UTC: mantener activo Supabase.
