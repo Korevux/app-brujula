@@ -1034,11 +1034,9 @@ const STORAGE_KEY = 'brujulaInterior.v1';
 let N8N_WEBHOOK_URL = ''; // opcional; también configurable desde Ajustes
 
 const PUSH_SUBSCRIBED_KEY = 'brujula_push_subscribed';
-// Clave pública VAPID: no es secreta (así funciona el estándar Web Push,
-// el navegador la usa para verificar que el push viene de este
-// servidor). La clave privada vive solo en el servidor (variable de
-// entorno de Netlify), nunca aquí.
-const VAPID_PUBLIC_KEY = 'BFL4lnw7kWXCu_MjfbZoJQbs3P-GtxiiMDdAP96pes1o8lh4kTgdvvk-8xeHkfZa6Za9lzzomWs2kOphsP3YyK8';
+// La clave pública VAPID se pide al servidor (/api/vapid-public-key): no es
+// secreta, pero así se puede cambiar desde Cloudflare sin tocar la app. La
+// clave privada vive solo en el servidor (secreto de Cloudflare), nunca aquí.
 
 let CAPSULAS = []; // se llena vía fetch('capsulas.json'); si falla, queda vacío y la app sigue funcionando
 
@@ -2590,6 +2588,12 @@ function urlBase64ToUint8Array(base64String){
   return outputArray;
 }
 
+function mismosBytes(a, b){
+  if(a.length !== b.length) return false;
+  for(let i=0; i<a.length; i++){ if(a[i] !== b[i]) return false; }
+  return true;
+}
+
 function deviceTimezone(){
   try{
     return Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/Caracas';
@@ -2667,13 +2671,26 @@ function pushScheduleUpdate(){
 function subscribeToPush(){
   if(!('serviceWorker' in navigator) || !('PushManager' in window)) return;
 
-  navigator.serviceWorker.ready.then(function(registration){
+  Promise.all([
+    navigator.serviceWorker.ready,
+    fetch('/api/vapid-public-key', { cache: 'no-store' }).then(function(r){ return r.ok ? r.json() : null; })
+  ]).then(function(res){
+    const registration = res[0];
+    const publicKey = res[1] && res[1].publicKey;
+    if(!publicKey) throw new Error('El servidor aún no tiene las claves de los avisos.');
+    const clave = urlBase64ToUint8Array(publicKey);
     return registration.pushManager.getSubscription().then(function(existing){
+      // Si la suscripción se creó con otra clave (se cambiaron las claves),
+      // hay que rehacerla o el servicio push rechazará los avisos.
+      if(existing){
+        const usada = existing.options && existing.options.applicationServerKey;
+        if(!usada || mismosBytes(new Uint8Array(usada), clave)) return existing;
+        return existing.unsubscribe().then(function(){ return null; });
+      }
+      return null;
+    }).then(function(existing){
       if(existing) return existing;
-      return registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-      });
+      return registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: clave });
     });
   }).then(function(subscription){
     if(!subscription) return;

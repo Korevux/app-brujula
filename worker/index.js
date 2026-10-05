@@ -1,5 +1,6 @@
 // Worker de Cloudflare para Brújula Interior.
 //  - Sirve la app (archivos estáticos de la raíz del repositorio).
+//  - GET /api/vapid-public-key: la clave pública de los avisos (no es secreta).
 //  - POST /api/save-schedule: guarda la suscripción push del dispositivo,
 //    su zona horaria y la lista completa de recordatorios.
 //  - Cada minuto (cron): manda los avisos cuya hora local coincide.
@@ -180,6 +181,10 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === "/api/save-schedule") return saveSchedule(request, env);
+    if (url.pathname === "/api/vapid-public-key") {
+      if (!env.VAPID_PUBLIC_KEY) return json({ error: "Avisos sin configurar" }, 503);
+      return json({ publicKey: env.VAPID_PUBLIC_KEY });
+    }
     return env.ASSETS.fetch(request);
   },
 
