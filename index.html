@@ -1614,7 +1614,7 @@ function renderProgresoHoy(){
     if(hd && hd.omitido) return;
     total += 1; if(hd && hd.completado) done++;
   });
-  total += 1; if(dia.cierre) done++;
+  total += 1; if(cierreHecho(dia)) done++;
 
   const pct = total? Math.round((done/total)*100) : 0;
   const fill = document.getElementById('hoy-progress-fill');
@@ -2016,7 +2016,7 @@ function renderTimeline(){
   dia.enfoque.pasos.forEach((p,i)=>{
     if(p.texto) items.push({ hora:'—', texto: `Compromiso ${i+1}: `+p.texto, done: p.completado });
   });
-  items.push({ hora:'—', texto:'Cierre de la noche', done: !!dia.cierre });
+  items.push({ hora:'—', texto:'Cierre de la noche', done: cierreHecho(dia) });
 
   const nowMin = new Date().getHours()*60+new Date().getMinutes();
   let nowAssigned = false;
@@ -2043,7 +2043,11 @@ function textosCierre(dia){
 }
 function pasosCierre(dia){
   const c = textosCierre(dia);
-  return { logre: !!c.logre, aprendi: !!c.aprendi, agradezco: !!c.agradezco, identidad: !!dia.identidad.noche };
+  return { logre: !!c.logre, aprendi: !!c.aprendi, agradezco: !!c.agradezco, identidad: !!(dia.identidad && dia.identidad.noche) };
+}
+// El cierre está listo solo cuando sus 4 pasos están hechos (no basta con pulsar "Guardar").
+function cierreHecho(dia){
+  return Object.values(pasosCierre(dia)).every(Boolean);
 }
 function renderCierre(){
   const el = document.getElementById('cierre-list');
@@ -2053,7 +2057,7 @@ function renderCierre(){
   const c = textosCierre(dia);
   const pasos = pasosCierre(dia);
   const hechos = Object.values(pasos).filter(Boolean).length, total = Object.keys(pasos).length;
-  const hecho = !!dia.cierre;
+  const hecho = cierreHecho(dia);
   const count = document.getElementById('cierre-count');
   count.innerHTML = hecho ? `${ic('checked',16)} Listo` : `${hechos}/${total}`;
   count.classList.toggle('ok', hecho);
@@ -2085,13 +2089,19 @@ function renderCierre(){
       destino[k] = v;
       const btn = document.querySelector(`[data-pop="ritc${k}"]`);
       if(btn){ btn.classList.toggle('checked', !!v); btn.setAttribute('aria-pressed', !!v); btn.closest('.ritual-row').classList.toggle('done', !!v); }
-      if(!d.cierre){ const pc = pasosCierre(d); count.textContent = `${Object.values(pc).filter(Boolean).length}/${Object.keys(pc).length}`; }
+      const pc = pasosCierre(d), listo = Object.values(pc).every(Boolean);
+      count.innerHTML = listo ? `${ic('checked',16)} Listo` : `${Object.values(pc).filter(Boolean).length}/${Object.keys(pc).length}`;
+      count.classList.toggle('ok', listo);
     });
   });
 }
 function guardarCierre(){
   const fecha = todayKey();
   const dia = ensureDia(fecha);
+  const nombres = { logre:'¿Qué logré hoy?', aprendi:'¿Qué aprendí?', agradezco:'¿Por qué estoy agradecido?' };
+  const faltan = Object.keys(nombres).filter(k=>!document.getElementById('cierre-'+k).value.trim()).map(k=>nombres[k]);
+  if(!(dia.identidad && dia.identidad.noche)) faltan.push('leer tu declaración');
+  if(faltan.length){ showToast('Para terminar el cierre falta: ' + faltan.join(', ') + '.'); return; }
   dia.cierre = {
     logre: document.getElementById('cierre-logre').value.trim(),
     aprendi: document.getElementById('cierre-aprendi').value.trim(),
@@ -2158,7 +2168,7 @@ function diaTuvoActividad(fecha){
   if(!dia.enfoque && dia.mpa && dia.mpa.m) return true; // compatibilidad con datos muy antiguos aún no migrados
   if(dia.tasks && dia.tasks.some(t=>t.completado)) return true;
   if(dia.habitos && Object.values(dia.habitos).some(h=>h.completado)) return true;
-  if(dia.cierre) return true;
+  if(cierreHecho(dia)) return true;
   return false;
 }
 function calcularRacha(){
@@ -2228,7 +2238,7 @@ function historialHtml(keys){
       <div style="flex:1; min-width:0;">
         <div class="row-title">${formatDiaCorto(k)}</div>
         <div class="row-sub">${objetivo}</div>
-        <div class="row-sub">${habitosOk} hábito(s) · ${pasosOk} compromiso(s)${dia.cierre?' · cierre hecho':''}</div>
+        <div class="row-sub">${habitosOk} hábito(s) · ${pasosOk} compromiso(s)${cierreHecho(dia)?' · cierre hecho':''}</div>
       </div>
       <span class="small-muted">›</span>
     </button>`;
@@ -2261,7 +2271,7 @@ function verDia(key){
     return `<div class="muted">${h.completado?ic('checked',16):(h.omitido?ic('skip',16):ic('circle',16))} ${escapeHtml(nombre)}</div>${h.nota?`<p class="muted" style="margin:2px 0 6px 22px;"><i>${escapeHtml(h.nota)}</i></p>`:''}`;
   }).join('');
   const tasks = (dia.tasks||[]).map(t=>`<div class="muted">${t.completado?ic('checked',16):ic('circle',16)} ${escapeHtml(t.desc)}</div>`).join('');
-  const c = dia.cierre;
+  const c = (dia.cierre || dia.cierreBorrador) ? textosCierre(dia) : null;
   const cierre = c ? `${c.logre?`<p class="muted"><b>Logré:</b> ${escapeHtml(c.logre)}</p>`:''}${c.aprendi?`<p class="muted"><b>Aprendí:</b> ${escapeHtml(c.aprendi)}</p>`:''}${c.agradezco?`<p class="muted"><b>Agradezco:</b> ${escapeHtml(c.agradezco)}</p>`:''}` : '';
   openModal(`
     <h3 style="margin-bottom:4px;">${formatDiaCorto(key)}</h3>
