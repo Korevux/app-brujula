@@ -11,8 +11,11 @@
 <meta name="apple-mobile-web-app-title" content="Brújula Interior">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="icon" type="image/svg+xml" href="icon.svg">
-<link rel="apple-touch-icon" href="icon.svg">
+<link rel="apple-touch-icon" href="icon-180.png">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <style>
 /* ============================================================
    Brújula Interior — estilos
@@ -28,8 +31,8 @@
   --accent-light:#4fa3e0;
   --accent-dark:#1d5590;
   --accent-soft:#e8f2fc;
-  --gold:#c9a15a;
-  --gold-soft:#f3e6cb;
+  --gold:#f07b4f;
+  --gold-soft:#ffe4d6;
   --ink:#1a1d22;
   --ink-soft:#5b6270;
   --ink-faint:#8a91a0;
@@ -46,7 +49,8 @@
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  letter-spacing:-0.005em;
   background: linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
   color: var(--ink);
   min-height:100vh;
@@ -133,9 +137,9 @@ input,textarea,select{ font-family:inherit; }
 }
 .enfoque-cta:active{ transform: scale(0.98); }
 .paso-row{ display:flex; align-items:flex-start; gap:10px; margin-top:12px; background: rgba(255,255,255,0.14); border-radius:14px; padding:10px 12px; }
-.paso-check{ width:24px; height:24px; border-radius:7px; border:2px solid rgba(255,255,255,0.75); flex-shrink:0; display:flex; align-items:center; justify-content:center; margin-top:1px; transition: all .15s ease; }
+.paso-check{ padding:0; background:transparent; width:24px; height:24px; border-radius:7px; border:2px solid rgba(255,255,255,0.75); flex-shrink:0; display:flex; align-items:center; justify-content:center; margin-top:1px; transition: all .15s ease; }
 .paso-check.checked{ background: var(--white); border-color: var(--white); }
-.paso-check.checked::after{ content:"✓"; color:var(--accent-dark); font-size:14px; font-weight:800; }
+.paso-check.checked::after{ content:""; width:60%; height:60%; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231d5590' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 5 5 9-10'/%3E%3C/svg%3E") center/contain no-repeat; }
 .paso-text{ font-size:14.5px; font-weight:600; line-height:1.35; }
 .paso-text.done{ text-decoration:line-through; opacity:0.75; }
 
@@ -177,12 +181,13 @@ input:focus, textarea:focus, select:focus{ border-color: var(--accent); backgrou
 }
 .check-row:last-child{ border-bottom:none; }
 .checkbox{
+  padding:0;
   width:26px; height:26px; border-radius:8px; border:2px solid var(--border-strong);
   display:flex; align-items:center; justify-content:center; flex-shrink:0; background:var(--white);
   transition: all .15s ease;
 }
 .checkbox.checked{ background: var(--accent); border-color: var(--accent); }
-.checkbox.checked::after{ content:"✓"; color:white; font-size:15px; font-weight:700; }
+.checkbox.checked::after{ content:""; width:58%; height:58%; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 5 5 9-10'/%3E%3C/svg%3E") center/contain no-repeat; }
 .row-title{ font-weight:600; font-size:14.5px; }
 .row-sub{ font-size:12.5px; color: var(--ink-faint); margin-top:2px; }
 .row-actions{ margin-left:auto; display:flex; gap:6px; flex-shrink:0; }
@@ -191,9 +196,12 @@ input:focus, textarea:focus, select:focus{ border-color: var(--accent); backgrou
   display:flex; align-items:center; justify-content:center; font-size:15px; color:var(--ink-soft);
 }
 .icon-btn:active{ transform:scale(0.92); }
+.omitir-btn{ display:inline-flex; align-items:center; gap:5px; min-height:40px; padding:8px 13px; border-radius:999px; border:1px solid var(--border); background:var(--card); color:var(--ink-soft); font:inherit; font-size:13.5px; font-weight:650; cursor:pointer; white-space:nowrap; }
+.omitir-btn.activo{ background:var(--accent-soft); border-color:var(--accent); color:var(--accent-dark); }
+.omitir-btn:active{ transform:scale(0.95); }
 
 /* ---------- Switch ---------- */
-.switch{ width:44px; height:26px; border-radius:999px; background: var(--border-strong); position:relative; flex-shrink:0; transition: background .15s; }
+.switch{ padding:0; width:44px; height:26px; border-radius:999px; background: var(--border-strong); position:relative; flex-shrink:0; transition: background .15s; }
 .switch.on{ background: var(--accent); }
 .switch::after{ content:""; position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:white; box-shadow:var(--shadow-sm); transition: left .15s; }
 .switch.on::after{ left:21px; }
@@ -291,10 +299,6 @@ input:focus, textarea:focus, select:focus{ border-color: var(--accent); backgrou
 .empty-state{ text-align:center; padding: 26px 10px; color: var(--ink-faint); }
 .empty-state .em-icon{ font-size:30px; margin-bottom:8px; }
 
-/* ---------- Mode selector ---------- */
-.mode-row{ display:flex; gap:8px; }
-.mode-btn{ flex:1; padding:10px 6px; border-radius:14px; background:var(--bg-soft); text-align:center; font-size:12.5px; font-weight:700; color:var(--ink-soft); }
-.mode-btn.active{ background:var(--accent); color:white; }
 
 /* ---------- Timeline ---------- */
 .tl-item{ display:flex; gap:12px; padding:10px 2px; }
@@ -306,7 +310,41 @@ input:focus, textarea:focus, select:focus{ border-color: var(--accent); backgrou
 .tl-time{ font-size:11.5px; color:var(--ink-faint); font-weight:700; width:44px; flex-shrink:0; }
 .tl-text{ font-size:13.5px; font-weight:600; }
 
-/* ---------- Weekly truth removed per product decision (no "verdades" section in this build) ---------- */
+/* ---------- Tabs (Rutina: Hoy / Historial) ---------- */
+.tabs{ display:flex; gap:6px; background:var(--bg-soft); padding:4px; border-radius:14px; margin-bottom:16px; }
+.tab-btn{ flex:1; padding:10px 6px; border-radius:11px; background:transparent; font-size:13.5px; font-weight:700; color:var(--ink-soft); }
+.tab-btn.active{ background:var(--card); color:var(--accent-dark); box-shadow:var(--shadow-sm); }
+
+/* ---------- Extras plegables ---------- */
+details.extras > summary{ list-style:none; cursor:pointer; display:flex; align-items:center; justify-content:space-between; }
+details.extras > summary::-webkit-details-marker{ display:none; }
+details.extras > summary::after{ content:"▾"; color:var(--ink-faint); font-size:14px; transition: transform .15s; }
+details.extras[open] > summary::after{ transform: rotate(180deg); }
+details.extras > summary .card-title{ margin-bottom:0; }
+.extra-block{ padding-top:14px; margin-top:14px; border-top:1px solid var(--border); }
+.extra-block .card-title{ margin-bottom:6px; }
+
+/* ---------- Chips de metas (editor de objetivo) ---------- */
+.chip-row{ display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
+
+/* ---------- Estado del cierre ---------- */
+.cierre-row{ display:flex; align-items:center; gap:12px; }
+.cierre-row .btn{ margin-left:auto; }
+.install-steps{ margin:8px 0 0 0; padding-left:20px; font-size:13.5px; line-height:1.6; color:var(--ink); }
+.install-steps li{ margin-bottom:4px; }
+.ios-banner{ display:flex; align-items:center; gap:10px; background:var(--accent-soft); border:1px solid var(--border); border-radius:var(--radius-md); padding:12px 14px; margin-bottom:14px; font-size:13px; color:var(--accent-dark); }
+.ios-banner .btn{ flex-shrink:0; }
+.estilo-row{ display:flex; gap:8px; margin-top:8px; }
+.estilo-btn{ flex:1; padding:12px 8px; border-radius:14px; background:var(--bg-soft); color:var(--ink-soft); font-size:13px; font-weight:700; border:2px solid transparent; text-align:center; }
+.estilo-btn.active{ background:var(--accent-soft); color:var(--accent-dark); border-color:var(--accent); }
+.alarma-overlay{ position:fixed; inset:0; z-index:400; background:linear-gradient(160deg, var(--accent) 0%, var(--accent-dark) 100%); color:var(--white); display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px; }
+.alarma-overlay.active{ display:flex; }
+.alarma-icon{ font-size:64px; animation: sacudir 0.6s ease-in-out infinite; }
+@keyframes sacudir{ 0%,100%{ transform:rotate(0); } 25%{ transform:rotate(-14deg); } 75%{ transform:rotate(14deg); } }
+.alarma-title{ font-size:24px; font-weight:800; margin-top:18px; }
+.alarma-body{ font-size:16px; opacity:0.9; margin-top:10px; line-height:1.5; max-width:320px; }
+.next-reminder{ font-size:12.5px; color:var(--ink-soft); margin-top:6px; }
 
 /* ---------- Settings list ---------- */
 .settings-group{ margin-bottom:18px; }
@@ -314,6 +352,242 @@ input:focus, textarea:focus, select:focus{ border-color: var(--accent); backgrou
 .settings-item{ display:flex; align-items:center; gap:12px; padding:14px 4px; border-bottom:1px solid var(--border); }
 .settings-item:last-child{ border-bottom:none; }
 .settings-item .row-actions{ margin-left:auto; }
+
+/* ============================================================
+   Diseño 2.0: misma paleta, íconos de línea, elementos grandes y cómodos de tocar.
+   Disciplina de color: azul = acciones; dorado = solo logros y rachas.
+   ============================================================ */
+.ic{ display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; line-height:0; }
+.ic svg{ display:block; }
+.card{ border-radius:20px; box-shadow:0 1px 2px rgba(20,30,45,.04); }
+.card-title{ text-transform:none; letter-spacing:0; font-size:16px; color:var(--ink); font-weight:700; display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.card-title .ic{ color:var(--accent); background:var(--accent-soft); padding:6px; border-radius:10px; }
+.card-title .icon{ display:none; }
+.hero .greeting{ font-size:28px; letter-spacing:-0.02em; }
+.hero .date{ text-transform:none; font-size:15px; }
+.next-reminder{ display:inline-flex; align-items:center; gap:6px; background:var(--accent-soft); color:var(--accent-dark); padding:8px 12px; border-radius:999px; margin-top:12px; font-size:13px; }
+.next-reminder:empty{ display:none; }
+.section-title{ font-size:24px; letter-spacing:-0.02em; }
+.enfoque-hero{ border-radius:24px; padding:22px; }
+.enfoque-label{ text-transform:none; letter-spacing:0; font-size:14px; opacity:.85; display:flex; align-items:center; gap:8px; font-weight:600; }
+.enfoque-metas-text{ font-size:21px; letter-spacing:-0.01em; margin-top:8px; }
+.enfoque-empty{ font-size:15.5px; margin-top:6px; }
+.paso-row{ padding:14px; border-radius:16px; min-height:56px; align-items:center; gap:14px; cursor:pointer; }
+.paso-check{ width:30px; height:30px; border-radius:50%; margin-top:0; }
+.paso-text{ font-size:16px; }
+.enfoque-cta{ min-height:52px; border-radius:16px; font-size:15.5px; font-weight:650; display:flex; align-items:center; justify-content:center; gap:8px; }
+#hoy-habitos-list .check-row, #tasks-list .task-item{ background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:12px 12px 12px 14px; margin-bottom:10px; min-height:64px; }
+#hoy-habitos-list .check-row:last-child, #tasks-list .task-item:last-child{ margin-bottom:0; border-bottom:1px solid var(--border); }
+#tasks-list .task-item{ align-items:center; min-height:56px; }
+.checkbox{ border-radius:50%; width:32px; height:32px; border-width:2px; }
+.row-title, .task-title{ font-weight:650; font-size:16px; }
+.row-sub{ font-size:13px; }
+.icon-btn{ width:44px; height:44px; background:var(--card); border:1px solid var(--border); color:var(--ink-soft); }
+.btn{ border-radius:16px; min-height:52px; font-weight:650; font-size:15.5px; gap:8px; }
+.btn.small{ min-height:46px; padding:11px 18px; font-size:15px; border-radius:14px; }
+.btn.gold{ background:var(--accent); color:var(--white); }
+.btn.ghost{ border-width:1.5px; border-color:var(--border-strong); color:var(--accent-dark); }
+input[type=text], input[type=number], input[type=time], input[type=date], input[type=email], input[type=password], textarea, select{ min-height:50px; border-radius:14px; font-size:16px; }
+input[type=email], input[type=password]{ width:100%; padding:12px 14px; border:1.5px solid var(--border-strong); background:var(--bg-soft); color:var(--ink); outline:none; font-family:inherit; }
+.cierre-row{ flex-direction:column; align-items:stretch; gap:12px; }
+.cierre-row .btn{ margin-left:0; width:100%; }
+.progress-track{ height:10px; }
+.progress-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
+.progress-head .card-title{ margin-bottom:0; }
+.streak-chip{ display:inline-flex; align-items:center; gap:6px; background:var(--gold-soft); color:#b8461c; padding:6px 12px; border-radius:999px; font-size:13px; font-weight:700; white-space:nowrap; }
+.streak-chip .ic{ color:var(--gold); }
+.streak-flame{ color:var(--gold); background:var(--gold-soft); width:60px; height:60px; border-radius:18px; display:flex; align-items:center; justify-content:center; }
+.streak-num{ color:var(--ink); }
+.goal-card{ border-left-color:var(--accent); background:var(--card); border:1px solid var(--border); border-left:5px solid var(--accent); }
+.goal-num{ color:var(--accent); }
+.capsula-tema{ color:var(--accent); }
+.tl-dot.now{ background:var(--accent); box-shadow:0 0 0 4px var(--accent-soft); }
+.tab-btn{ min-height:44px; font-size:14.5px; }
+.tl-time:empty{ display:none; }
+.tl-text{ font-size:14.5px; }
+.estilo-btn{ min-height:56px; display:flex; align-items:center; justify-content:center; gap:6px; }
+.settings-group-title{ letter-spacing:0.04em; }
+.empty-state .em-icon{ color:var(--ink-faint); display:flex; justify-content:center; }
+.navbar{ padding-top:10px; }
+.nav-item{ gap:4px; min-width:56px; padding:4px 6px; }
+.nav-item .nav-icon{ padding:4px 14px; border-radius:999px; transition: background .15s; }
+.nav-item .nav-label{ font-size:11.5px; font-weight:600; }
+.nav-item.active{ color:var(--accent); }
+.nav-item.active .nav-icon{ background:var(--accent-soft); }
+.alarma-icon .ic svg{ width:72px; height:72px; }
+.ios-banner{ border-radius:16px; }
+
+/* Arranque del día */
+.card.momento, .card.tight.momento{ padding:0; overflow:hidden; }
+.momento-head{ all:unset; box-sizing:border-box; width:100%; display:flex; align-items:center; gap:12px; padding:16px; cursor:pointer; min-height:76px; -webkit-tap-highlight-color:transparent; }
+.momento-head:focus-visible{ outline:3px solid var(--accent-light); outline-offset:-3px; border-radius:var(--radius-lg); }
+.momento-icon{ flex-shrink:0; width:44px; height:44px; border-radius:14px; display:flex; align-items:center; justify-content:center; background:var(--gold-soft); color:#b8461c; }
+.momento.noche .momento-icon{ background:var(--accent-soft); color:var(--accent-dark); }
+.momento-text{ flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+.momento-title{ font-size:18px; font-weight:700; color:var(--ink); letter-spacing:-0.01em; }
+.momento-sub{ font-size:13.5px; font-weight:500; color:var(--ink-soft); line-height:1.35; }
+.momento-chev{ flex-shrink:0; color:var(--ink-faint); display:flex; transition:transform .2s; }
+.momento-head[aria-expanded="true"] .momento-chev{ transform:rotate(180deg); }
+.momento-body{ padding:0 16px 16px; border-top:1px solid var(--border); padding-top:14px; }
+.momento-body textarea{ margin-top:8px; min-height:56px; }
+.declaracion-leer{ margin-top:8px; font-size:16.5px; line-height:1.5; font-style:italic; font-weight:500; color:var(--ink); background:#fff; border-left:4px solid var(--gold); border-radius:10px; padding:12px 14px; }
+.ritual-sub-nota{ display:block; margin-top:6px; font-size:13.5px; color:var(--ink-soft); }
+.ciencia{ margin-top:10px; font-size:14px; }
+.ciencia summary{ cursor:pointer; list-style:none; display:inline-flex; align-items:center; gap:6px; color:var(--accent-dark); font-weight:650; font-size:13.5px; padding:4px 10px; border-radius:999px; background:#fff; border:1px solid var(--border); }
+.ciencia summary::-webkit-details-marker{ display:none; }
+.ciencia[open] summary{ background:var(--accent-soft); border-color:#cfe2f6; }
+.ciencia p{ margin-top:8px; color:var(--ink); line-height:1.5; font-size:14.5px; }
+.ciencia .ciencia-fuente{ font-size:12.5px; color:var(--ink-faint); margin-top:4px; }
+.check-row{ flex-wrap:wrap; }
+.habito-extra{ flex-basis:100%; padding-left:46px; }
+.nota-habito{ margin-top:8px; }
+.nota-habito summary{ cursor:pointer; list-style:none; display:inline-flex; align-items:center; gap:6px; color:var(--ink-soft); font-weight:600; font-size:13.5px; }
+.nota-habito summary::-webkit-details-marker{ display:none; }
+.nota-habito textarea{ margin-top:8px; min-height:56px; }
+.glosario-grupo{ font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:var(--accent-dark); margin:14px 0 6px; }
+.glosario-grupo:first-child{ margin-top:0; }
+.glosario-item{ border:1px solid var(--border); border-radius:14px; padding:12px 14px; margin-bottom:8px; background:var(--bg); }
+.glosario-item summary{ cursor:pointer; font-weight:700; font-size:15.5px; color:var(--ink); }
+.glosario-item p{ margin-top:8px; font-size:14.5px; line-height:1.5; color:var(--ink); }
+.glosario-item .ciencia-fuente{ font-size:12.5px; color:var(--ink-faint); }
+.cualidad-line{ display:block; margin-top:6px; font-size:13px; color:var(--ink-soft); }
+.cualidad-line b{ color:#b8461c; }
+.ritual-row{ display:flex; align-items:flex-start; gap:14px; background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:14px; margin-bottom:10px; }
+.ritual-row:last-child{ margin-bottom:0; }
+.ritual-row .checkbox{ margin-top:-2px; }
+.ritual-body{ flex:1; min-width:0; }
+.ritual-sub{ font-size:13.5px; color:var(--ink-soft); margin-top:4px; line-height:1.45; }
+.quote{ font-style:italic; color:var(--ink); }
+.quote-block{ font-size:15.5px; line-height:1.55; font-style:italic; color:var(--ink); background:var(--bg); border-left:4px solid var(--accent); border-radius:10px; padding:12px 14px; }
+.link{ color:var(--accent-dark); font-weight:650; cursor:pointer; white-space:nowrap; }
+.opt-tag{ font-size:11px; font-weight:600; color:var(--ink-faint); background:var(--bg-soft); padding:2px 8px; border-radius:999px; margin-left:4px; vertical-align:middle; }
+
+.arranque-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:6px; }
+.arranque-head .card-title{ margin-bottom:0; }
+.arranque-count{ font-size:13px; font-weight:700; color:var(--accent-dark); background:var(--accent-soft); padding:5px 12px; border-radius:999px; display:inline-flex; align-items:center; gap:5px; }
+.arranque-count.ok{ background:var(--gold-soft); color:#b8461c; }
+
+/* Microinteracciones */
+@keyframes pop{ 0%{ transform:scale(1);} 40%{ transform:scale(1.22);} 100%{ transform:scale(1);} }
+.pop{ animation: pop .32s ease; }
+
+/* Celebración al completar el día */
+.celebracion{ position:fixed; inset:0; z-index:350; display:none; align-items:center; justify-content:center; background:rgba(10,14,20,0.35); overflow:hidden; }
+.celebracion.active{ display:flex; }
+.celebra-card{ position:relative; z-index:2; background:var(--card); border-radius:28px; padding:30px 26px; text-align:center; width:min(320px, 86vw); box-shadow:var(--shadow-lg); animation: entra .45s cubic-bezier(.2,1.4,.4,1); }
+@keyframes entra{ from{ transform:scale(.7); opacity:0; } to{ transform:scale(1); opacity:1; } }
+.celebra-flame{ width:76px; height:76px; margin:0 auto; border-radius:24px; background:var(--gold-soft); color:var(--gold); display:flex; align-items:center; justify-content:center; }
+.celebra-title{ font-size:24px; font-weight:800; margin-top:16px; letter-spacing:-0.02em; }
+.celebra-sub{ font-size:15px; color:var(--ink-soft); margin-top:6px; line-height:1.5; }
+.celebra-racha{ display:inline-flex; align-items:center; gap:6px; margin-top:16px; background:var(--gold-soft); color:#b8461c; font-weight:800; padding:8px 16px; border-radius:999px; }
+.confeti{ position:absolute; top:-12px; width:9px; height:14px; border-radius:3px; opacity:.95; animation: cae linear forwards; }
+@keyframes cae{ to{ transform: translateY(105vh) rotate(540deg); } }
+@media (prefers-reduced-motion: reduce){
+  .pop, .celebra-card, .confeti, .alarma-icon, .screen{ animation:none !important; }
+  .confeti{ display:none; }
+}
+
+/* ===== v3: más color y letras más grandes (plan de éxito diario) ===== */
+:root{ --sky:#4fa3e0; --sky-soft:#e3f1fc; --gold-deep:#d9572b; }
+body{ font-size:16px; }
+.hint{ font-size:14px; color:var(--ink-soft); line-height:1.45; }
+.muted{ font-size:15px; }
+.small-muted{ font-size:13.5px; }
+.row-sub{ font-size:14.5px; }
+.row-title{ font-size:16.5px; }
+.ritual-sub{ font-size:15px; }
+.momento-sub{ font-size:14.5px; }
+.cualidad-line{ font-size:14.5px; }
+.progress-text{ font-size:13.5px; font-weight:500; color:var(--ink-faint); margin-top:6px; }
+.task-meta{ font-size:13.5px; }
+.tl-text{ font-size:15px; }
+.tl-time{ font-size:13px; }
+.chip{ font-size:13px; }
+button.chip{ font-size:14px; padding:8px 14px; }
+label{ font-size:14.5px; }
+.nav-item .nav-label{ font-size:12px; }
+.next-reminder{ font-size:14px; }
+.capsula-tema{ font-size:13px; }
+.arranque-count{ font-size:15px; padding:6px 14px; }
+.streak-chip{ font-size:15px; padding:7px 14px; }
+
+/* Saludo con color */
+.hero{ background:linear-gradient(135deg, var(--accent-dark) 0%, var(--accent) 55%, var(--sky) 100%); color:#fff; border-radius:24px; padding:20px 20px 18px; margin-bottom:16px; box-shadow:0 10px 28px rgba(29,85,144,.25); position:relative; overflow:hidden; }
+.hero::after{ content:""; position:absolute; right:-40px; top:-40px; width:150px; height:150px; border-radius:50%; background:radial-gradient(circle, rgba(240,123,79,.55), rgba(240,123,79,0) 70%); }
+.hero .greeting{ color:#fff; }
+.hero .date{ color:rgba(255,255,255,.85); }
+.hero .next-reminder{ background:rgba(255,255,255,.18); color:#fff; position:relative; z-index:1; }
+.hero .next-reminder b{ color:#fff; }
+
+/* Bloques del día con identidad propia */
+.momento-head{ background:linear-gradient(135deg, #fff0e6 0%, #fffaf6 100%); }
+.momento.noche .momento-head{ background:linear-gradient(135deg, #e6effa 0%, #f8fbff 100%); }
+.momento-icon{ background:linear-gradient(135deg, #ff9a6b, var(--gold)); color:#fff; box-shadow:0 4px 12px rgba(240,123,79,.35); }
+.momento.noche .momento-icon{ background:linear-gradient(135deg, var(--accent-light), var(--accent-dark)); color:#fff; box-shadow:0 4px 12px rgba(43,111,184,.3); }
+.momento-title{ font-size:19px; }
+.momento .arranque-count{ background:#fff; box-shadow:0 1px 4px rgba(20,30,45,.08); }
+.momento .arranque-count.ok{ background:var(--gold); color:#fff; }
+.momento #arranque-fill{ background:linear-gradient(90deg, var(--gold), #ffb38a); }
+.ritual-row.done{ background:var(--accent-soft); border-color:#cfe2f6; }
+.momento.noche .ritual-row.done{ background:#eaf1fb; }
+.ritual-row.done .row-title{ color:var(--accent-dark); }
+
+/* Iconos de cada tarjeta con color */
+.card-title{ font-size:17px; }
+.card-title .ic{ background:linear-gradient(135deg, var(--accent-light), var(--accent)); color:#fff; }
+
+/* Tu logro de hoy */
+.logro-card{ border:1px solid #ffd9c4; background:linear-gradient(160deg, #fff6f0 0%, #ffffff 60%); }
+.logro-card .card-title .ic{ background:linear-gradient(135deg, #ff9a6b, var(--gold)); }
+.logro-fila{ display:flex; align-items:center; gap:14px; margin:4px 0 12px; }
+.logro-num{ font-size:44px; font-weight:800; line-height:1; letter-spacing:-0.03em; color:var(--accent); }
+.logro-num-label{ font-size:15px; font-weight:700; color:var(--accent-dark); }
+.logro-msg{ font-size:15.5px; font-weight:500; color:var(--ink-soft); margin-top:2px; }
+.logro-card .progress-track{ height:8px; }
+.logro-card .progress-fill{ background:linear-gradient(90deg, var(--accent), var(--sky), var(--gold)); }
+.logro-card.completo{ background:linear-gradient(160deg, #ffe6d6 0%, #fff6f0 70%); }
+.logro-card.completo .logro-num{ color:var(--gold-deep); }
+
+/* Compromisos del día */
+.enfoque-hero{ background:linear-gradient(135deg, var(--accent-dark) 0%, var(--accent) 70%, var(--sky) 130%); }
+
+/* Progreso */
+.racha-card{ background:linear-gradient(135deg, #f07b4f 0%, #ff9e70 60%, #ffc7a3 100%); border:none; color:#ffffff; }
+.racha-card .card-title{ color:#ffffff; }
+.racha-card .card-title .ic{ background:rgba(255,255,255,.35); color:#fff; }
+.racha-card .streak-flame{ background:rgba(255,255,255,.3); color:#fff; width:72px; height:72px; border-radius:22px; }
+.racha-card .streak-num{ font-size:60px; color:#fff; text-shadow:0 2px 8px rgba(150,50,10,.25); }
+.racha-card .streak-label{ font-size:15.5px; color:#ffffff; font-weight:600; }
+.racha-card .muted{ color:#fff6f0; font-size:15.5px; }
+.stat-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; }
+.stat{ border-radius:18px; padding:14px 10px; text-align:center; }
+.stat-num{ font-size:36px; font-weight:800; line-height:1.05; letter-spacing:-0.02em; }
+.stat-label{ font-size:13.5px; font-weight:600; margin-top:4px; line-height:1.3; }
+.stat.azul{ background:var(--accent-soft); color:var(--accent-dark); }
+.stat.dorado{ background:var(--gold-soft); color:#b8461c; }
+.stat.cielo{ background:var(--sky-soft); color:#1f6aa5; }
+
+/* Íconos ilustrados y encabezados de amanecer / noche */
+.momento-icon.sol, .momento-icon.luna{ width:52px; height:52px; padding:0; background:none !important; border-radius:15px; overflow:hidden; }
+.momento-icon.sol{ box-shadow:0 6px 16px rgba(255,122,89,.35) !important; }
+.momento-icon.luna{ box-shadow:0 6px 16px rgba(27,33,96,.45) !important; }
+.momento-icon svg{ display:block; width:52px; height:52px; }
+.momento-icon.luna{ outline:2px solid rgba(255,255,255,.28); outline-offset:-1px; }
+#cierre-card #btn-guardar-cierre.gold{ background:linear-gradient(120deg, #262b78, #3a3f9a); color:#fff; }
+#arranque-card .momento-head{ background:linear-gradient(120deg, #ffe7c2 0%, #ffd9b8 45%, #fff4e0 100%); }
+#cierre-card .momento-head{ background:linear-gradient(120deg, #262b78 0%, #3a3f9a 55%, #5a5fbf 100%); }
+#cierre-card .momento-title{ color:#fff; }
+#cierre-card .momento-sub{ color:rgba(255,255,255,.82); }
+#cierre-card .momento-chev{ color:rgba(255,255,255,.8); }
+#cierre-card .arranque-count{ background:rgba(255,255,255,.95); color:#262b78; }
+#cierre-card .arranque-count.ok{ background:var(--gold); color:#fff; }
+#cierre-card .momento-head:focus-visible{ outline-color:#ffd54a; }
+#cierre-card .momento-body{ border-top-color:#dfe1f5; }
+#cierre-card .ritual-row.done{ background:#eceefb; border-color:#d3d6f2; }
+#cierre-card .ritual-row.done .row-title{ color:#2f3488; }
+#cierre-card .checkbox.checked{ background:#3a3f9a; border-color:#3a3f9a; }
+#arranque-card .arranque-count{ color:#c2551f; }
+@media (max-width:340px){ .stat-num{ font-size:28px; } .logro-num{ font-size:36px; } }
 
 @media (max-width:340px){
   .hero .greeting{ font-size:19px; }
@@ -330,153 +604,179 @@ input:focus, textarea:focus, select:focus{ border-color: var(--accent); backgrou
       <div class="brand-mark"><img src="icon.svg" alt="Brújula Interior"></div>
       <div class="brand-name">Brújula Interior</div>
     </div>
-    <button class="icon-btn" id="btn-mode-indicator" title="Modo del día">☀️</button>
   </div>
 
   <!-- ===================== HOY ===================== -->
+  <!-- Una sola lista de lo que toca hoy: objetivo + 2 pasos, hábitos y cierre.
+       Lo demás (cápsula, identidad, gratitud, visualización) va plegado como extra opcional. -->
   <section class="screen" id="screen-hoy">
     <div class="hero">
       <div class="greeting" id="hoy-greeting">Hola</div>
       <div class="date" id="hoy-date">—</div>
+      <div class="next-reminder" id="hoy-next-reminder"></div>
     </div>
 
-    <div class="card tight" id="capsula-preview-card">
-      <div class="card-title">🕊️ Cápsula del día</div>
-      <div class="capsula-tema" id="hoy-cap-tema">—</div>
-      <div class="capsula-frase" id="hoy-cap-frase" style="font-size:15px;">—</div>
-      <button class="btn ghost small" style="margin-top:10px;" onclick="go('cápsula')">Abrir cápsula</button>
+    <div class="ios-banner" id="ios-banner" style="display:none;">
+      <div style="flex:1;">Instala la app en tu iPhone para recibir los avisos aunque esté cerrada.</div>
+      <button class="btn small" onclick="verGuiaIphone()">Ver cómo</button>
+      <button class="icon-btn" aria-label="Ocultar aviso" onclick="ocultarBannerIphone()"><i class="ic" data-ic="x"></i></button>
     </div>
 
-    <div class="card tight">
-      <div class="card-title">🎯 Mis metas</div>
-      <div id="hoy-metas-mini"></div>
-    </div>
-
-    <div class="card tight">
-      <div class="card-title">🧭 Declaración de identidad</div>
-      <div id="hoy-identidad-text" class="muted">Aún no has escrito tu declaración. Ve a Rutina para crearla.</div>
-      <div style="display:flex; gap:8px; margin-top:10px;">
-        <button class="btn small" id="btn-identidad-manana" onclick="marcarIdentidad('manana')">Ya la dije (mañana)</button>
-        <button class="btn small secondary" id="btn-identidad-noche" onclick="marcarIdentidad('noche')">Ya la dije (noche)</button>
+    <!-- Arranque del día: primer hábito; usa lo definido una sola vez en "Mi brújula" -->
+    <div class="card tight momento" id="arranque-card">
+      <button type="button" class="momento-head" id="arranque-toggle" aria-expanded="false" aria-controls="arranque-body" onclick="toggleMomento('arranque')">
+        <span class="momento-icon sol" aria-hidden="true"><svg viewBox="0 0 48 48" width="48" height="48"><defs><linearGradient id="g-sol" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd54a"/><stop offset="1" stop-color="#ff8a2a"/></linearGradient><linearGradient id="g-cielo-am" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb36b"/><stop offset="1" stop-color="#ff7a59"/></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#g-cielo-am)"/><g stroke="#fff3c4" stroke-width="2.4" stroke-linecap="round"><path d="M24 9v4"/><path d="M12.5 14.5l2.8 2.8"/><path d="M35.5 14.5l-2.8 2.8"/><path d="M8 26h4"/><path d="M36 26h4"/></g><circle cx="24" cy="28" r="9" fill="url(#g-sol)" stroke="#fff3c4" stroke-width="1.5"/><rect x="0" y="31" width="48" height="17" fill="#ff7a59" opacity=".55"/><path d="M8 34h32" stroke="#fff3c4" stroke-width="2.4" stroke-linecap="round"/><path d="M14 39h20" stroke="#fff3c4" stroke-width="2" stroke-linecap="round" opacity=".8"/></svg></span>
+        <span class="momento-text"><span class="momento-title">Arranque del día</span><span class="momento-sub">Empieza con propósito. Gana el día con disciplina.</span></span>
+        <span class="arranque-count" id="arranque-count"></span>
+        <span class="momento-chev"><i class="ic" data-ic="chevron" data-size="20"></i></span>
+      </button>
+      <div class="momento-body" id="arranque-body" hidden>
+        <p class="hint" id="arranque-hint" style="margin-top:0; margin-bottom:12px;">Tu primer hábito: déjalo listo antes de seguir con lo demás.</p>
+        <div class="progress-track" style="height:6px; margin-bottom:14px;"><div class="progress-fill" id="arranque-fill" style="width:0%"></div></div>
+        <div id="ritual-list"></div>
       </div>
     </div>
 
-    <div class="enfoque-hero" id="enfoque-card">
-      <div class="enfoque-label">🔭 Enfoque de hoy</div>
+    <div class="enfoque-hero" id="enfoque-card" style="display:none;">
+      <div class="enfoque-label"><i class="ic" data-ic="target"></i><span>Mis compromisos de hoy</span></div>
       <div id="enfoque-content"></div>
     </div>
 
     <div class="card tight">
-      <div class="card-title">✅ Hábitos de hoy</div>
+      <div class="card-title"><i class="ic" data-ic="check"></i><span>Hábitos de hoy</span></div>
+      <p class="hint" id="habitos-hint" style="display:none; margin-top:-4px; margin-bottom:10px;">Primero completa tu arranque del día.</p>
       <div id="hoy-habitos-list"></div>
+      <div id="habitos-ciencia" style="margin-top:10px;"></div>
     </div>
 
-    <div class="card tight">
-      <div class="card-title">📈 Tu progreso</div>
+    <div class="card tight momento noche" id="cierre-card">
+      <button type="button" class="momento-head" id="cierre-toggle" aria-expanded="false" aria-controls="cierre-body" onclick="toggleMomento('cierre')">
+        <span class="momento-icon luna" aria-hidden="true"><svg viewBox="0 0 48 48" width="48" height="48"><defs><linearGradient id="g-cielo-pm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b3f9e"/><stop offset="1" stop-color="#1b2160"/></linearGradient><linearGradient id="g-luna" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2c2"/><stop offset="1" stop-color="#e8c26a"/></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#g-cielo-pm)"/><path d="M29.5 12.5a12 12 0 1 0 6.5 21.4A10 10 0 0 1 29.5 12.5z" fill="url(#g-luna)"/><g fill="#fff"><path d="M13 12l.9 2 2 .9-2 .9-.9 2-.9-2-2-.9 2-.9z"/><circle cx="38" cy="15" r="1.3"/><circle cx="12" cy="31" r="1"/><circle cx="35" cy="38" r="1.1" opacity=".8"/></g></svg></span>
+        <span class="momento-text"><span class="momento-title">Cierre de la noche</span><span class="momento-sub">Revisa tu día y vuelve a quién eres.</span></span>
+        <span class="arranque-count" id="cierre-count"></span>
+        <span class="momento-chev"><i class="ic" data-ic="chevron" data-size="20"></i></span>
+      </button>
+      <div class="momento-body" id="cierre-body" hidden>
+        <p class="hint" id="cierre-hint" style="margin-top:0; margin-bottom:12px;"></p>
+        <div id="cierre-list"></div>
+      </div>
+    </div>
+
+    <div class="card tight logro-card">
+      <div class="progress-head">
+        <div class="card-title"><i class="ic" data-ic="chart"></i><span>Tu logro de hoy</span></div>
+        <div class="streak-chip" id="hoy-racha" style="display:none;"></div>
+      </div>
+      <div class="logro-fila">
+        <div class="logro-num" id="hoy-hechos">0</div>
+        <div><div class="logro-num-label" id="hoy-hechos-label">pasos logrados hoy</div><div class="logro-msg" id="hoy-logro-msg">Cada paso cuenta.</div></div>
+      </div>
       <div class="progress-track"><div class="progress-fill" id="hoy-progress-fill" style="width:0%"></div></div>
-      <div class="progress-text" id="hoy-progress-text">0 de 0 elementos completados hoy</div>
+      <div class="progress-text" id="hoy-progress-text">0 de 0 completados hoy</div>
     </div>
 
-    <div class="card tight">
-      <div class="card-title">⏰ Próximo recordatorio</div>
-      <div id="hoy-next-reminder" class="muted">No tienes recordatorios próximos.</div>
-    </div>
-
-    <button class="btn block gold" style="margin-top:6px;" onclick="abrirCierreNocturno()">🌙 Cierre nocturno</button>
   </section>
 
   <!-- ===================== METAS ===================== -->
+  <!-- Mi brújula: lo que se define una sola vez y se revisa de vez en cuando -->
   <section class="screen" id="screen-metas">
-    <h2 class="section-title first">Mis metas</h2>
-    <p class="muted">Tus 3 a 5 metas principales. Son objetivos de vida importantes: no hace falta cambiarlas seguido. Revísalas idealmente una vez por semana.</p>
-    <div id="metas-list" style="margin-top:14px;"></div>
-    <button class="btn block secondary" style="margin-top:8px;" onclick="editarMetas()">✏️ Editar metas</button>
+    <h2 class="section-title first">Mi brújula</h2>
+    <p class="muted">Lo que defines una sola vez y guía tus días. En "Hoy" solo lo lees y lo practicas; aquí lo editas cuando quieras.</p>
+
+    <div class="card" style="margin-top:14px;">
+      <div class="card-title"><i class="ic" data-ic="target"></i><span>Mis metas</span></div>
+      <p class="hint" style="margin-top:0; margin-bottom:10px;">3 a 5 objetivos de vida. Revísalas una vez por semana.</p>
+      <div id="metas-list"></div>
+      <button class="btn block secondary" style="margin-top:10px;" onclick="editarMetas()"><i class="ic" data-ic="pencil"></i> Editar metas</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ic" data-ic="compass"></i><span>Mi declaración de identidad</span></div>
+      <p class="hint" style="margin-top:0; margin-bottom:10px;">Quién eres y quieres ser. La lees cada mañana y cada noche.</p>
+      <div id="identidad-view"></div>
+      <button class="btn block secondary" style="margin-top:10px;" onclick="editarTextoFijo('identidad')"><i class="ic" data-ic="pencil"></i> <span id="btn-identidad-edit-label">Editar declaración</span></button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ic" data-ic="spark"></i><span>Cualidad que quiero mejorar esta semana</span></div>
+      <p class="hint" style="margin-top:0; margin-bottom:10px;">Una sola por semana. La ves cada mañana en tu arranque del día.</p>
+      <div id="cualidad-view"></div>
+      <button class="btn block secondary" style="margin-top:10px;" onclick="elegirCualidad()"><i class="ic" data-ic="pencil"></i> <span id="btn-cualidad-label">Elegir cualidad</span></button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ic" data-ic="eye"></i><span>Mi visualización</span></div>
+      <p class="hint" style="margin-top:0; margin-bottom:10px;">Tu meta ya lograda, descrita en presente. La relees cada día.</p>
+      <div id="visualizacion-view"></div>
+      <button class="btn block secondary" style="margin-top:10px;" onclick="editarTextoFijo('visualizacion')"><i class="ic" data-ic="pencil"></i> <span id="btn-visualizacion-edit-label">Editar visualización</span></button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ic" data-ic="spark"></i><span>La ciencia detrás de tu rutina</span></div>
+      <p class="hint" style="margin-top:0; margin-bottom:10px;">Por qué funciona cada paso, con estudios verificados sobre el cerebro y la conducta. Toca un tema para leerlo.</p>
+      <div id="ciencia-glosario"></div>
+    </div>
+
+      <details class="card extras" id="habitos-config-card">
+        <summary><div class="card-title"><i class="ic" data-ic="gear"></i><span>Mis hábitos y horarios</span></div></summary>
+        <p class="hint" style="margin-top:8px;">Qué hábitos practicas, a qué hora y sus recordatorios.</p>
+        <div id="habitos-config-list" style="margin-top:8px;"></div>
+        <button class="btn ghost small block" style="margin-top:10px;" onclick="agregarHabitoPersonalizado()">+ Agregar hábito nuevo</button>
+      </details>
+
   </section>
 
   <!-- ===================== RUTINA ===================== -->
   <section class="screen" id="screen-rutina">
     <h2 class="section-title first">Rutina</h2>
 
-    <div class="mode-row" style="margin-bottom:16px;">
-      <div class="mode-btn" data-mode="completo" onclick="setModoDia('completo')">Día completo</div>
-      <div class="mode-btn" data-mode="ocupado" onclick="setModoDia('ocupado')">Día ocupado</div>
-      <div class="mode-btn" data-mode="minimo" onclick="setModoDia('minimo')">Día mínimo</div>
+    <div class="tabs" role="tablist">
+      <button class="tab-btn" role="tab" data-tab="hoy" onclick="setRutinaTab('hoy')">Hoy</button>
+      <button class="tab-btn" role="tab" data-tab="historial" onclick="setRutinaTab('historial')">Historial</button>
     </div>
 
-    <div class="card">
-      <div class="card-title">🧭 Identidad</div>
-      <textarea id="input-identidad" placeholder="Soy una persona disciplinada, enfocada y constante."></textarea>
-      <button class="btn small" style="margin-top:10px;" onclick="guardarIdentidad()">Guardar</button>
-    </div>
-
-    <div class="card">
-      <div class="card-title">🙏 Gratitud</div>
-      <textarea id="input-gratitud" placeholder="Hoy agradezco..."></textarea>
-      <button class="btn small" style="margin-top:10px;" onclick="guardarGratitud()">Guardar</button>
-    </div>
-
-    <div class="card">
-      <div class="card-title">🌅 Visualización</div>
-      <p class="hint" style="margin-top:0; margin-bottom:10px;">Describe tu meta ya lograda, en presente, como si ya estuviera pasando.</p>
-      <textarea id="input-visualizacion" placeholder="Estoy disfrutando de..."></textarea>
-      <div style="display:flex; gap:8px; margin-top:10px;">
-        <button class="btn small" onclick="guardarVisualizacion()">Guardar</button>
-        <button class="btn small ghost" onclick="modoVisualizacion()">Leer en modo foco</button>
+    <div id="rutina-tab-hoy">
+      <div class="card" id="timeline-card">
+        <div class="card-title"><i class="ic" data-ic="calendar"></i><span>Lo que toca hoy</span></div>
+        <div id="timeline-list"></div>
+        <button class="btn ghost small block" style="margin-top:10px;" onclick="abrirEditorEnfoque()"><i class="ic" data-ic="pencil"></i> Editar objetivo y compromiso</button>
       </div>
-    </div>
 
-    <div class="card">
-      <div class="card-title">🔭 Enfoque de hoy</div>
-      <p class="muted" style="margin-bottom:4px;">Elige hacia cuál de tus metas quieres avanzar hoy, y qué vas a hacer al respecto.</p>
-      <label>Metas para hoy</label>
-      <input type="text" id="input-enfoque-metas" placeholder="Ej: Avanzar en la propuesta del cliente">
-      <p class="hint">¿Qué te gustaría lograr o avanzar hoy? Puede relacionarse con una de tus metas principales.</p>
-      <label>Razones para alcanzarlas</label>
-      <input type="text" id="input-enfoque-razones" placeholder="Ej: Es clave para mi meta de negocio">
-      <p class="hint">¿Por qué te importa? Te ayuda a recordar tu motivación cuando el día se complique.</p>
-      <label>¿Qué 2 cosas harás hoy para acercarte a esa meta?</label>
-      <input type="text" id="input-enfoque-paso1" placeholder="Paso 1">
-      <input type="text" id="input-enfoque-paso2" placeholder="Paso 2" style="margin-top:8px;">
-      <p class="hint">Dos acciones concretas y realistas que puedas hacer hoy mismo.</p>
-      <button class="btn small" style="margin-top:10px;" onclick="guardarEnfoque()">Guardar enfoque de hoy</button>
-    </div>
-
-    <h3 class="section-title">Otras acciones del día</h3>
-    <div class="card">
-      <label>Nueva acción</label>
-      <input type="text" id="input-task-desc" placeholder="Descripción de la acción">
-      <div class="field-row" style="margin-top:8px;">
-        <div>
-          <label style="margin-top:0;">Hora (opcional)</label>
-          <input type="time" id="input-task-hora">
+      <div class="card" id="tasks-card">
+        <div class="card-title"><i class="ic" data-ic="list"></i><span>Otras acciones de hoy</span></div>
+        <div id="tasks-list"></div>
+        <div style="display:flex; gap:8px; margin-top:10px;">
+          <input type="text" id="input-task-desc" placeholder="Agregar una acción..." onkeydown="if(event.key==='Enter') agregarTask()">
+          <button class="btn small" onclick="agregarTask()" aria-label="Agregar acción">+</button>
         </div>
-        <div>
-          <label style="margin-top:0;">Duración min. (opcional)</label>
-          <input type="number" id="input-task-duracion" placeholder="30">
-        </div>
+        <details style="margin-top:8px;">
+          <summary class="small-muted" style="cursor:pointer;">Hora y duración (opcional)</summary>
+          <div class="field-row" style="margin-top:8px;">
+            <div>
+              <label style="margin-top:0;">Hora</label>
+              <input type="time" id="input-task-hora">
+            </div>
+            <div>
+              <label style="margin-top:0;">Duración (min)</label>
+              <input type="number" id="input-task-duracion" placeholder="30">
+            </div>
+          </div>
+        </details>
       </div>
-      <button class="btn small" style="margin-top:10px;" onclick="agregarTask()">Agregar acción</button>
-    </div>
-    <div class="card" id="tasks-card">
-      <div class="card-title">Acciones de hoy</div>
-      <div id="tasks-list"></div>
+
+      <div class="card">
+        <div class="card-title"><i class="ic" data-ic="calcheck"></i><span>Revisión semanal</span></div>
+        <p class="muted" style="margin-bottom:8px;">Una vez por semana, 5 minutos.</p>
+        <button class="btn secondary block" onclick="abrirRevisionSemanal()">Abrir revisión semanal</button>
+      </div>
+
     </div>
 
-    <h3 class="section-title">Hábitos</h3>
-    <div class="card" id="habitos-config-card">
-      <div id="habitos-config-list"></div>
-      <button class="btn ghost small block" style="margin-top:10px;" onclick="agregarHabitoPersonalizado()">+ Agregar hábito nuevo</button>
-    </div>
-
-    <h3 class="section-title">Línea de tiempo del día</h3>
-    <div class="card" id="timeline-card">
-      <div id="timeline-list"></div>
-    </div>
-
-    <h3 class="section-title">Revisión semanal</h3>
-    <div class="card">
-      <p class="muted" style="margin-bottom:8px;">Recomendada una vez por semana. Tus metas principales también pueden revisarse aquí.</p>
-      <button class="btn secondary block" onclick="abrirRevisionSemanal()">Abrir revisión semanal</button>
+    <div id="rutina-tab-historial" style="display:none;">
+      <p class="muted" style="margin-bottom:12px;">Toca un día para ver lo que hiciste y escribiste.</p>
+      <div class="card tight">
+        <div id="rutina-historial-list"></div>
+      </div>
     </div>
   </section>
 
@@ -492,10 +792,11 @@ input:focus, textarea:focus, select:focus{ border-color: var(--accent); backgrou
       <div class="muted" id="cap-accion" style="margin-top:4px;"></div>
       <label style="margin-top:16px;">Tu respuesta / reflexión</label>
       <textarea id="cap-respuesta" placeholder="Escribe aquí lo que te haga pensar esta cápsula..."></textarea>
-      <button class="btn small" style="margin-top:10px;" onclick="guardarRespuestaCapsula()">Guardar respuesta</button>
+      <p class="hint">Se guarda automáticamente.</p>
+      <button id="cap-leida-btn" class="btn block" style="margin-top:12px;" onclick="marcarCapsulaLeida()">Ya la leí</button>
     </div>
     <div class="card">
-      <div class="card-title">📅 Día del programa</div>
+      <div class="card-title"><i class="ic" data-ic="calendar"></i><span>Día del programa</span></div>
       <p class="muted" id="cap-dia-info">—</p>
       <p class="hint" id="cap-repetida-hint" style="display:none;">Ya viste todas las cápsulas disponibles y están repitiéndose desde el Día 1. Si quieres cápsulas nuevas, descarga la próxima actualización de la app cuando esté disponible.</p>
     </div>
@@ -505,10 +806,10 @@ input:focus, textarea:focus, select:focus{ border-color: var(--accent); backgrou
   <section class="screen" id="screen-progreso">
     <h2 class="section-title first">Progreso</h2>
 
-    <div class="card">
-      <div class="card-title">🔥 Racha de continuidad</div>
+    <div class="card racha-card">
+      <div class="card-title"><i class="ic" data-ic="flame"></i><span>Racha de continuidad</span></div>
       <div class="streak-hero">
-        <div class="streak-flame">🔥</div>
+        <div class="streak-flame"><i class="ic" data-ic="flame" data-size="30"></i></div>
         <div>
           <div class="streak-num" id="streak-num">0</div>
           <div class="streak-label">días consecutivos con actividad registrada</div>
@@ -518,20 +819,23 @@ input:focus, textarea:focus, select:focus{ border-color: var(--accent); backgrou
     </div>
 
     <div class="card">
-      <div class="card-title">📅 Resumen semanal</div>
-      <p class="muted">Hábitos completados: <b id="resumen-habitos">0</b></p>
-      <p class="muted" style="margin-top:4px;">Pasos completados: <b id="resumen-pasos">0</b></p>
-      <p class="muted" style="margin-top:4px;">Días con rutina registrada: <b id="resumen-dias">0</b></p>
+      <div class="card-title"><i class="ic" data-ic="chart"></i><span>Resumen semanal</span></div>
+      <p class="hint" style="margin-top:-4px; margin-bottom:12px;">Tus logros de los últimos 7 días.</p>
+      <div class="stat-grid">
+        <div class="stat azul"><div class="stat-num" id="resumen-habitos">0</div><div class="stat-label">hábitos completados</div></div>
+        <div class="stat dorado"><div class="stat-num" id="resumen-pasos">0</div><div class="stat-label">compromisos cumplidos</div></div>
+        <div class="stat cielo"><div class="stat-num" id="resumen-dias">0</div><div class="stat-label">días con rutina</div></div>
+      </div>
     </div>
 
     <div class="card">
-      <div class="card-title">🗓️ Revisión mensual</div>
+      <div class="card-title"><i class="ic" data-ic="calcheck"></i><span>Revisión mensual</span></div>
       <p class="muted">Se abre automáticamente el día 1 de cada mes. También puedes abrirla manualmente.</p>
       <button class="btn secondary block" style="margin-top:10px;" onclick="abrirRevisionMensual()">Abrir revisión mensual</button>
     </div>
 
     <div class="card">
-      <div class="card-title">🕰️ Historial reciente</div>
+      <div class="card-title"><i class="ic" data-ic="history"></i><span>Historial reciente</span></div>
       <div id="historial-list"></div>
     </div>
   </section>
@@ -545,16 +849,22 @@ input:focus, textarea:focus, select:focus{ border-color: var(--accent); backgrou
       <div class="card">
         <label>Tu nombre</label>
         <input type="text" id="input-nombre" placeholder="Ej: Noel">
-        <p class="hint">Se usa para saludarte por tu nombre en la pantalla Hoy. Es opcional.</p>
-        <button class="btn small" style="margin-top:8px;" onclick="guardarNombre()">Guardar</button>
+        <p class="hint">Se usa para saludarte por tu nombre en la pantalla Hoy. Es opcional. Se guarda solo.</p>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <div class="settings-group-title">Cuenta y sincronización</div>
+      <div class="card" id="cuenta-card">
+        <div id="cuenta-body"></div>
       </div>
     </div>
 
     <div class="settings-group">
       <div class="settings-group-title">Datos</div>
       <div class="card">
-        <button class="btn block" onclick="exportarDatos()">⬇️ Exportar mis datos (JSON)</button>
-        <button class="btn block secondary" style="margin-top:10px;" onclick="document.getElementById('import-file-input').click()">⬆️ Importar mis datos</button>
+        <button class="btn block" onclick="exportarDatos()"><i class="ic" data-ic="download"></i> Exportar mis datos (JSON)</button>
+        <button class="btn block secondary" style="margin-top:10px;" onclick="document.getElementById('import-file-input').click()"><i class="ic" data-ic="upload"></i> Importar mis datos</button>
         <input type="file" id="import-file-input" accept="application/json" style="display:none" onchange="importarDatos(event)">
       </div>
     </div>
@@ -564,8 +874,7 @@ input:focus, textarea:focus, select:focus{ border-color: var(--accent); backgrou
       <div class="card">
         <label>URL de webhook n8n (opcional)</label>
         <input type="text" id="input-webhook" placeholder="https://...">
-        <p class="hint">Si configuras una URL, cada cierre de día se intentará enviar también allí en formato JSON. Es completamente opcional: la app funciona igual sin esto. Nunca se comparte nada sin que tú lo configures aquí.</p>
-        <button class="btn small" style="margin-top:8px;" onclick="guardarWebhook()">Guardar</button>
+        <p class="hint">Si configuras una URL, cada cierre de día se intentará enviar también allí en formato JSON. Es completamente opcional: la app funciona igual sin esto. Nunca se comparte nada sin que tú lo configures aquí. Se guarda solo.</p>
       </div>
     </div>
 
@@ -577,8 +886,30 @@ input:focus, textarea:focus, select:focus{ border-color: var(--accent); backgrou
           Avisarme aunque no tenga la app abierta
         </label>
         <p class="hint" id="notifyStatus" style="margin-top:8px;"></p>
-        <p class="muted" style="margin-top:10px;">Los recordatorios de cada hábito se activan y configuran desde la sección Rutina (hora y días). Aquí puedes probar el aviso.</p>
-        <button class="btn ghost small block" style="margin-top:10px;" onclick="probarRecordatorio()">🔔 Probar recordatorio</button>
+
+        <div class="card-title" style="margin-top:16px;">Tipo de aviso</div>
+        <div class="estilo-row" role="radiogroup" aria-label="Tipo de aviso">
+          <button type="button" class="estilo-btn" role="radio" data-estilo="notificacion" onclick="setEstiloAviso('notificacion')"><i class="ic" data-ic="bell"></i> Solo notificación</button>
+          <button type="button" class="estilo-btn" role="radio" data-estilo="alarma" onclick="setEstiloAviso('alarma')"><i class="ic" data-ic="alarm"></i> Notificación + alarma</button>
+        </div>
+        <p class="hint" id="estilo-aviso-hint" style="margin-top:8px;"></p>
+
+        <div class="card-title" style="margin-top:16px;">Revisar mi rutina</div>
+        <p class="hint" style="margin-top:0;">Dos avisos al día para abrir la app y revisar lo que toca.</p>
+        <div id="avisos-revision-list"></div>
+ <p class="hint" id="desktop-notify-hint" style="display:none; margin-top:12px;">En computador los avisos llegan aunque cierres la pestaña, siempre que el navegador (Chrome, Edge, Firefox o Safari) siga abierto. Si quieres tenerla como app, usa el ícono de instalar en la barra de direcciones de Chrome o Edge.</p>
+        <div id="ios-install-guide" style="display:none; margin-top:14px; padding:14px; border-radius:var(--radius-md); background:var(--accent-soft);">
+          <div class="card-title" style="margin-bottom:2px;"><i class="ic" data-ic="phone"></i><span>En iPhone: instala la app primero</span></div>
+          <p class="hint" style="margin-top:0;">Apple solo permite avisos con la app cerrada si está en tu pantalla de inicio (iOS 16.4 o superior).</p>
+          <ol class="install-steps">
+            <li>Abre esta página en <b>Safari</b>.</li>
+            <li>Toca el botón <b>Compartir</b> (el cuadrado con la flecha hacia arriba).</li>
+            <li>Elige <b>“Agregar a pantalla de inicio”</b> y toca <b>Agregar</b>.</li>
+            <li>Abre <b>Brújula</b> desde el nuevo ícono y vuelve aquí para activar los avisos.</li>
+          </ol>
+        </div>
+        <p class="muted" style="margin-top:10px;">Los recordatorios de cada hábito se configuran en Brújula → Mis hábitos y horarios.</p>
+        <button class="btn ghost small block" style="margin-top:10px;" onclick="probarRecordatorio()"><i class="ic" data-ic="bell"></i> Probar recordatorio</button>
       </div>
     </div>
 
@@ -588,25 +919,25 @@ input:focus, textarea:focus, select:focus{ border-color: var(--accent); backgrou
         <img class="about-logo" src="logo.svg" alt="Brújula Interior">
         <p class="muted"><b>Brújula Interior</b> es un acompañante personal para convertir intención en acción: recordar tus metas, definir tu prioridad del día y cerrar el día con conciencia.</p>
         <p class="muted" style="margin-top:10px;">Esta aplicación no está afiliada a ningún autor, programa o marca externa. El contenido de las cápsulas diarias es original, inspirado libremente en ideas generales y clásicas del desarrollo personal (disciplina, metas, hábitos, gratitud, acción), de dominio público en su espíritu, sin citar ni reproducir textos protegidos de ningún autor o curso específico.</p>
-        <p class="small-muted" style="margin-top:10px;">Versión 1.1 · Datos guardados solo en este dispositivo (localStorage).</p>
+        <p class="small-muted" style="margin-top:10px;">Versión 1.2 · Datos guardados solo en este dispositivo (localStorage).</p>
       </div>
     </div>
 
     <div class="settings-group">
       <div class="settings-group-title">Zona de riesgo</div>
       <div class="card">
-        <button class="btn danger block" onclick="confirmarBorrarTodo()">🗑️ Borrar todos mis datos</button>
+        <button class="btn danger block" onclick="confirmarBorrarTodo()"><i class="ic" data-ic="trash"></i> Borrar todos mis datos</button>
       </div>
     </div>
   </section>
 
   <div class="navbar">
-    <button class="nav-item" data-screen="hoy" onclick="go('hoy')"><span class="nav-icon">🏠</span><span class="nav-label">Hoy</span></button>
-    <button class="nav-item" data-screen="metas" onclick="go('metas')"><span class="nav-icon">🎯</span><span class="nav-label">Metas</span></button>
-    <button class="nav-item" data-screen="rutina" onclick="go('rutina')"><span class="nav-icon">🗓️</span><span class="nav-label">Rutina</span></button>
-    <button class="nav-item" data-screen="cápsula" onclick="go('cápsula')"><span class="nav-icon">🕊️</span><span class="nav-label">Cápsula</span></button>
-    <button class="nav-item" data-screen="progreso" onclick="go('progreso')"><span class="nav-icon">📈</span><span class="nav-label">Progreso</span></button>
-    <button class="nav-item" data-screen="ajustes" onclick="go('ajustes')"><span class="nav-icon">⚙️</span><span class="nav-label">Ajustes</span></button>
+    <button class="nav-item" data-screen="hoy" onclick="go('hoy')"><span class="nav-icon"><i class="ic" data-ic="home"></i></span><span class="nav-label">Hoy</span></button>
+    <button class="nav-item" data-screen="metas" onclick="go('metas')"><span class="nav-icon"><i class="ic" data-ic="compass"></i></span><span class="nav-label">Brújula</span></button>
+    <button class="nav-item" data-screen="rutina" onclick="go('rutina')"><span class="nav-icon"><i class="ic" data-ic="calendar"></i></span><span class="nav-label">Rutina</span></button>
+    <button class="nav-item" data-screen="cápsula" onclick="go('cápsula')"><span class="nav-icon"><i class="ic" data-ic="feather"></i></span><span class="nav-label">Cápsula</span></button>
+    <button class="nav-item" data-screen="progreso" onclick="go('progreso')"><span class="nav-icon"><i class="ic" data-ic="chart"></i></span><span class="nav-label">Progreso</span></button>
+    <button class="nav-item" data-screen="ajustes" onclick="go('ajustes')"><span class="nav-icon"><i class="ic" data-ic="gear"></i></span><span class="nav-label">Ajustes</span></button>
   </div>
 </div>
 
@@ -620,11 +951,84 @@ input:focus, textarea:focus, select:focus{ border-color: var(--accent); backgrou
 
 <div class="toast" id="toast"></div>
 
+<div class="celebracion" id="celebracion" onclick="cerrarCelebracion()" role="dialog" aria-label="Día completo">
+  <div class="celebra-card">
+    <div class="celebra-flame"><i class="ic" data-ic="flame" data-size="40"></i></div>
+    <div class="celebra-title">¡Día completo!</div>
+    <div class="celebra-sub">Cumpliste todo lo de hoy. Así se construye el hábito.</div>
+    <div class="celebra-racha" id="celebra-racha"></div>
+  </div>
+</div>
+
+<div class="alarma-overlay" id="alarma-overlay" role="alertdialog" aria-labelledby="alarma-title">
+  <div class="alarma-icon"><i class="ic" data-ic="alarm"></i></div>
+  <div class="alarma-title" id="alarma-title">Brújula Interior</div>
+  <div class="alarma-body" id="alarma-body"></div>
+  <button class="btn" style="margin-top:28px; background:var(--white); color:var(--accent-dark); min-width:200px;" onclick="detenerAlarma(true)">Detener y abrir</button>
+</div>
+
+<script src="config.js"></script>
+<script>
+  // Supabase solo se carga si está configurado en config.js; si no carga (sin internet), la app sigue igual.
+  (function(){
+    var c = window.BRUJULA_CONFIG || {};
+    if(c.supabaseUrl && c.supabaseAnonKey){
+      document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"><\/script>');
+    }
+  })();
+</script>
 <script>
 /* ============================================================
    Brújula Interior — lógica de la aplicación
    Sin dependencias externas. Todo el estado vive en localStorage.
    ============================================================ */
+
+// ---------- Íconos de línea (SVG en línea, sin dependencias) ----------
+const ICONS = {
+  home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/>',
+  target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  calcheck:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m9 15 2 2 4-4"/>',
+  feather:'<path d="M20 4c-7 0-13 5-13 13v3"/><path d="M7 17h7c4 0 6-5 6-13"/>',
+  chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+  check:'<rect x="3" y="3" width="18" height="18" rx="5"/><path d="m8 12 3 3 5-6"/>',
+  checked:'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',
+  circle:'<circle cx="12" cy="12" r="9"/>',
+  moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5z"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 17v4M17 19h4"/>',
+  compass:'<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>',
+  heart:'<path d="M12 20s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9z"/>',
+  eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  list:'<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/>',
+  flame:'<path d="M12 22c4 0 7-2.7 7-6.6 0-3.4-2.2-5.5-3.6-7.4-.4 1.8-1.4 3-2.6 3.6.3-3.3-1.2-6.4-4.3-8.6.2 3.2-1.4 5.2-2.8 7C4.6 11.6 5 13 5 15.4 5 19.3 8 22 12 22z"/>',
+  history:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/>',
+  download:'<path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/>',
+  upload:'<path d="M12 21V9M7 14l5-5 5 5"/><path d="M4 3h16"/>',
+  bell:'<path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+  alarm:'<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M5 3 2 6M19 3l3 3"/>',
+  phone:'<rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/>',
+  trash:'<path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15"/>',
+  pencil:'<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="m14 6 4 4"/>',
+  x:'<path d="M6 6l12 12M18 6 6 18"/>',
+  skip:'<path d="m6 5 9 7-9 7z"/><path d="M19 5v14"/>',
+  undo:'<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  chevron:'<path d="m6 9 6 6 6-6"/>',
+  leaf:'<path d="M5 21c0-9 5-15 15-16-1 10-7 15-15 16z"/><path d="M5 21 13 13"/>'
+};
+function ic(nombre, size){
+  const s = size || 18;
+  return `<span class="ic" aria-hidden="true"><svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${ICONS[nombre]||''}</svg></span>`;
+}
+// Convierte los <i class="ic" data-ic="..."> del HTML estático en íconos SVG.
+function hidratarIconos(root){
+  (root || document).querySelectorAll('i.ic[data-ic]').forEach(el=>{
+    const size = Number(el.dataset.size) || (el.closest('.nav-icon') ? 24 : 18);
+    el.outerHTML = ic(el.dataset.ic, size);
+  });
+}
 
 const STORAGE_KEY = 'brujulaInterior.v1';
 let N8N_WEBHOOK_URL = ''; // opcional; también configurable desde Ajustes
@@ -654,13 +1058,25 @@ const DEFAULT_STATE = {
   dias: {},             // dias[fecha] = { gratitud, visualizacion, enfoque:{metas,razones,pasos:[{texto,completado}x2]}, tasks:[...], habitos:{id:{completado,duracion}}, cierre:{...}, capsulaRespuesta, capsulaDia }
   semanaRevisiones: {}, // semanaRevisiones[isoWeekKey] = {...}
   mesRevisiones: {},    // mesRevisiones['YYYY-MM'] = {...}
-  ultimaAperturaMensual: null
+  ultimaAperturaMensual: null,
+  // Dos avisos diarios para abrir la app y revisar la rutina (push, aunque la app esté cerrada)
+  avisosRevision: {
+    manana: { activo:true, hora:'08:00' },
+    noche:  { activo:true, hora:'21:00' }
+  },
+  estiloAviso: 'notificacion', // 'notificacion' | 'alarma'
+  visualizacionTexto: '',      // se escribe una vez (Mi brújula) y se lee cada día
+  cualidadSemana: null         // { semana:'YYYY-Www', texto } cualidad que quiero mejorar esta semana
 };
 
 let state = null;
 
 // ---------- Persistencia ----------
 function loadState(){
+  loadStateRaw();
+  tomarSnapshots();
+}
+function loadStateRaw(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
     if(!raw){ state = JSON.parse(JSON.stringify(DEFAULT_STATE)); return; }
@@ -669,14 +1085,54 @@ function loadState(){
     state = Object.assign(JSON.parse(JSON.stringify(DEFAULT_STATE)), parsed);
     if(!state.dias) state.dias = {};
     if(!state.habitosConfig) state.habitosConfig = DEFAULT_STATE.habitosConfig;
+    if(!state.avisosRevision) state.avisosRevision = JSON.parse(JSON.stringify(DEFAULT_STATE.avisosRevision));
+    // Migración: la visualización antes se escribía cada día; ahora es una sola. Se toma la más reciente.
+    if(!state.visualizacionTexto){
+      const conVis = Object.keys(state.dias).sort().reverse().find(k=>state.dias[k] && state.dias[k].visualizacion);
+      if(conVis) state.visualizacionTexto = state.dias[conVis].visualizacion;
+    }
   }catch(e){
     console.warn('No se pudo leer el estado guardado, iniciando limpio.', e);
     state = JSON.parse(JSON.stringify(DEFAULT_STATE));
   }
 }
+// Marcas de tiempo para fusionar bien entre aparatos (ver SINCRONIZACIÓN).
+// Solo se marcan cambios reales: abrir la app en un aparato nuevo no debe
+// "ganarle" a los datos que ya tienes en la nube.
+let snapConfig = null, snapDias = {};
+function contenidoConfig(s){
+  const c = Object.assign({}, s);
+  ['dias','_updatedAt','_configAt','_capsulaStartEpoch','ultimaAperturaMensual','semanaRevisiones','mesRevisiones','modoDia','iosBannerOculto'].forEach(k=>delete c[k]);
+  return JSON.stringify(c);
+}
+function contenidoDia(d){
+  const c = Object.assign({}, d);
+  ['_u','capsulaDia','capsulaRepetida'].forEach(k=>delete c[k]);
+  return JSON.stringify(c);
+}
+function tomarSnapshots(){
+  snapConfig = contenidoConfig(state);
+  snapDias = {};
+  Object.keys(state.dias||{}).forEach(k=>{ snapDias[k] = contenidoDia(state.dias[k]); });
+}
+function marcarCambios(){
+  const now = Date.now();
+  const cfg = contenidoConfig(state);
+  if(snapConfig !== null && cfg !== snapConfig) state._configAt = now;
+  snapConfig = cfg;
+  Object.keys(state.dias||{}).forEach(k=>{
+    const c = contenidoDia(state.dias[k]);
+    const cambio = snapDias[k] === undefined ? diaTuvoActividad2(state.dias[k]) : c !== snapDias[k];
+    if(cambio) state.dias[k]._u = now;
+    snapDias[k] = c;
+  });
+  state._updatedAt = now;
+}
 function saveState(){
   try{
+    marcarCambios();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    if(typeof programarSubida === 'function') programarSubida();
   }catch(e){
     console.warn('No se pudo guardar el estado (localStorage no disponible o lleno).', e);
     showToast('No se pudo guardar. Revisa el espacio de almacenamiento del navegador.');
@@ -707,7 +1163,8 @@ function isoWeekKey(d){
 }
 function formatDateLong(d){
   const dt = d || new Date();
-  return dt.toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  const t = dt.toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long' });
+  return t.charAt(0).toUpperCase() + t.slice(1);
 }
 function ensureDia(fecha){
   if(!state.dias[fecha]){
@@ -818,49 +1275,280 @@ function renderHoy(){
   document.getElementById('hoy-greeting').textContent = saludo;
   document.getElementById('hoy-date').textContent = formatDateLong();
 
-  // Cápsula
-  const cap = capsulaDelDia(fecha);
-  if(cap){
-    document.getElementById('hoy-cap-tema').textContent = cap.tema;
-    document.getElementById('hoy-cap-frase').textContent = cap.frase;
-  } else {
-    document.getElementById('hoy-cap-tema').textContent = 'Sin conexión al contenido';
-    document.getElementById('hoy-cap-frase').textContent = 'Las cápsulas no pudieron cargarse ahora mismo. El resto de la app funciona con normalidad.';
-  }
-
-  // Metas mini
-  const metasMini = document.getElementById('hoy-metas-mini');
-  if(!state.metas.length){
-    metasMini.innerHTML = `<div class="muted">Aún no defines tus metas principales. <span style="color:var(--accent-dark); font-weight:700; cursor:pointer;" onclick="go('metas')">Crearlas →</span></div>`;
-  } else {
-    metasMini.innerHTML = state.metas.slice(0,5).map(m=>`<div style="padding:6px 0; font-size:14px;"><b style="color:var(--gold);">${m.numero}</b> · ${escapeHtml(m.titulo)}</div>`).join('');
-  }
-
-  // Identidad
-  const idText = document.getElementById('hoy-identidad-text');
-  if(state.identidad.texto){
-    idText.textContent = '“' + state.identidad.texto + '”';
-    idText.classList.remove('muted');
-  } else {
-    idText.textContent = 'Aún no has escrito tu declaración. Ve a Rutina para crearla.';
-    idText.classList.add('muted');
-  }
-  const btnM = document.getElementById('btn-identidad-manana');
-  const btnN = document.getElementById('btn-identidad-noche');
-  btnM.textContent = dia.identidad.manana ? '✓ Dicha en la mañana' : 'Ya la dije (mañana)';
-  btnN.textContent = dia.identidad.noche ? '✓ Dicha en la noche' : 'Ya la dije (noche)';
-
-  // Enfoque de hoy
+  // 1 · Objetivo de hoy
   renderEnfoqueHoy();
 
-  // Hábitos
+  // 2 · Hábitos
   renderHabitosHoy();
+
+  const hc = document.getElementById('habitos-ciencia'); if(hc && !hc.innerHTML) hc.innerHTML = cienciaHtml('habitos');
+
+  // 3 · Cierre de la noche
+  renderCierre();
 
   // Progreso del día
   renderProgresoHoy();
 
-  // Próximo recordatorio
+  // Próximo aviso
   renderProximoRecordatorio();
+
+  // Arranque del día
+  renderRitual();
+}
+
+// ---------- Arranque del día ----------
+// Lo que se define una vez (identidad, visualización) aquí solo se lee y se marca;
+// lo que es diario (gratitud) se escribe aquí mismo.
+// La declaración se escribe una vez en Mi brújula; aquí solo se muestra para leerla.
+function declaracionParaLeer(){
+  const t = state.identidad.texto;
+  return t
+    ? `<div class="declaracion-leer">“${escapeHtml(t)}”</div><span class="ritual-sub-nota">Léela con calma y marca la casilla.</span>`
+    : `Aún no la tienes escrita. <a class="link" onclick="editarTextoFijo('identidad')">Escríbela una sola vez en Mi brújula →</a>`;
+}
+// Fundamento científico de cada paso, en lenguaje sencillo (fuentes verificadas).
+const CIENCIA = {
+  gratitud: { texto:'En el cerebro: tras 3 semanas escribiendo gratitud, la corteza prefrontal ventromedial (zona de valor y recompensa) respondió más al dar a otros. En la vida diaria: un metaanálisis de 64 ensayos clínicos encontró menos ansiedad y depresión y más satisfacción con la vida.',
+    fuente:'Karns, Moore y Mayr, Universidad de Oregón, 2017, Frontiers in Human Neuroscience (resonancia magnética); Diniz y col., 2023, revista científica del Hospital Israelita Albert Einstein, São Paulo, indexada en PubMed (metaanálisis).' },
+  visualizacion: { texto:'En el cerebro: imaginar una acción activa redes motoras y visuales parecidas a las de hacerla, por eso la práctica mental mejora el desempeño. Funciona mejor si te imaginas haciendo los pasos y anticipas el obstáculo con tu plan: soñar solo con la meta lograda puede quitarte energía.',
+    fuente:'Metaanálisis de imaginería, Simonsmeier y col., Universidad de Bielefeld, 2021; Pham y Taylor, UCLA, 1999; Oettingen y Mayer, Universidad de Nueva York, 2002; metaanálisis del método WOOP, Wang, Wang y Gai, 2021 (15.907 personas).' },
+  objetivo: { texto:'Las metas concretas y desafiantes producen mejor desempeño que proponerse "hacer lo mejor posible". En deporte, las metas de proceso (lo que harás) mejoraron mucho más el desempeño que las metas de solo resultado. Hacer primero la tarea más importante es un consejo práctico, sin un estudio específico.',
+    fuente:'Metaanálisis de 27 estudios, International Review of Sport and Exercise Psychology, 2024; Locke y Latham, Universidad de Maryland y Universidad de Toronto, 2002, American Psychologist.',
+    mas:[ 'Efecto sobre el desempeño: metas de proceso d = 1,36; metas de rendimiento d = 0,44; metas de solo resultado d = 0,09.' ] },
+  compromiso: { texto:'Decidir de antemano qué harás, cuándo y dónde ("si son las 9, entonces escribo el índice") deja la acción lista para dispararse sola. El metaanálisis más grande, con 642 pruebas, confirma que mejora la conducta, y funciona mejor con el formato "si..., entonces...".',
+    fuente:'Sheeran, Listrom y Gollwitzer, Universidad de Carolina del Norte y Universidad de Nueva York, 2025, European Review of Social Psychology (642 pruebas, d entre 0,27 y 0,66).' },
+  identidad: { texto:'En el cerebro: leer tus valores activa zonas de recompensa y del "yo" (corteza prefrontal ventromedial y estriado ventral), sobre todo si te imaginas viviéndolos en el futuro, y esa activación predice cambios reales de conducta.',
+    fuente:'Cascio y col., Universidad de Pensilvania, 2016, Social Cognitive and Affective Neuroscience (resonancia magnética funcional).',
+    mas:[ 'Quienes afirmaron sus valores procesaron mejor los consejos de salud en la corteza prefrontal ventromedial y redujeron más su sedentarismo el mes siguiente (Falk y col., Universidad de Pensilvania, 2015, PNAS).',
+          'Un metaanálisis de 41 estudios encontró que afirmar tus valores mejora la conducta, no solo la intención (Epton y col., Universidad de Manchester, 2015, Health Psychology).',
+          'Escribir sobre los propios valores en clase mejoró las notas y redujo 40% la brecha de rendimiento entre grupos de estudiantes (Cohen y col., 2006, Science; Geoffrey Cohen es hoy profesor en Stanford).',
+          'Pensarte como "una persona que..." motiva más que "hacer algo": preguntar por "ser votante" en lugar de "votar" aumentó la participación real en elecciones (Bryan, Walton, Rogers y Dweck, Universidad de Stanford, 2011, PNAS). Por eso la declaración se escribe en presente: "Soy...".' ] },
+  capsula: { texto:'Siendo honestos: este paso no tiene un estudio propio que mida su efecto. Es una idea breve para empezar el día pensando en algo que te inspire.',
+    fuente:'Sin fuente científica específica.' },
+  reflexion: { texto:'Dedicar 15 minutos al final del día a escribir lo que aprendiste mejoró el desempeño cerca de 23% frente a quienes usaron ese tiempo para seguir trabajando (evidencia de conducta).',
+    fuente:'Di Stefano, Gino, Pisano y Staats, Universidad de Harvard (Harvard Business School), 2014.' },
+  habitos: { texto:'En el cerebro: al repetir una conducta, su control pasa del estriado dorsomedial (decisiones con intención) al dorsolateral (respuestas automáticas). En la práctica tarda unos dos meses (mediana de 59 a 66 días, con mucha variación), y los hábitos de la mañana resultaron más fuertes. Fallar un día suelto no arruina el proceso.',
+    fuente:'Yin y Knowlton, UCLA, 2006, Nature Reviews Neuroscience; Singh y col., Universidad de Australia del Sur, 2024, Healthcare; Lally y col., University College London, 2010.',
+    mas:[ 'El mito de los 21 días viene del cirujano Maxwell Maltz (Psycho-Cybernetics, 1960): notó que sus pacientes tardaban "un mínimo de unos 21 días" en acostumbrarse a su nueva imagen. Era una observación, no un experimento.',
+          'Cuando se midió: mediana de 66 días, con un rango de 18 a 254, y saltarse un día no afectó la formación del hábito (Lally y col., University College London, 2010, European Journal of Social Psychology, 96 personas).' ] },
+  ejercicio: { texto:'Mejora la memoria y la capacidad de pensar (caminar con regularidad agrandó el hipocampo) y reduce la depresión, la ansiedad y el estrés tanto o más que la terapia o los medicamentos. Caminar, trotar, yoga o pesas sirven, y más cuanto más intensos.',
+    fuente:'Erickson y col., Universidad de Pittsburgh, 2011, PNAS; Singh y col., Universidad de Australia del Sur, British Journal of Sports Medicine, 2024 (2.724 ensayos) y 2023 (1.039 ensayos); Noetel y col., Universidad de Queensland, 2024, BMJ (218 estudios, 14.170 personas).' },
+  lectura: { texto:'Escribir lo que recuerdas de lo que leíste fija la memoria mucho mejor que releer. Un metaanálisis de 222 estudios con 48.478 estudiantes confirmó un efecto medio a favor de recordar y ponerse a prueba. Por eso conviene anotar tu reflexión.',
+    fuente:'Yang y col., University College London y otras, 2021, Psychological Bulletin; Roediger y Karpicke, Universidad Washington en San Luis, 2006, Psychological Science (56% frente a 42% recordado a la semana).' },
+  estudio: { texto:'Estudiar en sesiones repartidas en varios días se recuerda mejor que estudiar todo de una vez, y explicar con tus palabras lo aprendido (recordar sin mirar) refuerza la memoria.',
+    fuente:'Cepeda y col., Universidad de California en San Diego, 2006, Psychological Bulletin (práctica espaciada); Yang y col., University College London y otras, 2021, Psychological Bulletin (222 estudios).' }
+};
+const CIENCIA_GRUPOS = [
+  { titulo:'Arranque del día', items:[['gratitud','Gratitud'],['visualizacion','Visualización y obstáculo'],['objetivo','Objetivo del día'],['compromiso','Compromiso'],['identidad','Declaración de identidad'],['capsula','Cápsula del día']] },
+  { titulo:'Cierre de la noche', items:[['reflexion','¿Qué aprendí?'],['gratitud','¿Por qué estoy agradecido?'],['identidad','Declaración de identidad']] },
+  { titulo:'Hábitos', items:[['habitos','Cómo se forma un hábito (y el mito de los 21 días)'],['ejercicio','Ejercicio'],['lectura','Lectura y reflexión'],['estudio','Estudio']] }
+];
+function renderGlosarioCiencia(){
+  const el = document.getElementById('ciencia-glosario');
+  if(!el || el.dataset.listo) return;
+  el.dataset.listo = '1';
+  el.innerHTML = CIENCIA_GRUPOS.map(g=>`<div class="glosario-grupo">${escapeHtml(g.titulo)}</div>` + g.items.map(([k,t])=>{
+    const c = CIENCIA[k];
+    return `<details class="glosario-item"><summary>${escapeHtml(t)}</summary><p>${c.texto}</p>${(c.mas||[]).map(m=>`<p>${m}</p>`).join('')}<p class="ciencia-fuente">Fuente: ${c.fuente}</p></details>`;
+  }).join('')).join('');
+}
+function cienciaHtml(clave){
+  const c = CIENCIA[clave];
+  if(!c) return '';
+  return `<details class="ciencia"><summary>${ic('spark',14)} ¿Por qué funciona?</summary><p>${c.texto}</p><p class="ciencia-fuente">Fuente: ${c.fuente}</p></details>`;
+}
+function filaRitual({ id, done, titulo, sub, extra, opcional, onToggle, ciencia }){
+  return `<div class="ritual-row ${done?'done':''}">
+    <button type="button" data-pop="rit${id}" class="checkbox ${done?'checked':''}" aria-pressed="${done}" aria-label="Marcar ${escapeHtml(titulo)}" onclick="${onToggle}"></button>
+    <div class="ritual-body">
+      <div class="row-title">${escapeHtml(titulo)}${opcional?' <span class="opt-tag">opcional</span>':''}</div>
+      ${sub ? `<div class="ritual-sub">${sub}</div>` : ''}
+      ${extra || ''}
+      ${ciencia ? cienciaHtml(ciencia) : ''}
+    </div>
+  </div>`;
+}
+// Arranque del día: el primer hábito. En este orden: gratitud, visualización,
+// objetivo del día (tarea más importante), compromiso, identidad y cápsula. Todo cuenta.
+function pasosArranque(dia){
+  const e = dia.enfoque || { metas:'', pasos:[] };
+  return {
+    gratitud: !!dia.gratitud,
+    visualizacion: !!dia.visualizacionLeida,
+    objetivo: !!e.metas,
+    compromiso: (e.pasos||[]).some(p=>p.texto),
+    identidad: !!dia.identidad.manana,
+    capsula: !!dia.capsulaLeida
+  };
+}
+// Dos bloques que se despliegan: Arranque (mañana) y Cierre (noche).
+// null = automático: se abre el que toca según la hora y si falta por hacer.
+const momentoAbierto = { arranque:null, cierre:null };
+function momentoEstaAbierto(cual, completo){
+  if(momentoAbierto[cual] !== null) return momentoAbierto[cual];
+  const h = new Date().getHours();
+  return cual === 'arranque' ? (!completo && h < 18) : (!completo && h >= 18);
+}
+function pintarMomento(cual, abierto){
+  const btn = document.getElementById(cual+'-toggle');
+  const body = document.getElementById(cual+'-body');
+  if(!btn || !body) return;
+  btn.setAttribute('aria-expanded', abierto);
+  body.hidden = !abierto;
+}
+function toggleMomento(cual){
+  const btn = document.getElementById(cual+'-toggle');
+  const abierto = btn && btn.getAttribute('aria-expanded') === 'true';
+  momentoAbierto[cual] = !abierto;
+  pintarMomento(cual, !abierto);
+}
+function escribiendoEn(listaId){
+  const a = document.activeElement;
+  return !!(a && a.tagName === 'TEXTAREA' && a.closest('#'+listaId));
+}
+function renderConteoArranque(){
+  const pasos = pasosArranque(ensureDia(todayKey()));
+  const hechos = Object.values(pasos).filter(Boolean).length, total = Object.keys(pasos).length;
+  const completo = hechos === total;
+  document.getElementById('arranque-count').innerHTML = completo ? `${ic('checked',16)} Listo` : `${hechos}/${total}`;
+  document.getElementById('arranque-count').classList.toggle('ok', completo);
+  document.getElementById('arranque-fill').style.width = Math.round(hechos/total*100)+'%';
+  document.getElementById('arranque-hint').textContent = completo ? 'Arranque completo. Ahora, a cumplir tus compromisos y hábitos.' : 'Tu primer hábito: déjalo listo antes de seguir con lo demás.';
+  const hh = document.getElementById('habitos-hint'); if(hh) hh.style.display = completo ? 'none' : 'block';
+  return completo;
+}
+function marcarFilaTexto(pop, on){
+  const btn = document.querySelector(`[data-pop="${pop}"]`);
+  if(!btn) return;
+  btn.classList.toggle('checked', on); btn.setAttribute('aria-pressed', on);
+  const row = btn.closest('.ritual-row'); if(row) row.classList.toggle('done', on);
+}
+function renderRitual(){
+  const el = document.getElementById('ritual-list');
+  if(!el) return;
+  const dia = ensureDia(todayKey());
+  if(escribiendoEn('ritual-list')) return; // no re-dibujar mientras escribes la gratitud
+  const pasos = pasosArranque(dia);
+  const completo = renderConteoArranque();
+  pintarMomento('arranque', momentoEstaAbierto('arranque', completo));
+  const identidad = state.identidad.texto;
+  const vis = state.visualizacionTexto;
+  const cap = capsulaDelDia(todayKey());
+  const e = dia.enfoque;
+  const compromisos = (e.pasos||[]).filter(p=>p.texto).map(p=>escapeHtml(p.texto)).join(' · ');
+  el.innerHTML = [
+    filaRitual({ id:'grat', done: pasos.gratitud, titulo:'1. Gratitud',
+      extra: `<textarea id="input-gratitud" rows="2" placeholder="Hoy agradezco..." style="margin-top:8px; min-height:56px;">${escapeHtml(dia.gratitud||'')}</textarea>`,
+      onToggle:"document.getElementById('input-gratitud').focus()", ciencia:'gratitud' }),
+    filaRitual({ id:'vis', done: pasos.visualizacion, titulo:'2. Visualización',
+      sub: (vis ? `Tu meta ya lograda. <a class="link" onclick="modoVisualizacion()">Leer →</a>` : `<a class="link" onclick="editarTextoFijo('visualizacion')">Escríbela una sola vez →</a>`)
+        + `<span class="ritual-sub-nota"><b>Visualizar es ver la escena en tu mente, como una película.</b> Cierra los ojos un minuto: 1) imagina tu meta ya lograda y cómo te sientes; 2) mírate haciendo, paso a paso, tu tarea principal de hoy; 3) piensa qué podría frenarte y qué harás.</span>`,
+      extra: `<label for="input-obstaculo" style="margin-top:10px;">¿Qué obstáculo puede aparecer hoy y qué harás?</label><textarea id="input-obstaculo" rows="2" placeholder="Si aparece..., entonces haré...">${escapeHtml(dia.obstaculo||'')}</textarea>`,
+      onToggle:"toggleRitual('visualizacionLeida')", ciencia:'visualizacion' }),
+    filaRitual({ id:'obj', done: pasos.objetivo, titulo:'3. Objetivo del día',
+      sub: e.metas ? `<span class="quote">${escapeHtml(e.metas)}</span>` : `Elige tu tarea más importante y hazla primero. <a class="link" onclick="abrirEditorEnfoque()">Elegirla →</a>`,
+      onToggle:"abrirEditorEnfoque()", ciencia:'objetivo' }),
+    filaRitual({ id:'comp', done: pasos.compromiso, titulo:'4. Compromiso',
+      sub: compromisos ? `<span class="quote">${compromisos}</span> <a class="link" onclick="abrirEditorEnfoque()">Editar</a>` : `<a class="link" onclick="abrirEditorEnfoque()">Elige 2 acciones concretas →</a>`,
+      onToggle:"abrirEditorEnfoque()", ciencia:'compromiso' }),
+    filaRitual({ id:'ident', done: pasos.identidad, titulo:'5. Lee tu declaración de identidad',
+      sub: declaracionParaLeer()
+        + `<span class="cualidad-line">${cualidadActual() ? `Esta semana mejoro: <b>${escapeHtml(cualidadActual())}</b>` : `<a class="link" onclick="elegirCualidad()">Elige tu cualidad de la semana →</a>`}</span>`,
+      onToggle:"marcarIdentidad('manana')", ciencia:'identidad' }),
+    filaRitual({ id:'cap', done: pasos.capsula, titulo:'6. Cápsula del día',
+      sub: cap ? `<span class="quote">${escapeHtml(cap.frase)}</span> <a class="link" onclick="abrirCapsulaDesdeHoy()">Abrir →</a>` : 'Las cápsulas no pudieron cargarse ahora.',
+      onToggle:"toggleRitual('capsulaLeida')", ciencia:'capsula' })
+  ].join('');
+  bindAutosave('input-gratitud', v=>{
+    const d = ensureDia(todayKey());
+    const antes = !!d.gratitud;
+    d.gratitud = v;
+    if(antes !== !!v){ saveState(); setTimeout(()=>{ if(escribiendoEn('ritual-list')){ renderProgresoHoy(); actualizarCheckGratitud(); } else renderAll(); }, 0); }
+  });
+  bindAutosave('input-obstaculo', v=>{ ensureDia(todayKey()).obstaculo = v; });
+}
+function actualizarCheckGratitud(){
+  marcarFilaTexto('ritgrat', !!ensureDia(todayKey()).gratitud);
+  renderConteoArranque();
+}
+function toggleRitual(campo){
+  const dia = ensureDia(todayKey());
+  dia[campo] = !dia[campo];
+  if(dia[campo]) recienMarcado = campo==='visualizacionLeida' ? 'ritvis' : 'ritcap';
+  saveState();
+  renderAll();
+}
+// Abrir la cápsula no la marca: el paso se marca solo con la casilla.
+function abrirCapsulaDesdeHoy(){
+  go('cápsula');
+}
+
+// ---------- Mi brújula: textos que se escriben una vez ----------
+// Cualidad que quiero mejorar esta semana (inspirado en las virtudes de Franklin).
+const CUALIDADES_SUGERIDAS = ['Disciplina','Constancia','Orden','Paciencia','Templanza','Serenidad','Humildad','Sinceridad','Generosidad','Escucha','Puntualidad','Gratitud','Determinación'];
+function cualidadActual(){
+  const c = state.cualidadSemana;
+  return c && c.semana === isoWeekKey() ? c.texto : '';
+}
+function elegirCualidad(){
+  const actual = cualidadActual();
+  openModal(`
+    <h3 style="margin-bottom:6px;">Cualidad de esta semana</h3>
+    <p class="muted" style="margin-bottom:10px;">Elige una sola cualidad que quieras mejorar estos 7 días. Toca una sugerencia o escribe la tuya.</p>
+    <div class="chip-row">${CUALIDADES_SUGERIDAS.map(c=>`<button type="button" class="chip" onclick="document.getElementById('input-cualidad').value=this.textContent">${c}</button>`).join('')}</div>
+    <label>Mi cualidad</label>
+    <input type="text" id="input-cualidad" value="${escapeHtml(actual)}" placeholder="Ej: Paciencia">
+    <button class="btn block" style="margin-top:14px;" onclick="guardarCualidad()">Guardar</button>
+  `);
+}
+function guardarCualidad(){
+  const v = document.getElementById('input-cualidad').value.trim();
+  state.cualidadSemana = v ? { semana: isoWeekKey(), texto: v } : null;
+  saveState();
+  closeModal();
+  showToast(v ? 'Cualidad de la semana guardada.' : 'Cualidad borrada.');
+  renderAll();
+}
+function editarTextoFijo(tipo){
+  const esId = tipo === 'identidad';
+  const valor = esId ? state.identidad.texto : state.visualizacionTexto;
+  openModal(`
+    <h3 style="margin-bottom:6px;">${esId ? 'Mi declaración de identidad' : 'Mi visualización'}</h3>
+    <p class="muted" style="margin-bottom:10px;">${esId ? 'Escríbela en presente, como quien ya eres. La escribes una vez; cada día solo la lees.' : 'Describe tu meta ya lograda, en presente y con detalle. La escribes una vez; cada día solo la relees.'}</p>
+    <textarea id="texto-fijo" rows="5" style="min-height:130px;" placeholder="${esId ? 'Soy una persona disciplinada, enfocada y constante.' : 'Estoy disfrutando de...'}">${escapeHtml(valor||'')}</textarea>
+    <button class="btn block" style="margin-top:14px;" onclick="guardarTextoFijo('${tipo}')">Guardar</button>
+  `);
+  setTimeout(()=>{ const t = document.getElementById('texto-fijo'); if(t) t.focus(); }, 250);
+}
+function guardarTextoFijo(tipo){
+  const v = document.getElementById('texto-fijo').value.trim();
+  if(tipo === 'identidad') state.identidad.texto = v; else state.visualizacionTexto = v;
+  saveState();
+  closeModal();
+  showToast('Guardado.');
+  renderAll();
+}
+function irAConfigurarHabitos(){
+  go('metas');
+  const d = document.getElementById('habitos-config-card');
+  if(d){ d.open = true; setTimeout(()=>d.scrollIntoView({ behavior:'smooth', block:'start' }), 80); }
+}
+
+// Rellena un campo con el valor guardado, salvo que la persona esté escribiendo en él.
+function fillInput(id, value){
+  const el = document.getElementById(id);
+  if(!el || document.activeElement === el) return;
+  el.value = value || '';
+}
+
+// Guardado automático: guarda mientras escribes (con una pequeña espera) y al salir del campo.
+function bindAutosave(id, onSave){
+  const el = document.getElementById(id);
+  if(!el) return;
+  let timer = null;
+  const run = ()=>{ clearTimeout(timer); timer = null; onSave(el.value.trim()); saveState(); };
+  el.addEventListener('input', ()=>{ clearTimeout(timer); timer = setTimeout(run, 500); });
+  el.addEventListener('blur', ()=>{ if(timer) run(); });
 }
 
 function escapeHtml(s){
@@ -873,23 +1561,30 @@ function renderEnfoqueHoy(){
   const enfoque = dia.enfoque;
   const box = document.getElementById('enfoque-content');
   if(!box) return;
-  if(!enfoque || !enfoque.metas){
-    box.innerHTML = `<div class="enfoque-empty">Todavía no defines tu enfoque de hoy: hacia qué meta quieres avanzar y qué vas a hacer al respecto.</div>
-      <button class="enfoque-cta" onclick="go('rutina')">Definir enfoque de hoy</button>`;
-    return;
-  }
+  const card = document.getElementById('enfoque-card');
+  // Se define en el Arranque del día; aquí solo se cumplen los compromisos durante el día.
+  if(!enfoque || !enfoque.metas){ if(card) card.style.display = 'none'; return; }
+  if(card) card.style.display = '';
   const pasosHtml = enfoque.pasos.map((p,i)=>{
     if(!p.texto) return '';
     return `<div class="paso-row">
-      <div class="paso-check ${p.completado?'checked':''}" onclick="toggleEnfoquePaso(${i})"></div>
-      <div class="paso-text ${p.completado?'done':''}">${escapeHtml(p.texto)}</div>
+      <button type="button" data-pop="paso${i}" class="paso-check ${p.completado?'checked':''}" aria-pressed="${p.completado}" aria-label="Marcar paso ${i+1}" onclick="toggleEnfoquePaso(${i})"></button>
+      <div class="paso-text ${p.completado?'done':''}" onclick="toggleEnfoquePaso(${i})">${escapeHtml(p.texto)}</div>
     </div>`;
   }).join('');
   box.innerHTML = `
     <div class="enfoque-metas-text">${escapeHtml(enfoque.metas)}</div>
     ${enfoque.razones?`<div class="enfoque-razones-text">${escapeHtml(enfoque.razones)}</div>`:''}
     ${pasosHtml || `<div class="enfoque-razones-text" style="margin-top:12px;">Aún no defines tus 2 pasos de hoy.</div>`}
+    <button class="enfoque-cta" style="background:rgba(255,255,255,0.16); color:var(--white); box-shadow:none;" onclick="abrirEditorEnfoque()">${ic('pencil')} Editar</button>
   `;
+}
+let recienMarcado = null; // para animar solo la casilla que se acaba de marcar
+function animarRecienMarcado(){
+  if(!recienMarcado) return;
+  const el = document.querySelector(`[data-pop="${recienMarcado}"]`);
+  recienMarcado = null;
+  if(el){ el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); }
 }
 function toggleEnfoquePaso(idx){
   const fecha = todayKey();
@@ -897,6 +1592,7 @@ function toggleEnfoquePaso(idx){
   const p = dia.enfoque.pasos[idx];
   if(!p) return;
   p.completado = !p.completado;
+  if(p.completado) recienMarcado = 'paso'+idx;
   saveState();
   renderAll();
   if(p.completado) showToast('Paso completado. Bien hecho.');
@@ -906,32 +1602,44 @@ function renderHabitosHoy(){
   const fecha = todayKey();
   const dia = ensureDia(fecha);
   const list = document.getElementById('hoy-habitos-list');
+  if(escribiendoEn('hoy-habitos-list')) return; // no re-dibujar mientras escribes una reflexión
   const activos = state.habitosConfig.filter(h=>h.activo);
   if(!activos.length){
-    list.innerHTML = `<div class="empty-state"><div class="em-icon">🌱</div>No tienes hábitos activos. Actívalos en Rutina.</div>`;
+    list.innerHTML = `<div class="empty-state"><div class="em-icon">${ic('leaf',28)}</div>No tienes hábitos activos. Actívalos en Brújula → Mis hábitos y horarios.</div>`;
     return;
   }
   list.innerHTML = activos.map(h=>{
     const hd = dia.habitos[h.id] || { completado:false, duracion:null, omitido:false };
     const dur = h.duracionPersonal || h.duracionRecomendada;
     return `<div class="check-row">
-      <div class="checkbox ${hd.completado?'checked':''}" onclick="toggleHabito('${h.id}')"></div>
-      <div>
+      <button type="button" data-pop="hab${h.id}" class="checkbox ${hd.completado?'checked':''}" aria-pressed="${hd.completado}" aria-label="Marcar ${escapeHtml(h.nombre)}" onclick="toggleHabito('${h.id}')"></button>
+      <div onclick="toggleHabito('${h.id}')" style="cursor:pointer;">
         <div class="row-title">${escapeHtml(h.nombre)}</div>
-        <div class="row-sub">${h.hora?h.hora+' · ':''}${dur} min recomendados${hd.omitido?' · omitido hoy':''}</div>
+        <div class="row-sub">${h.hora?h.hora+' · ':''}${hd.omitido?'Saltado hoy · no cuenta en tu logro':dur+' min recomendados'}</div>
       </div>
       <div class="row-actions">
-        <button class="icon-btn" title="Omitir hoy" onclick="omitirHabito('${h.id}')">⏭️</button>
+        <button type="button" class="omitir-btn${hd.omitido?' activo':''}" aria-pressed="${!!hd.omitido}" aria-label="${hd.omitido?'Retomar '+escapeHtml(h.nombre)+' hoy':'Saltar '+escapeHtml(h.nombre)+' hoy, sin que cuente en el logro'}" onclick="omitirHabito('${h.id}')">${hd.omitido?ic('undo',15)+' Retomar':ic('skip',15)+' Hoy no'}</button>
+      </div>
+      <div class="habito-extra">
+        <details class="nota-habito"${hd.nota?' open':''}><summary>${ic('pencil',14)} ${hd.nota?'Mi reflexión':'Anotar reflexión'}</summary>
+          <textarea id="nota-${h.id}" rows="2" placeholder="${h.id==='lectura'?'¿Qué aprendí de lo que leí?':h.id==='estudio'?'¿Qué aprendí hoy? Explícalo con tus palabras.':'¿Qué noté o aprendí hoy?'}">${escapeHtml(hd.nota||'')}</textarea>
+        </details>
+        ${CIENCIA[h.id] ? cienciaHtml(h.id) : ''}
       </div>
     </div>`;
   }).join('');
+  activos.forEach(h=>bindAutosave('nota-'+h.id, v=>{
+    const d = ensureDia(todayKey());
+    if(!d.habitos[h.id]) d.habitos[h.id] = { completado:false, duracion:null, omitido:false };
+    d.habitos[h.id].nota = v;
+  }));
 }
 function toggleHabito(id){
   const fecha = todayKey();
   const dia = ensureDia(fecha);
   if(!dia.habitos[id]) dia.habitos[id] = { completado:false, duracion:null, omitido:false };
   dia.habitos[id].completado = !dia.habitos[id].completado;
-  if(dia.habitos[id].completado) dia.habitos[id].omitido = false;
+  if(dia.habitos[id].completado){ dia.habitos[id].omitido = false; recienMarcado = 'hab'+id; }
   saveState();
   renderAll();
 }
@@ -939,52 +1647,99 @@ function omitirHabito(id){
   const fecha = todayKey();
   const dia = ensureDia(fecha);
   if(!dia.habitos[id]) dia.habitos[id] = { completado:false, duracion:null, omitido:false };
-  dia.habitos[id].omitido = true;
-  dia.habitos[id].completado = false;
+  // Alterna: un toque lo salta por hoy (sale del logro del día), otro lo retoma.
+  const saltar = !dia.habitos[id].omitido;
+  dia.habitos[id].omitido = saltar;
+  if(saltar) dia.habitos[id].completado = false;
   saveState();
   renderAll();
-  showToast('Hoy puedes omitirlo. Mañana puedes retomarlo.');
+  showToast(saltar ? 'Saltado por hoy: no cuenta en tu logro. Toca "Retomar" si cambias de idea.' : 'Retomado: vuelve a contar hoy.');
 }
 
 function renderProgresoHoy(){
   const fecha = todayKey();
   const dia = ensureDia(fecha);
   let total = 0, done = 0;
-  // identidad (2), gratitud, visualizacion, enfoque (metas + pasos), habitos activos, cierre
-  total += 2; if(dia.identidad.manana) done++; if(dia.identidad.noche) done++;
-  total += 1; if(dia.gratitud) done++;
-  total += 1; if(dia.visualizacion) done++;
-  total += 1; if(dia.enfoque && dia.enfoque.metas) done++;
+  // El día: arranque (6 pasos), cumplir los compromisos, hábitos activos (los omitidos salen) y cierre.
+  Object.values(pasosArranque(dia)).forEach(v=>{ total += 1; if(v) done++; });
   dia.enfoque.pasos.forEach(p=>{ if(p.texto){ total += 1; if(p.completado) done++; } });
   const activos = state.habitosConfig.filter(h=>h.activo);
-  activos.forEach(h=>{ total+=1; const hd = dia.habitos[h.id]; if(hd && (hd.completado||hd.omitido)) done++; });
-  total += 1; if(dia.cierre) done++;
+  activos.forEach(h=>{
+    const hd = dia.habitos[h.id];
+    if(hd && hd.omitido) return;
+    total += 1; if(hd && hd.completado) done++;
+  });
+  total += 1; if(cierreHecho(dia)) done++;
 
   const pct = total? Math.round((done/total)*100) : 0;
   const fill = document.getElementById('hoy-progress-fill');
   const text = document.getElementById('hoy-progress-text');
   if(fill){ fill.style.width = pct+'%'; }
-  if(text){ text.textContent = `${done} de ${total} elementos completados hoy`; }
+  if(text){ text.textContent = done===total ? `¡Día completo! ${done} de ${total}` : `${done} de ${total} · ${pct}%`; }
+  const hEl = document.getElementById('hoy-hechos'); if(hEl) hEl.textContent = done;
+  const hl = document.getElementById('hoy-hechos-label'); if(hl) hl.textContent = done===1 ? 'paso logrado hoy' : 'pasos logrados hoy';
+  const msgEl = document.getElementById('hoy-logro-msg');
+  if(msgEl) msgEl.textContent = pct===100 ? '¡Ganaste el día!' : done>=5 ? 'Vas muy bien, sigue así.' : done>0 ? 'Buen comienzo. Cada paso suma.' : 'Cada paso cuenta. Empieza con uno.';
+  const card = document.querySelector('.logro-card'); if(card) card.classList.toggle('completo', pct===100);
+
+  // Racha visible (dorado = logro)
+  const racha = calcularRacha();
+  const chip = document.getElementById('hoy-racha');
+  if(chip){
+    chip.style.display = racha > 0 ? 'inline-flex' : 'none';
+    chip.innerHTML = `${ic('flame',15)} ${racha} día${racha===1?'':'s'}`;
+  }
+
+  // Celebración una sola vez por día al completarlo todo
+  if(total > 0 && done === total && !dia.celebrado){
+    dia.celebrado = true;
+    saveState();
+    setTimeout(()=>celebrar(racha), 250);
+  }
+}
+
+let celebraTimer = null;
+function celebrar(racha){
+  const el = document.getElementById('celebracion');
+  if(!el) return;
+  document.getElementById('celebra-racha').innerHTML = `${ic('flame',16)} Racha: ${racha} día${racha===1?'':'s'}`;
+  el.querySelectorAll('.confeti').forEach(c=>c.remove());
+  const colores = ['#2b6fb8','#4fa3e0','#f07b4f','#ffe4d6','#1d5590'];
+  for(let i=0;i<36;i++){
+    const c = document.createElement('span');
+    c.className = 'confeti';
+    c.style.left = Math.random()*100 + '%';
+    c.style.background = colores[i % colores.length];
+    c.style.animationDuration = (1.8 + Math.random()*1.6) + 's';
+    c.style.animationDelay = (Math.random()*0.5) + 's';
+    el.appendChild(c);
+  }
+  el.classList.add('active');
+  if(navigator.vibrate) navigator.vibrate([40,60,40]);
+  clearTimeout(celebraTimer);
+  celebraTimer = setTimeout(cerrarCelebracion, 3600);
+}
+function cerrarCelebracion(){
+  clearTimeout(celebraTimer);
+  const el = document.getElementById('celebracion');
+  if(el) el.classList.remove('active');
 }
 
 function renderProximoRecordatorio(){
   const el = document.getElementById('hoy-next-reminder');
   if(!el) return;
-  const activos = state.habitosConfig.filter(h=>h.activo && h.recordatorio && h.hora);
-  if(!activos.length){ el.textContent='No tienes recordatorios próximos.'; el.classList.add('muted'); return; }
+  const candidatos = recordatoriosActivos();
+  if(!candidatos.length){ el.textContent=''; return; }
   const now = new Date();
   const nowMin = now.getHours()*60+now.getMinutes();
   let best = null;
-  activos.forEach(h=>{
-    const [hh,mm] = h.hora.split(':').map(Number);
+  candidatos.forEach(r=>{
+    const [hh,mm] = r.hora.split(':').map(Number);
     const mins = hh*60+mm;
     const delta = mins>=nowMin ? mins-nowMin : (1440-nowMin)+mins;
-    if(best===null || delta<best.delta) best = { h, delta };
+    if(best===null || delta<best.delta) best = { r, delta };
   });
-  if(best){
-    el.classList.remove('muted');
-    el.innerHTML = `<b>${escapeHtml(best.h.nombre)}</b> a las ${best.h.hora}`;
-  }
+  if(best) el.innerHTML = `${ic("bell",16)} <span>Próximo aviso: <b>${escapeHtml(best.r.nombre)}</b> a las ${best.r.hora}</span>`;
 }
 
 // ============================================================
@@ -994,43 +1749,53 @@ function marcarIdentidad(momento){
   const fecha = todayKey();
   const dia = ensureDia(fecha);
   dia.identidad[momento] = !dia.identidad[momento];
+  if(dia.identidad[momento]) recienMarcado = momento==='manana' ? 'ritident' : 'ritcident';
   saveState();
-  renderAll();
-}
-function guardarIdentidad(){
-  const val = document.getElementById('input-identidad').value.trim();
-  state.identidad.texto = val;
-  saveState();
-  showToast('Identidad guardada.');
-  renderAll();
-}
-function guardarGratitud(){
-  const fecha = todayKey();
-  const dia = ensureDia(fecha);
-  dia.gratitud = document.getElementById('input-gratitud').value.trim();
-  saveState();
-  showToast('Gratitud guardada.');
-  renderAll();
-}
-function guardarVisualizacion(){
-  const fecha = todayKey();
-  const dia = ensureDia(fecha);
-  dia.visualizacion = document.getElementById('input-visualizacion').value.trim();
-  saveState();
-  showToast('Visualización guardada.');
   renderAll();
 }
 function modoVisualizacion(){
   const fecha = todayKey();
   const dia = ensureDia(fecha);
-  const texto = dia.visualizacion || 'Aún no escribiste tu visualización.';
+  const texto = state.visualizacionTexto || 'Aún no escribiste tu visualización.';
   openModal(`
     <div style="text-align:center; padding: 30px 10px;">
-      <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold); font-weight:700; margin-bottom:14px;">Modo foco</div>
+      <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:var(--accent); font-weight:700; margin-bottom:14px;">Modo foco</div>
       <div style="font-size:19px; line-height:1.6; font-weight:600;">${escapeHtml(texto)}</div>
-      <button class="btn secondary" style="margin-top:26px;" onclick="closeModal()">Cerrar</button>
+      <p class="muted" style="margin-top:18px; font-size:14.5px; line-height:1.5;">Ahora cierra los ojos un minuto. Mira la escena: dónde estás, qué haces, cómo te sientes. Después mírate haciendo hoy los pasos que te acercan.</p>
+      ${state.visualizacionTexto && !dia.visualizacionLeida
+        ? `<button class="btn" style="margin-top:22px;" onclick="toggleRitual('visualizacionLeida'); closeModal();">Ya lo visualicé</button><br><button class="btn secondary small" style="margin-top:10px;" onclick="closeModal()">Cerrar</button>`
+        : `<button class="btn secondary" style="margin-top:22px;" onclick="closeModal()">Cerrar</button>`}
     </div>
   `);
+}
+function abrirEditorEnfoque(){
+  const dia = ensureDia(todayKey());
+  const e = dia.enfoque;
+  const chips = state.metas.length
+    ? `<p class="hint" style="margin-top:6px;">Toca una de tus metas para usarla:</p>
+       <div class="chip-row">${state.metas.map((m,i)=>`<button type="button" class="chip" onclick="usarMetaEnEnfoque(${i})">${escapeHtml(m.titulo)}</button>`).join('')}</div>`
+    : '';
+  openModal(`
+    <h3 style="margin-bottom:6px;">Objetivo y compromiso de hoy</h3>
+    <p class="muted" style="margin-bottom:6px;">Un objetivo y dos acciones concretas a las que te comprometes. Nada más.</p>
+    <label>Objetivo del día: tu tarea más importante o difícil</label>
+    <p class="hint" style="margin-top:2px;">Elige la que más impacto tiene y hazla primero.</p>
+    <input type="text" id="input-enfoque-metas" value="${escapeHtml(e.metas||'')}" placeholder="Ej: Terminar la propuesta del cliente">
+    ${chips}
+    <label>Compromiso 1: ¿qué harás hoy para lograrlo?</label>
+    <input type="text" id="input-enfoque-paso1" value="${escapeHtml((e.pasos[0]&&e.pasos[0].texto)||'')}" placeholder="Ej: Escribir el índice">
+    <label>Compromiso 2</label>
+    <input type="text" id="input-enfoque-paso2" value="${escapeHtml((e.pasos[1]&&e.pasos[1].texto)||'')}" placeholder="Ej: Enviar el borrador">
+    <label>¿Por qué te importa? (opcional)</label>
+    <input type="text" id="input-enfoque-razones" value="${escapeHtml(e.razones||'')}" placeholder="Ej: Es clave para mi meta de negocio">
+    <button class="btn block" style="margin-top:16px;" onclick="guardarEnfoque()">Listo</button>
+  `);
+  setTimeout(()=>{ const i = document.getElementById('input-enfoque-metas'); if(i && !i.value) i.focus(); }, 250);
+}
+function usarMetaEnEnfoque(i){
+  const m = state.metas[i];
+  const inp = document.getElementById('input-enfoque-metas');
+  if(m && inp){ inp.value = m.titulo; inp.focus(); }
 }
 function guardarEnfoque(){
   const fecha = todayKey();
@@ -1046,7 +1811,8 @@ function guardarEnfoque(){
     ]
   };
   saveState();
-  showToast('Enfoque de hoy guardado.');
+  closeModal();
+  showToast('Objetivo de hoy guardado.');
   renderAll();
 }
 
@@ -1054,9 +1820,20 @@ function guardarEnfoque(){
 // METAS
 // ============================================================
 function renderMetas(){
+  renderGlosarioCiencia();
+  const cv = document.getElementById('cualidad-view');
+  const cual = cualidadActual();
+  if(cv) cv.innerHTML = cual ? `<p class="quote-block">${escapeHtml(cual)}</p>` : `<p class="muted">Aún no eliges la de esta semana.</p>`;
+  const lc = document.getElementById('btn-cualidad-label'); if(lc) lc.textContent = cual ? 'Cambiar cualidad' : 'Elegir cualidad';
+  const idv = document.getElementById('identidad-view');
+  if(idv) idv.innerHTML = state.identidad.texto ? `<p class="quote-block">“${escapeHtml(state.identidad.texto)}”</p>` : `<p class="muted">Aún no la escribes.</p>`;
+  const vv = document.getElementById('visualizacion-view');
+  if(vv) vv.innerHTML = state.visualizacionTexto ? `<p class="quote-block">${escapeHtml(state.visualizacionTexto)}</p>` : `<p class="muted">Aún no la escribes.</p>`;
+  const l1 = document.getElementById('btn-identidad-edit-label'); if(l1) l1.textContent = state.identidad.texto ? 'Editar declaración' : 'Escribir declaración';
+  const l2 = document.getElementById('btn-visualizacion-edit-label'); if(l2) l2.textContent = state.visualizacionTexto ? 'Editar visualización' : 'Escribir visualización';
   const list = document.getElementById('metas-list');
   if(!state.metas.length){
-    list.innerHTML = `<div class="empty-state"><div class="em-icon">🎯</div>Aún no tienes metas creadas.</div>`;
+    list.innerHTML = `<div class="empty-state"><div class="em-icon">${ic('target',28)}</div>Aún no tienes metas creadas.</div>`;
     return;
   }
   list.innerHTML = state.metas.map(m=>`
@@ -1118,23 +1895,23 @@ function guardarMetas(){
 }
 
 // ============================================================
-// MODO DEL DIA
+// RUTINA: pestañas Hoy / Historial
 // ============================================================
-function setModoDia(modo){
-  const fecha = todayKey();
-  state.modoDia[fecha] = modo;
-  saveState();
-  renderAll();
+let rutinaTab = 'hoy';
+function setRutinaTab(tab){
+  rutinaTab = tab;
+  renderRutinaTabs();
 }
-function renderModoDia(){
-  const fecha = todayKey();
-  const modo = state.modoDia[fecha] || 'completo';
-  document.querySelectorAll('.mode-btn').forEach(b=>{
-    b.classList.toggle('active', b.dataset.mode===modo);
+function renderRutinaTabs(){
+  document.querySelectorAll('.tab-btn').forEach(b=>{
+    const on = b.dataset.tab===rutinaTab;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
   });
-  const iconMap = { completo:'☀️', ocupado:'⏱️', minimo:'🌱' };
-  const btn = document.getElementById('btn-mode-indicator');
-  if(btn) btn.textContent = iconMap[modo] || '☀️';
+  document.getElementById('rutina-tab-hoy').style.display = rutinaTab==='hoy' ? '' : 'none';
+  document.getElementById('rutina-tab-historial').style.display = rutinaTab==='historial' ? '' : 'none';
+  if(rutinaTab==='hoy'){ renderTimeline(); renderTasks(); }
+  else renderHistorialRutina();
 }
 
 // ============================================================
@@ -1165,21 +1942,21 @@ function renderTasks(){
   const dia = ensureDia(fecha);
   const list = document.getElementById('tasks-list');
   if(!dia.tasks.length){
-    list.innerHTML = `<div class="empty-state"><div class="em-icon">📝</div>Aún no agregas acciones para hoy.</div>`;
+    list.innerHTML = `<div class="small-muted">Sin acciones extra por ahora.</div>`;
     return;
   }
   list.innerHTML = dia.tasks.map(t=>`
     <div class="task-item ${t.completado?'done':''}">
-      <div class="checkbox ${t.completado?'checked':''}" onclick="toggleTask('${t.id}')"></div>
+      <button type="button" class="checkbox ${t.completado?'checked':''}" aria-pressed="${t.completado}" aria-label="Marcar acción" onclick="toggleTask('${t.id}')"></button>
       <div style="flex:1;">
         <div class="task-title">${escapeHtml(t.desc)}</div>
         <div class="task-meta">
-          ${t.hora?`<span>🕒 ${t.hora}</span>`:''}
+          ${t.hora?`<span>${ic('clock',14)} ${t.hora}</span>`:''}
           ${t.duracion?`<span>${t.duracion} min</span>`:''}
         </div>
       </div>
       <div class="row-actions">
-        <button class="icon-btn" title="Eliminar" onclick="eliminarTask('${t.id}')">✕</button>
+        <button class="icon-btn" title="Eliminar" aria-label="Eliminar acción" onclick="eliminarTask('${t.id}')">${ic('x',16)}</button>
       </div>
     </div>
   `).join('');
@@ -1215,7 +1992,7 @@ function renderHabitosConfig(){
           <div class="row-sub">${h.duracionPersonal||h.duracionRecomendada} min · ${h.hora||'sin hora fija'}</div>
         </div>
         <div class="row-actions">
-          <div class="switch ${h.activo?'on':''}" onclick="toggleHabitoActivo('${h.id}')"></div>
+          <button type="button" class="switch ${h.activo?'on':''}" role="switch" aria-checked="${h.activo}" aria-label="Activar ${escapeHtml(h.nombre)}" onclick="toggleHabitoActivo('${h.id}')"></button>
         </div>
       </div>
       <div style="margin-top:10px;">
@@ -1231,10 +2008,10 @@ function renderHabitosConfig(){
         </div>
         ${h.id==='lectura' ? `<label>Contenido actual (ej: libro que estás leyendo)</label>
           <input type="text" value="${escapeHtml(h.contenidoPersonal||'')}" placeholder="Ej: Libro actual: ..." onchange="setHabitoField('${h.id}','contenidoPersonal',this.value)">` : ''}
-        <label style="display:flex; align-items:center; gap:8px; margin-top:10px;">
-          <span style="flex:1;">Recordatorio activo</span>
-          <div class="switch ${h.recordatorio?'on':''}" onclick="toggleHabitoRecordatorio('${h.id}')"></div>
-        </label>
+        <div style="display:flex; align-items:center; gap:8px; margin-top:12px; font-size:13px; font-weight:600; color:var(--ink-soft);">
+          <span style="flex:1;">Recordatorio activo${h.hora?'':' (elige una hora)'}</span>
+          <button type="button" class="switch ${h.recordatorio?'on':''}" role="switch" aria-checked="${h.recordatorio}" aria-label="Recordatorio de ${escapeHtml(h.nombre)}" onclick="toggleHabitoRecordatorio('${h.id}')"></button>
+        </div>
       </div>
     </div>
   `).join('');
@@ -1284,16 +2061,17 @@ function renderTimeline(){
   const fecha = todayKey();
   const dia = ensureDia(fecha);
   const items = [];
-  items.push({ hora:'—', texto:'Identidad (mañana)', done: dia.identidad.manana });
+  const pa = pasosArranque(dia), hechosA = Object.values(pa).filter(Boolean).length;
+  const totalA = Object.keys(pasosArranque(dia)).length;
+  items.push({ hora:'—', texto:`Arranque del día (${hechosA}/${totalA})`, done: hechosA===totalA });
   state.habitosConfig.filter(h=>h.activo).forEach(h=>{
     const hd = dia.habitos[h.id];
     items.push({ hora: h.hora||'—', texto: h.nombre, done: !!(hd&&(hd.completado||hd.omitido)) });
   });
   dia.enfoque.pasos.forEach((p,i)=>{
-    if(p.texto) items.push({ hora:'—', texto: `Paso ${i+1}: `+p.texto, done: p.completado });
+    if(p.texto) items.push({ hora:'—', texto: `Compromiso ${i+1}: `+p.texto, done: p.completado });
   });
-  items.push({ hora:'—', texto:'Identidad (noche)', done: dia.identidad.noche });
-  items.push({ hora:'—', texto:'Cierre nocturno', done: !!dia.cierre });
+  items.push({ hora:'—', texto:'Cierre de la noche', done: cierreHecho(dia) });
 
   const nowMin = new Date().getHours()*60+new Date().getMinutes();
   let nowAssigned = false;
@@ -1305,9 +2083,9 @@ function renderTimeline(){
       if(hh*60+mm >= nowMin){ cls='now'; nowAssigned=true; }
     }
     return `<div class="tl-item">
-      <div class="tl-time">${it.hora}</div>
+      <div class="tl-time">${it.hora==='—'?'':it.hora}</div>
       <div class="tl-dot-col"><div class="tl-dot ${cls}"></div>${i<items.length-1?'<div class="tl-line"></div>':''}</div>
-      <div class="tl-text">${escapeHtml(it.texto)} ${it.done?'✓':(cls==='now'?'→ Ahora':'')}</div>
+      <div class="tl-text">${escapeHtml(it.texto)} ${it.done?'':(cls==='now'?'<span class="chip">Ahora</span>':'')}</div>
     </div>`;
   }).join('');
 }
@@ -1315,38 +2093,79 @@ function renderTimeline(){
 // ============================================================
 // CIERRE NOCTURNO
 // ============================================================
-function abrirCierreNocturno(){
-  const fecha = todayKey();
-  const dia = ensureDia(fecha);
-  const c = dia.cierre || { logre:'', aprendi:'', agradezco:'' };
+function textosCierre(dia){
+  return dia.cierre || dia.cierreBorrador || { logre:'', aprendi:'', agradezco:'' };
+}
+function pasosCierre(dia){
+  const c = textosCierre(dia);
+  return { logre: !!c.logre, aprendi: !!c.aprendi, agradezco: !!c.agradezco, identidad: !!(dia.identidad && dia.identidad.noche) };
+}
+// El cierre está listo solo cuando sus 4 pasos están hechos (no basta con pulsar "Guardar").
+function cierreHecho(dia){
+  return Object.values(pasosCierre(dia)).every(Boolean);
+}
+function renderCierre(){
+  const el = document.getElementById('cierre-list');
+  if(!el) return;
+  if(escribiendoEn('cierre-list')) return; // no re-dibujar mientras escribes
+  const dia = ensureDia(todayKey());
+  const c = textosCierre(dia);
+  const pasos = pasosCierre(dia);
+  const hechos = Object.values(pasos).filter(Boolean).length, total = Object.keys(pasos).length;
+  const hecho = cierreHecho(dia);
+  const count = document.getElementById('cierre-count');
+  count.innerHTML = hecho ? `${ic('checked',16)} Listo` : `${hechos}/${total}`;
+  count.classList.toggle('ok', hecho);
   const activos = state.habitosConfig.filter(h=>h.activo);
   const pasosConTexto = dia.enfoque.pasos.filter(p=>p.texto);
-  let completados = 0, totalItems = activos.length + pasosConTexto.length;
-  activos.forEach(h=>{ const hd=dia.habitos[h.id]; if(hd&&(hd.completado||hd.omitido)) completados++; });
+  let completados = 0; const totalItems = activos.length + pasosConTexto.length;
+  activos.forEach(h=>{ const hd=dia.habitos[h.id]; if(hd&&hd.completado) completados++; });
   pasosConTexto.forEach(p=>{ if(p.completado) completados++; });
-  openModal(`
-    <h3 style="margin-bottom:6px;">🌙 Cierre nocturno${state.nombre?', '+escapeHtml(state.nombre):''}</h3>
-    <p class="muted" style="margin-bottom:14px;">Hoy completaste ${completados} de ${totalItems} elementos. ${completados<totalItems?'Está bien: mañana puedes retomarlo.':'Buen trabajo hoy.'}</p>
-    <label style="margin-top:0;">¿Qué logré hoy?</label>
-    <textarea id="cierre-logre">${escapeHtml(c.logre)}</textarea>
-    <label>¿Qué aprendí?</label>
-    <textarea id="cierre-aprendi">${escapeHtml(c.aprendi)}</textarea>
-    <label>¿Por qué estoy agradecido?</label>
-    <textarea id="cierre-agradezco">${escapeHtml(c.agradezco)}</textarea>
-    <button class="btn block" style="margin-top:14px;" onclick="guardarCierre()">Guardar cierre</button>
-  `);
+  document.getElementById('cierre-hint').textContent = hecho
+    ? 'Cierre hecho. Descansa bien; puedes editarlo si quieres.'
+    : `Antes de dormir. Hoy completaste ${completados} de ${totalItems} hábitos y compromisos. ${completados<totalItems?'Está bien: mañana puedes retomarlo.':'Buen trabajo hoy.'}`;
+  pintarMomento('cierre', momentoEstaAbierto('cierre', hecho));
+  const identidad = state.identidad.texto;
+  const campo = (id, n, titulo, valor, ph, ciencia) => filaRitual({ id:'c'+id, done: !!valor, titulo:`${n}. ${titulo}`,
+    extra: `<textarea id="cierre-${id}" rows="2" placeholder="${ph}">${escapeHtml(valor||'')}</textarea>`,
+    onToggle:`document.getElementById('cierre-${id}').focus()`, ciencia });
+  el.innerHTML = [
+    campo('logre', 1, '¿Qué logré hoy?', c.logre, 'Hoy logré...'),
+    campo('aprendi', 2, '¿Qué aprendí?', c.aprendi, 'Hoy aprendí...', 'reflexion'),
+    campo('agradezco', 3, '¿Por qué estoy agradecido?', c.agradezco, 'Agradezco...', 'gratitud'),
+    filaRitual({ id:'cident', done: pasos.identidad, titulo:'4. Lee tu declaración de identidad',
+      sub: declaracionParaLeer(),
+      onToggle:"marcarIdentidad('noche')", ciencia:'identidad' })
+  ].join('') + `<button class="btn block ${hecho?'secondary':'gold'}" id="btn-guardar-cierre" style="margin-top:14px;" onclick="guardarCierre()">${hecho?'Actualizar cierre':'Guardar cierre'}</button>`;
+  ['logre','aprendi','agradezco'].forEach(k=>{
+    bindAutosave('cierre-'+k, v=>{
+      const d = ensureDia(todayKey());
+      const destino = d.cierre || (d.cierreBorrador = d.cierreBorrador || { logre:'', aprendi:'', agradezco:'' });
+      destino[k] = v;
+      const btn = document.querySelector(`[data-pop="ritc${k}"]`);
+      if(btn){ btn.classList.toggle('checked', !!v); btn.setAttribute('aria-pressed', !!v); btn.closest('.ritual-row').classList.toggle('done', !!v); }
+      const pc = pasosCierre(d), listo = Object.values(pc).every(Boolean);
+      count.innerHTML = listo ? `${ic('checked',16)} Listo` : `${Object.values(pc).filter(Boolean).length}/${Object.keys(pc).length}`;
+      count.classList.toggle('ok', listo);
+    });
+  });
 }
 function guardarCierre(){
   const fecha = todayKey();
   const dia = ensureDia(fecha);
+  const nombres = { logre:'¿Qué logré hoy?', aprendi:'¿Qué aprendí?', agradezco:'¿Por qué estoy agradecido?' };
+  const faltan = Object.keys(nombres).filter(k=>!document.getElementById('cierre-'+k).value.trim()).map(k=>nombres[k]);
+  if(!(dia.identidad && dia.identidad.noche)) faltan.push('leer tu declaración');
+  if(faltan.length){ showToast('Para terminar el cierre falta: ' + faltan.join(', ') + '.'); return; }
   dia.cierre = {
     logre: document.getElementById('cierre-logre').value.trim(),
     aprendi: document.getElementById('cierre-aprendi').value.trim(),
     agradezco: document.getElementById('cierre-agradezco').value.trim(),
     fecha
   };
+  delete dia.cierreBorrador;
+  momentoAbierto.cierre = false;
   saveState();
-  closeModal();
   showToast('Cierre nocturno guardado. Descansa bien.');
   enviarWebhook({ tipo:'cierre_nocturno', fecha, data: dia.cierre });
   renderAll();
@@ -1359,7 +2178,7 @@ function abrirRevisionSemanal(){
   const wk = isoWeekKey();
   const r = state.semanaRevisiones[wk] || { logre:'', noFunciono:'', aprendi:'', mejorar:'', proximaSemana:'', cambiarHorario:'' };
   openModal(`
-    <h3 style="margin-bottom:14px;">📅 Revisión semanal</h3>
+    <h3 style="margin-bottom:14px;">Revisión semanal</h3>
     <label style="margin-top:0;">¿Qué logré?</label>
     <textarea id="rs-logre">${escapeHtml(r.logre)}</textarea>
     <label>¿Qué no funcionó?</label>
@@ -1404,7 +2223,7 @@ function diaTuvoActividad(fecha){
   if(!dia.enfoque && dia.mpa && dia.mpa.m) return true; // compatibilidad con datos muy antiguos aún no migrados
   if(dia.tasks && dia.tasks.some(t=>t.completado)) return true;
   if(dia.habitos && Object.values(dia.habitos).some(h=>h.completado)) return true;
-  if(dia.cierre) return true;
+  if(cierreHecho(dia)) return true;
   return false;
 }
 function calcularRacha(){
@@ -1453,28 +2272,81 @@ function renderProgreso(){
   renderHistorial();
   chequearAperturaMensualAutomatica();
 }
-function renderHistorial(){
-  const el = document.getElementById('historial-list');
-  if(!el) return;
-  const keys = Object.keys(state.dias).sort().reverse().slice(0,10);
-  if(!keys.length){ el.innerHTML = `<div class="empty-state"><div class="em-icon">🕰️</div>Aún no hay historial.</div>`; return; }
-  el.innerHTML = keys.map(k=>{
+function formatDiaCorto(key){
+  const [y,m,d] = key.split('-').map(Number);
+  const dt = new Date(y, m-1, d);
+  const hoy = todayKey();
+  const ayer = new Date(); ayer.setDate(ayer.getDate()-1);
+  if(key===hoy) return 'Hoy';
+  if(key===todayKey(ayer)) return 'Ayer';
+  const txt = dt.toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long' });
+  return txt.charAt(0).toUpperCase() + txt.slice(1);
+}
+function historialHtml(keys){
+  if(!keys.length) return `<div class="empty-state"><div class="em-icon">${ic('history',28)}</div>Aún no hay días anteriores registrados.</div>`;
+  return keys.map(k=>{
     const dia = state.dias[k];
     const habitosOk = dia.habitos? Object.values(dia.habitos).filter(h=>h.completado).length : 0;
     const pasosOk = (dia.enfoque && Array.isArray(dia.enfoque.pasos)) ? dia.enfoque.pasos.filter(p=>p.completado).length : 0;
-    return `<div class="check-row">
-      <div>
-        <div class="row-title">${k}</div>
-        <div class="row-sub">${habitosOk} hábito(s) · ${pasosOk} paso(s) completado(s)${dia.cierre?' · cierre hecho':''}</div>
+    const objetivo = dia.enfoque && dia.enfoque.metas ? escapeHtml(dia.enfoque.metas) : 'Sin objetivo definido';
+    return `<button type="button" class="check-row" style="width:100%; background:none; text-align:left; color:inherit;" onclick="verDia('${k}')">
+      <div style="flex:1; min-width:0;">
+        <div class="row-title">${formatDiaCorto(k)}</div>
+        <div class="row-sub">${objetivo}</div>
+        <div class="row-sub">${habitosOk} hábito(s) · ${pasosOk} compromiso(s)${cierreHecho(dia)?' · cierre hecho':''}</div>
       </div>
-    </div>`;
+      <span class="small-muted">›</span>
+    </button>`;
   }).join('');
+}
+function diasConActividad(excluirHoy){
+  const hoy = todayKey();
+  return Object.keys(state.dias).sort().reverse().filter(k=>(!excluirHoy || k!==hoy) && diaTuvoActividad(k));
+}
+function renderHistorial(){
+  const el = document.getElementById('historial-list');
+  if(!el) return;
+  el.innerHTML = historialHtml(diasConActividad(false).slice(0,10));
+}
+function renderHistorialRutina(){
+  const el = document.getElementById('rutina-historial-list');
+  if(!el) return;
+  el.innerHTML = historialHtml(diasConActividad(true).slice(0,60));
+}
+function verDia(key){
+  const dia = state.dias[key];
+  if(!dia) return;
+  const bloque = (titulo, cuerpo)=> cuerpo ? `<div style="margin-top:14px;"><div class="card-title">${titulo}</div>${cuerpo}</div>` : '';
+  const texto = t => t ? `<p class="muted">${escapeHtml(t)}</p>` : '';
+  const e = dia.enfoque || { metas:'', pasos:[] };
+  const pasos = (e.pasos||[]).filter(p=>p.texto).map(p=>`<div class="muted">${p.completado?ic('checked',16):ic('circle',16)} ${escapeHtml(p.texto)}</div>`).join('');
+  const habitos = Object.entries(dia.habitos||{}).map(([id,h])=>{
+    const cfg = state.habitosConfig.find(x=>x.id===id);
+    const nombre = cfg ? cfg.nombre : id;
+    return `<div class="muted">${h.completado?ic('checked',16):(h.omitido?ic('skip',16):ic('circle',16))} ${escapeHtml(nombre)}</div>${h.nota?`<p class="muted" style="margin:2px 0 6px 22px;"><i>${escapeHtml(h.nota)}</i></p>`:''}`;
+  }).join('');
+  const tasks = (dia.tasks||[]).map(t=>`<div class="muted">${t.completado?ic('checked',16):ic('circle',16)} ${escapeHtml(t.desc)}</div>`).join('');
+  const c = (dia.cierre || dia.cierreBorrador) ? textosCierre(dia) : null;
+  const cierre = c ? `${c.logre?`<p class="muted"><b>Logré:</b> ${escapeHtml(c.logre)}</p>`:''}${c.aprendi?`<p class="muted"><b>Aprendí:</b> ${escapeHtml(c.aprendi)}</p>`:''}${c.agradezco?`<p class="muted"><b>Agradezco:</b> ${escapeHtml(c.agradezco)}</p>`:''}` : '';
+  openModal(`
+    <h3 style="margin-bottom:4px;">${formatDiaCorto(key)}</h3>
+    <p class="small-muted">${key}</p>
+    ${bloque(ic('target')+'<span>Objetivo</span>', (e.metas?`<p style="font-weight:700;">${escapeHtml(e.metas)}</p>`:'') + pasos)}
+    ${bloque(ic('check')+'<span>Hábitos</span>', habitos)}
+    ${bloque(ic('list')+'<span>Otras acciones</span>', tasks)}
+    ${bloque(ic('moon')+'<span>Cierre</span>', cierre)}
+    ${bloque(ic('heart')+'<span>Gratitud</span>', texto(dia.gratitud))}
+    ${bloque(ic('eye')+'<span>Obstáculo y plan</span>', texto(dia.obstaculo))}
+    ${bloque(ic('eye')+'<span>Visualización</span>', texto(dia.visualizacion))}
+    ${bloque(ic('feather')+'<span>Respuesta a la cápsula</span>', texto(dia.capsulaRespuesta))}
+    <button class="btn secondary block" style="margin-top:18px;" onclick="closeModal()">Cerrar</button>
+  `);
 }
 function abrirRevisionMensual(){
   const mk = monthKey();
   const r = state.mesRevisiones[mk] || { avance:'', estancado:'', corregir:'' };
   openModal(`
-    <h3 style="margin-bottom:6px;">🗓️ Revisión mensual</h3>
+    <h3 style="margin-bottom:6px;">Revisión mensual</h3>
     <p class="muted" style="margin-bottom:14px;">Correspondiente a ${mk}.</p>
     <label style="margin-top:0;">¿Qué avancé?</label>
     <textarea id="rm-avance">${escapeHtml(r.avance)}</textarea>
@@ -1532,18 +2404,19 @@ function renderCapsulaScreen(){
   document.getElementById('cap-pregunta').textContent = cap.pregunta;
   document.getElementById('cap-accion-label').textContent = 'Acción práctica';
   document.getElementById('cap-accion').textContent = cap.accion;
-  document.getElementById('cap-respuesta').value = dia.capsulaRespuesta || '';
+  fillInput('cap-respuesta', dia.capsulaRespuesta);
   document.getElementById('cap-dia-info').textContent = `Día ${cap.dia} · Tema: ${cap.tema}`;
   document.getElementById('cap-repetida-hint').style.display = dia.capsulaRepetida ? 'block' : 'none';
+  const lb = document.getElementById('cap-leida-btn');
+  if(lb){ lb.innerHTML = dia.capsulaLeida ? ic('checked',16)+' Leída hoy' : 'Ya la leí'; lb.classList.toggle('secondary', !!dia.capsulaLeida); }
 }
-function guardarRespuestaCapsula(){
-  const fecha = todayKey();
-  const dia = ensureDia(fecha);
-  dia.capsulaRespuesta = document.getElementById('cap-respuesta').value.trim();
+function marcarCapsulaLeida(){
+  const dia = ensureDia(todayKey());
+  dia.capsulaLeida = !dia.capsulaLeida;
+  if(dia.capsulaLeida) recienMarcado = 'ritcap';
   saveState();
-  showToast('Respuesta guardada.');
+  renderAll();
 }
-
 // ============================================================
 // EXPORT / IMPORT
 // ============================================================
@@ -1568,6 +2441,7 @@ function importarDatos(ev){
       const imported = JSON.parse(e.target.result);
       if(!imported || typeof imported!=='object'){ throw new Error('Formato inválido'); }
       state = Object.assign(JSON.parse(JSON.stringify(DEFAULT_STATE)), imported);
+      state._configAt = Date.now();
       saveState();
       showToast('Datos importados correctamente.');
       renderAll();
@@ -1582,7 +2456,7 @@ function importarDatos(ev){
 function confirmarBorrarTodo(){
   openModal(`
     <h3 style="margin-bottom:10px;">¿Borrar todos tus datos?</h3>
-    <p class="muted">Esta acción no se puede deshacer. Te recomendamos exportar tus datos antes de continuar.</p>
+    <p class="muted">Esta acción no se puede deshacer. Te recomendamos exportar tus datos antes de continuar.${syncUser?' También se borrarán de tu cuenta en la nube.':''}</p>
     <div style="display:flex; gap:10px; margin-top:16px;">
       <button class="btn secondary block" onclick="closeModal()">Cancelar</button>
       <button class="btn danger block" onclick="borrarTodo()">Borrar todo</button>
@@ -1590,6 +2464,7 @@ function confirmarBorrarTodo(){
   `);
 }
 function borrarTodo(){
+  borrarDatosNube();
   localStorage.removeItem(STORAGE_KEY);
   state = JSON.parse(JSON.stringify(DEFAULT_STATE));
   saveState();
@@ -1601,20 +2476,6 @@ function borrarTodo(){
 // ============================================================
 // WEBHOOK (opcional)
 // ============================================================
-function guardarNombre(){
-  const val = document.getElementById('input-nombre').value.trim();
-  state.nombre = val;
-  saveState();
-  showToast(val ? 'Nombre guardado.' : 'Nombre eliminado.');
-  if(currentScreen==='hoy') renderHoy();
-}
-function guardarWebhook(){
-  const val = document.getElementById('input-webhook').value.trim();
-  state.webhookUrl = val;
-  N8N_WEBHOOK_URL = val;
-  saveState();
-  showToast(val ? 'Webhook guardado.' : 'Webhook eliminado.');
-}
 function enviarWebhook(payload){
   const url = state.webhookUrl || N8N_WEBHOOK_URL;
   if(!url) return; // opcional: si no está configurado, no hace nada y no bloquea la app
@@ -1629,14 +2490,90 @@ function enviarWebhook(payload){
   }
 }
 function probarRecordatorio(){
+  const esAlarma = state.estiloAviso === 'alarma';
   if('Notification' in window && Notification.permission === 'granted'){
     try{
-      new Notification('Brújula Interior', { body: 'Así se vería un recordatorio.', tag: 'brujula-prueba' });
-      return;
+      new Notification('Brújula Interior', { body: 'Así se vería un recordatorio.', tag: 'brujula-prueba', requireInteraction: esAlarma });
     }catch(e){}
+  } else if(!esAlarma){
+    showToast('Así se vería un recordatorio. (Activa las notificaciones arriba para verlo como aviso real.)');
   }
-  showToast('🔔 Así se vería un recordatorio. (Activa las notificaciones arriba para verlo como aviso real.)');
+  if(esAlarma) mostrarAlarma('Brújula Interior', 'Así suena la alarma cuando la app está abierta.');
 }
+
+// ---------- Estilo de aviso: solo notificación o notificación + alarma ----------
+function setEstiloAviso(estilo){
+  state.estiloAviso = estilo;
+  saveState();
+  renderEstiloAviso();
+  pushScheduleUpdate();
+  if(estilo === 'alarma') desbloquearAudio();
+  showToast(estilo === 'alarma' ? 'Avisos con alarma.' : 'Avisos como notificación.');
+}
+function renderEstiloAviso(){
+  const estilo = state.estiloAviso || 'notificacion';
+  document.querySelectorAll('.estilo-btn').forEach(b=>{
+    const on = b.dataset.estilo === estilo;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-checked', on ? 'true' : 'false');
+  });
+  const hint = document.getElementById('estilo-aviso-hint');
+  if(!hint) return;
+  hint.textContent = estilo === 'alarma'
+    ? 'La notificación queda fija en pantalla hasta que la abras y vibra más largo. Si tienes la app abierta, además suena una alarma que se repite hasta que la detengas. Con la app cerrada (y siempre en iPhone) suena con el tono normal de notificaciones: el navegador no permite una alarma de verdad. En Android puedes elegir un tono más fuerte en Ajustes del teléfono → Apps → Chrome → Notificaciones.'
+    : 'Una notificación normal, con el sonido de notificaciones de tu teléfono.';
+}
+
+// Alarma dentro de la app: pitidos que se repiten hasta tocar "Detener".
+let audioCtx = null, alarmaTimer = null, alarmaVibraTimer = null;
+function desbloquearAudio(){
+  try{
+    if(!audioCtx){ const AC = window.AudioContext || window.webkitAudioContext; if(AC) audioCtx = new AC(); }
+    if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  }catch(e){}
+}
+function pitido(){
+  if(!audioCtx) return;
+  try{
+    const t0 = audioCtx.currentTime;
+    [0, 0.25, 0.5].forEach(d=>{
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = 'square'; o.frequency.value = 880;
+      g.gain.setValueAtTime(0.0001, t0+d);
+      g.gain.exponentialRampToValueAtTime(0.25, t0+d+0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0+d+0.18);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(t0+d); o.stop(t0+d+0.2);
+    });
+  }catch(e){}
+}
+function mostrarAlarma(titulo, cuerpo){
+  document.getElementById('alarma-title').textContent = titulo || 'Brújula Interior';
+  document.getElementById('alarma-body').textContent = cuerpo || 'Es hora de revisar tu rutina.';
+  document.getElementById('alarma-overlay').classList.add('active');
+  desbloquearAudio();
+  clearInterval(alarmaTimer); clearInterval(alarmaVibraTimer);
+  pitido();
+  alarmaTimer = setInterval(pitido, 1500);
+  if(navigator.vibrate){ navigator.vibrate([600,300,600]); alarmaVibraTimer = setInterval(()=>navigator.vibrate([600,300,600]), 1500); }
+}
+function detenerAlarma(irAHoy){
+  clearInterval(alarmaTimer); clearInterval(alarmaVibraTimer);
+  alarmaTimer = alarmaVibraTimer = null;
+  if(navigator.vibrate) navigator.vibrate(0);
+  document.getElementById('alarma-overlay').classList.remove('active');
+  if(irAHoy) go('hoy');
+}
+// El service worker avisa a la app abierta cuando llega un aviso con alarma.
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.addEventListener('message', function(ev){
+    const d = ev.data || {};
+    if(d.tipo === 'alarma') mostrarAlarma(d.title, d.body);
+  });
+}
+// El navegador solo deja sonar audio después de un toque: se "desbloquea" con el primero.
+document.addEventListener('pointerdown', function(){ if(state && state.estiloAviso === 'alarma') desbloquearAudio(); }, { passive:true });
+
 
 // ============================================================
 // NOTIFICACIONES PUSH REALES (avisan aunque no tengas la app abierta)
@@ -1661,10 +2598,40 @@ function deviceTimezone(){
   }
 }
 
+const AVISOS_REVISION = {
+  manana: { nombre:'Revisión de la mañana', mensaje:'Buenos días. Abre tu Brújula y define tu objetivo de hoy.' },
+  noche:  { nombre:'Revisión de la noche',  mensaje:'¿Cómo te fue hoy? Marca lo que hiciste y haz tu cierre.' }
+};
 function recordatoriosActivos(){
-  return state.habitosConfig
+  const habitos = state.habitosConfig
     .filter(h => h.activo && h.recordatorio && h.hora)
     .map(h => ({ habitId: h.id, nombre: h.nombre, hora: h.hora, dias: h.dias || [0,1,2,3,4,5,6] }));
+  const avisos = Object.keys(AVISOS_REVISION)
+    .filter(k => state.avisosRevision && state.avisosRevision[k] && state.avisosRevision[k].activo && state.avisosRevision[k].hora)
+    .map(k => ({ habitId: 'revision_'+k, nombre: AVISOS_REVISION[k].nombre, mensaje: AVISOS_REVISION[k].mensaje, hora: state.avisosRevision[k].hora, dias: [0,1,2,3,4,5,6] }));
+  return avisos.concat(habitos);
+}
+function renderAvisosRevision(){
+  const el = document.getElementById('avisos-revision-list');
+  if(!el) return;
+  el.innerHTML = Object.keys(AVISOS_REVISION).map(k=>{
+    const a = state.avisosRevision[k];
+    return `<div class="settings-item">
+      <div style="flex:1;">
+        <div class="row-title">${k==='manana'?ic('sun',18)+' Mañana':ic('moon',18)+' Noche'}</div>
+        <input type="time" value="${a.hora||''}" style="margin-top:6px; max-width:150px;" aria-label="Hora del aviso de la ${k==='manana'?'mañana':'noche'}" onchange="setAvisoRevision('${k}','hora',this.value)">
+      </div>
+      <button type="button" class="switch ${a.activo?'on':''}" role="switch" aria-checked="${a.activo}" aria-label="Activar aviso de la ${k==='manana'?'mañana':'noche'}" onclick="setAvisoRevision('${k}','activo',${!a.activo})"></button>
+    </div>`;
+  }).join('');
+}
+function setAvisoRevision(k, field, value){
+  state.avisosRevision[k][field] = value;
+  saveState();
+  renderAvisosRevision();
+  pushScheduleUpdate();
+  if(field==='activo') showToast(value ? 'Aviso activado.' : 'Aviso desactivado.');
+  else showToast('Hora del aviso actualizada.');
 }
 
 // Manda al servidor la lista completa de recordatorios activos y la
@@ -1687,7 +2654,8 @@ function pushScheduleUpdate(){
       body: JSON.stringify({
         subscription: subscription.toJSON(),
         timezone: deviceTimezone(),
-        reminders: recordatoriosActivos()
+        reminders: recordatoriosActivos(),
+        estiloAviso: state.estiloAviso || 'notificacion'
       })
     }).catch(function(){});
   }).catch(function(){});
@@ -1716,7 +2684,8 @@ function subscribeToPush(){
       body: JSON.stringify({
         subscription: subscription.toJSON(),
         timezone: deviceTimezone(),
-        reminders: recordatoriosActivos()
+        reminders: recordatoriosActivos(),
+        estiloAviso: state.estiloAviso || 'notificacion'
       })
     }).catch(function(){});
   }).catch(function(err){
@@ -1724,10 +2693,42 @@ function subscribeToPush(){
   });
 }
 
+// iPhone/iPad: los avisos push solo funcionan con la app instalada en la pantalla de inicio (iOS 16.4+).
+const IS_IOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+function isStandalone(){
+  try{ return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true; }
+  catch(e){ return false; }
+}
+function necesitaInstalarIphone(){ return IS_IOS && !isStandalone(); }
+function verGuiaIphone(){
+  go('ajustes');
+  setTimeout(()=>{ const g = document.getElementById('ios-install-guide'); if(g) g.scrollIntoView({ behavior:'smooth', block:'center' }); }, 100);
+}
+function ocultarBannerIphone(){
+  state.iosBannerOculto = true;
+  saveState();
+  renderAll();
+}
+function renderBannerIphone(){
+  const el = document.getElementById('ios-banner');
+  if(el) el.style.display = (necesitaInstalarIphone() && !state.iosBannerOculto) ? 'flex' : 'none';
+}
+
 function refreshNotifyStatus(){
   const notifyToggle = document.getElementById('notifyToggle');
   const notifyStatus = document.getElementById('notifyStatus');
   if(!notifyToggle || !notifyStatus) return;
+  const guia = document.getElementById('ios-install-guide');
+  if(guia) guia.style.display = necesitaInstalarIphone() ? 'block' : 'none';
+  const hintPc = document.getElementById('desktop-notify-hint');
+  if(hintPc) hintPc.style.display = (!IS_IOS && !/android|mobile/i.test(navigator.userAgent)) ? 'block' : 'none';
+
+  if(necesitaInstalarIphone()){
+    notifyStatus.textContent = 'Para recibir avisos en iPhone, primero instala la app en tu pantalla de inicio (pasos abajo).';
+    notifyToggle.disabled = true;
+    notifyToggle.checked = false;
+    return;
+  }
 
   if(!('Notification' in window)){
     notifyStatus.textContent = 'Tu navegador no soporta notificaciones del sistema.';
@@ -1745,6 +2746,7 @@ function refreshNotifyStatus(){
 
 function syncNotifyUI(){
   const notifyToggle = document.getElementById('notifyToggle');
+  if(notifyToggle && necesitaInstalarIphone()){ refreshNotifyStatus(); return; }
   if(!notifyToggle || !('Notification' in window)) return;
   let subscribed = false;
   try{ subscribed = window.localStorage.getItem(PUSH_SUBSCRIBED_KEY) === '1'; }catch(e){}
@@ -1753,46 +2755,315 @@ function syncNotifyUI(){
 }
 
 // ============================================================
+// CUENTA Y SINCRONIZACIÓN (Supabase, opcional)
+// Un documento JSON por persona en la tabla user_state (ver supabase/schema.sql).
+// La app sigue funcionando sin internet: guarda en localStorage y sincroniza
+// cuando puede. Al juntar datos de dos aparatos no se pierde nada: cada día se
+// queda con su versión más reciente, y la configuración con la más reciente.
+// ============================================================
+let sb = null;            // cliente de Supabase (null si no está configurado)
+let syncUser = null;      // { id, email } cuando hay sesión
+let syncEstado = '';      // texto de estado para Ajustes
+let syncUltima = null;    // Date de la última sincronización correcta
+let syncModo = 'entrar';   // 'entrar' | 'crear' | 'olvide' | 'nueva' (cambiar contraseña tras el enlace del correo)
+let syncAviso = '';        // mensaje bajo el formulario (p. ej. "revisa tu correo")
+let subidaTimer = null;
+let descargando = false;
+
+function syncDisponible(){ return !!sb; }
+
+function fusionarEstados(local, remoto){
+  if(!remoto) return local;
+  if(!local) return remoto;
+  // Configuración (metas, hábitos, identidad, avisos...): gana la editada más recientemente.
+  const lu = local._configAt || 0, ru = remoto._configAt || 0;
+  const remotoGana = ru > lu || (ru === lu && !!remoto);
+  const base = JSON.parse(JSON.stringify(remotoGana ? remoto : local));
+  const otro = remotoGana ? local : remoto;
+  // Días: unión; si un día existe en ambos, gana el modificado más recientemente.
+  base.dias = base.dias || {};
+  Object.keys(otro.dias || {}).forEach(k=>{
+    const a = base.dias[k], b = otro.dias[k];
+    if(!a || ((b._u || 0) > (a._u || 0))) base.dias[k] = JSON.parse(JSON.stringify(b));
+    else if(((b._u || 0) === (a._u || 0)) && !diaTuvoActividad2(a) && diaTuvoActividad2(b)) base.dias[k] = JSON.parse(JSON.stringify(b));
+  });
+  // Revisiones semanales y mensuales: unión (gana la del estado más reciente si coinciden).
+  ['semanaRevisiones','mesRevisiones','modoDia'].forEach(campo=>{
+    base[campo] = Object.assign({}, otro[campo] || {}, base[campo] || {});
+  });
+  // Inicio del programa de cápsulas: el más antiguo, para no reiniciar la numeración.
+  if(local._capsulaStartEpoch && remoto._capsulaStartEpoch){
+    base._capsulaStartEpoch = local._capsulaStartEpoch < remoto._capsulaStartEpoch ? local._capsulaStartEpoch : remoto._capsulaStartEpoch;
+  } else {
+    base._capsulaStartEpoch = local._capsulaStartEpoch || remoto._capsulaStartEpoch;
+  }
+  base._configAt = Math.max(lu, ru);
+  base._updatedAt = Math.max(local._updatedAt || 0, remoto._updatedAt || 0);
+  return base;
+}
+function diaTuvoActividad2(d){
+  if(!d) return false;
+  return !!((d.enfoque && d.enfoque.metas) || d.gratitud || d.visualizacion || d.cierre || d.capsulaRespuesta ||
+    (d.tasks && d.tasks.length) || (d.habitos && Object.values(d.habitos).some(h=>h.completado||h.omitido)) ||
+    (d.identidad && (d.identidad.manana || d.identidad.noche)));
+}
+
+function aplicarEstado(nuevo){
+  state = Object.assign(JSON.parse(JSON.stringify(DEFAULT_STATE)), nuevo);
+  if(!state.avisosRevision) state.avisosRevision = JSON.parse(JSON.stringify(DEFAULT_STATE.avisosRevision));
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+  tomarSnapshots();
+}
+
+async function sincronizar(){
+  if(!sb || !syncUser || descargando) return;
+  descargando = true;
+  try{
+    const { data, error } = await sb.from('user_state').select('state').eq('user_id', syncUser.id).maybeSingle();
+    if(error) throw error;
+    const remoto = data ? data.state : null;
+    const antes = JSON.stringify(state);
+    const fusion = fusionarEstados(state, remoto);
+    if(JSON.stringify(fusion) !== antes){
+      aplicarEstado(fusion);
+      renderAll();
+      pushScheduleUpdate();
+    }
+    if(!remoto || JSON.stringify(remoto) !== JSON.stringify(fusion)) await subirAhora();
+    else { syncUltima = new Date(); syncEstado = ''; }
+  }catch(e){
+    console.warn('No se pudo sincronizar.', e);
+    syncEstado = 'Sin conexión: se sincronizará cuando vuelva internet.';
+  }finally{
+    descargando = false;
+    renderCuenta();
+  }
+}
+
+async function subirAhora(){
+  if(!sb || !syncUser) return;
+  clearTimeout(subidaTimer); subidaTimer = null;
+  try{
+    const { error } = await sb.from('user_state').upsert({ user_id: syncUser.id, state, updated_at: new Date().toISOString() });
+    if(error) throw error;
+    syncUltima = new Date(); syncEstado = '';
+  }catch(e){
+    console.warn('No se pudo subir a la nube.', e);
+    syncEstado = 'Sin conexión: se sincronizará cuando vuelva internet.';
+  }
+  renderCuenta();
+}
+
+function programarSubida(){
+  if(!sb || !syncUser || descargando) return;
+  clearTimeout(subidaTimer);
+  subidaTimer = setTimeout(subirAhora, 1500);
+}
+
+function borrarDatosNube(){
+  if(!sb || !syncUser) return;
+  sb.from('user_state').delete().eq('user_id', syncUser.id).then(()=>{}, ()=>{});
+}
+
+// Entrar con correo y contraseña. Funciona igual dentro de la app instalada
+// (iPhone/Android) porque no depende de abrir enlaces. Los únicos correos que
+// manda Supabase (confirmar la cuenta y recuperar la contraseña) usan sus
+// plantillas por defecto, que no requieren configurar un servidor de correo.
+function datosCuenta(){
+  const email = ((document.getElementById('cuenta-email')||{}).value || '').trim();
+  const pass = (document.getElementById('cuenta-pass')||{}).value || '';
+  return { email, pass };
+}
+function correoValido(email){ return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email); }
+function botonOcupado(id, texto){ const b = document.getElementById(id); if(b){ b.disabled = true; b.textContent = texto; } }
+function errorCuenta(e){
+  const m = (e && e.message || '').toLowerCase();
+  if(m.includes('invalid login')) return 'Correo o contraseña incorrectos.';
+  if(m.includes('not confirmed')) return 'Falta confirmar tu correo: toca el enlace que te enviamos y vuelve a entrar.';
+  if(m.includes('already registered')) return 'Ese correo ya tiene cuenta. Usa "Entrar".';
+  if(m.includes('password')) return 'La contraseña debe tener al menos 6 caracteres.';
+  if(m.includes('rate') || m.includes('security purposes')) return 'Demasiados intentos seguidos. Espera un minuto y vuelve a probar.';
+  return 'No se pudo conectar. Revisa tu internet e inténtalo de nuevo.';
+}
+async function entrarCuenta(){
+  const { email, pass } = datosCuenta();
+  if(!correoValido(email)){ showToast('Escribe un correo válido.'); return; }
+  if(!pass){ showToast('Escribe tu contraseña.'); return; }
+  botonOcupado('btn-cuenta', 'Entrando...');
+  try{
+    const { error } = await sb.auth.signInWithPassword({ email, password: pass });
+    if(error) throw error;
+    syncAviso = '';
+    showToast('¡Listo! Tu cuenta está conectada.');
+  }catch(e){ console.warn(e); syncAviso = errorCuenta(e); renderCuenta(); }
+}
+async function crearCuenta(){
+  const { email, pass } = datosCuenta();
+  if(!correoValido(email)){ showToast('Escribe un correo válido.'); return; }
+  if(pass.length < 6){ showToast('La contraseña debe tener al menos 6 caracteres.'); return; }
+  botonOcupado('btn-cuenta', 'Creando...');
+  try{
+    const { data, error } = await sb.auth.signUp({ email, password: pass, options:{ emailRedirectTo: location.origin + location.pathname } });
+    if(error) throw error;
+    if(data && data.session){ syncAviso = ''; showToast('¡Cuenta creada y conectada!'); return; }
+    syncModo = 'entrar';
+    syncAviso = 'Te enviamos un correo a ' + email + '. Toca el enlace para confirmar tu cuenta y luego entra aquí con tu contraseña.';
+  }catch(e){ console.warn(e); syncAviso = errorCuenta(e); }
+  renderCuenta();
+}
+async function recuperarCuenta(){
+  const { email } = datosCuenta();
+  if(!correoValido(email)){ showToast('Escribe tu correo.'); return; }
+  botonOcupado('btn-cuenta', 'Enviando...');
+  try{
+    const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
+    if(error) throw error;
+    syncModo = 'entrar';
+    syncAviso = 'Te enviamos un enlace a ' + email + '. Ábrelo y la app te pedirá una contraseña nueva.';
+  }catch(e){ console.warn(e); syncAviso = errorCuenta(e); }
+  renderCuenta();
+}
+async function guardarNuevaPass(){
+  const pass = (document.getElementById('cuenta-pass')||{}).value || '';
+  if(pass.length < 6){ showToast('La contraseña debe tener al menos 6 caracteres.'); return; }
+  botonOcupado('btn-cuenta', 'Guardando...');
+  try{
+    const { error } = await sb.auth.updateUser({ password: pass });
+    if(error) throw error;
+    syncModo = 'entrar'; syncAviso = '';
+    showToast('Contraseña nueva guardada.');
+  }catch(e){ console.warn(e); syncAviso = errorCuenta(e); }
+  renderCuenta();
+}
+
+async function cerrarSesion(){
+  if(!sb) return;
+  await subirAhora();
+  try{ await sb.auth.signOut(); }catch(e){}
+  showToast('Sesión cerrada. Tus datos siguen en este dispositivo.');
+}
+
+function renderCuenta(){
+  const body = document.getElementById('cuenta-body');
+  if(!body) return;
+  if(!syncDisponible()){
+    const configurada = (window.BRUJULA_CONFIG||{}).supabaseUrl;
+    body.innerHTML = configurada
+      ? `<p class="muted">No se pudo conectar con el servicio de cuentas. Revisa tu conexión; tus datos siguen guardados en este dispositivo.</p>`
+      : `<p class="muted">Tus datos se guardan solo en este dispositivo. Para usar la misma cuenta en el celular y la laptop, falta activar la sincronización.</p>`;
+    return;
+  }
+  if(syncModo === 'nueva'){
+    body.innerHTML = `
+      <p class="muted">Escribe tu contraseña nueva.</p>
+      <input type="password" id="cuenta-pass" autocomplete="new-password" placeholder="Mínimo 6 caracteres" style="margin-top:10px;" onkeydown="if(event.key==='Enter') guardarNuevaPass()">
+      <button class="btn block" id="btn-cuenta" style="margin-top:10px;" onclick="guardarNuevaPass()">Guardar contraseña</button>${syncAviso ? `<p class="hint">${escapeHtml(syncAviso)}</p>` : ''}`;
+    return;
+  }
+  if(syncUser){
+    body.innerHTML = `
+      <p class="muted">Conectado como <b>${escapeHtml(syncUser.email||'')}</b>.</p>
+      <p class="hint">${syncEstado ? escapeHtml(syncEstado) : (syncUltima ? 'Sincronizado a las ' + syncUltima.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}) + '.' : 'Sincronizando...')}</p>
+      <p class="hint">Entra con este mismo correo en tu otro aparato y verás los mismos datos.</p>
+      <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
+        <button class="btn small" onclick="sincronizar()">Sincronizar ahora</button>
+        <button class="btn small secondary" onclick="cerrarSesion()">Cerrar sesión</button>
+      </div>`;
+    return;
+  }
+  const aviso = syncAviso ? `<p class="hint" style="color:var(--accent-dark); font-weight:600;">${escapeHtml(syncAviso)}</p>` : '';
+  const enlace = (modo, texto) => `<button type="button" class="link" style="background:none; border:0; padding:6px 0; font:inherit;" onclick="syncModo='${modo}'; syncAviso=''; renderCuenta();">${texto}</button>`;
+  const emailPrev = escapeHtml(((document.getElementById('cuenta-email')||{}).value) || '');
+  const campoEmail = `<input type="email" id="cuenta-email" autocomplete="email" placeholder="tu@correo.com" value="${emailPrev}" style="margin-top:10px;">`;
+  if(syncModo === 'olvide'){
+    body.innerHTML = `
+      <p class="muted">Te enviamos un enlace para poner una contraseña nueva.</p>
+      ${campoEmail}
+      <button class="btn block" id="btn-cuenta" style="margin-top:10px;" onclick="recuperarCuenta()">Enviarme el enlace</button>
+      ${aviso}${enlace('entrar','← Volver')}`;
+    return;
+  }
+  const crear = syncModo === 'crear';
+  body.innerHTML = `
+    <p class="muted">${crear ? 'Crea tu cuenta con tu correo y una contraseña.' : 'Entra con tu correo y contraseña para tener los mismos datos en el celular y la laptop.'}</p>
+    ${campoEmail}
+    <input type="password" id="cuenta-pass" autocomplete="${crear?'new-password':'current-password'}" placeholder="${crear?'Contraseña (mínimo 6 caracteres)':'Contraseña'}" style="margin-top:8px;" onkeydown="if(event.key==='Enter') ${crear?'crearCuenta()':'entrarCuenta()'}">
+    <button class="btn block" id="btn-cuenta" style="margin-top:10px;" onclick="${crear?'crearCuenta()':'entrarCuenta()'}">${crear?'Crear cuenta':'Entrar'}</button>
+    ${aviso}
+    <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-top:4px;">
+      ${crear ? enlace('entrar','¿Ya tienes cuenta? Entrar') : enlace('crear','¿Primera vez? Crear cuenta') + enlace('olvide','Olvidé mi contraseña')}
+    </div>
+    <p class="hint">Lo que ya tienes en este dispositivo se sube a tu cuenta, no se pierde.</p>`;
+}
+
+function initSync(){
+  const c = window.BRUJULA_CONFIG || {};
+  if(!c.supabaseUrl || !c.supabaseAnonKey || !window.supabase || !window.supabase.createClient) return;
+  try{
+    sb = window.supabase.createClient(c.supabaseUrl, c.supabaseAnonKey, { auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true } });
+  }catch(e){ console.warn('No se pudo iniciar Supabase.', e); sb = null; return; }
+  sb.auth.onAuthStateChange((evento, session)=>{
+    // Al abrir el enlace de "Olvidé mi contraseña", pedir la nueva en Ajustes.
+    if(evento === 'PASSWORD_RECOVERY'){ syncModo = 'nueva'; syncAviso = ''; setTimeout(()=>go('ajustes'), 0); }
+    const u = session && session.user ? { id: session.user.id, email: session.user.email } : null;
+    const cambio = (u && u.id) !== (syncUser && syncUser.id);
+    syncUser = u;
+    if(!u){ syncUltima = null; syncEstado = ''; }
+    renderCuenta();
+    if(u && cambio) sincronizar();
+  });
+  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) sincronizar(); });
+  window.addEventListener('online', ()=>sincronizar());
+}
+
+// ============================================================
 // RENDER GLOBAL
 // ============================================================
+let lastRenderedDay = null;
 function renderAll(){
   if(!state) return;
   try{
-    if(currentScreen==='hoy') renderHoy();
-    if(currentScreen==='metas') renderMetas();
-    if(currentScreen==='rutina'){ renderTasks(); renderHabitosConfig(); renderTimeline(); renderModoDia(); }
+    lastRenderedDay = todayKey();
+    if(currentScreen==='hoy'){ renderHoy(); renderBannerIphone(); animarRecienMarcado(); }
+    if(currentScreen==='metas'){ renderMetas(); renderHabitosConfig(); }
+    if(currentScreen==='rutina') renderRutinaTabs();
     if(currentScreen==='cápsula') renderCapsulaScreen();
     if(currentScreen==='progreso') renderProgreso();
-    // Ajustes: rellenar webhook al entrar
     if(currentScreen==='ajustes'){
-      const inp = document.getElementById('input-webhook');
-      if(inp) inp.value = state.webhookUrl || '';
-      const inpNombre = document.getElementById('input-nombre');
-      if(inpNombre) inpNombre.value = state.nombre || '';
+      fillInput('input-webhook', state.webhookUrl);
+      fillInput('input-nombre', state.nombre);
+      renderAvisosRevision();
+      renderEstiloAviso();
+      renderCuenta();
       syncNotifyUI();
     }
-    renderModoDia();
   }catch(e){
     console.error('Error de render (no crítico):', e);
   }
 }
 
+// Si la app queda abierta y cambia el día (o vuelves a ella al día siguiente), se refresca sola.
+function revisarCambioDeDia(){
+  if(state && lastRenderedDay && lastRenderedDay !== todayKey()) renderAll();
+}
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) revisarCambioDeDia(); });
+setInterval(revisarCambioDeDia, 60000);
+
 // ============================================================
 // INIT
 // ============================================================
 function init(){
+  hidratarIconos();
   loadState();
-  // precargar campos de rutina con valores guardados
-  document.getElementById('input-identidad').value = state.identidad.texto || '';
-  const fecha = todayKey();
-  const dia = ensureDia(fecha);
-  document.getElementById('input-gratitud').value = dia.gratitud || '';
-  document.getElementById('input-visualizacion').value = dia.visualizacion || '';
-  document.getElementById('input-enfoque-metas').value = dia.enfoque.metas || '';
-  document.getElementById('input-enfoque-razones').value = dia.enfoque.razones || '';
-  document.getElementById('input-enfoque-paso1').value = (dia.enfoque.pasos[0] && dia.enfoque.pasos[0].texto) || '';
-  document.getElementById('input-enfoque-paso2').value = (dia.enfoque.pasos[1] && dia.enfoque.pasos[1].texto) || '';
+  ensureDia(todayKey());
   saveState();
+
+  // Guardado automático de los campos de texto (sin botones "Guardar")
+  bindAutosave('cap-respuesta', v=>{ ensureDia(todayKey()).capsulaRespuesta = v; });
+  bindAutosave('input-nombre', v=>{ state.nombre = v; });
+  bindAutosave('input-webhook', v=>{ state.webhookUrl = v; N8N_WEBHOOK_URL = v; });
+
+  initSync();
   go('hoy');
   loadCapsulas();
 
