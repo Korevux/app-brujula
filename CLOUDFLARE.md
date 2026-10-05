@@ -20,11 +20,11 @@ Las cuentas siguen en Supabase. Todo cabe en el plan gratis de Cloudflare: el Wo
    Pulsa *Guardar e implementar*. Cloudflare lee `wrangler.jsonc` y crea solo el Worker, los dos crons y el espacio KV.
 3. **Copia la clave privada de los avisos.** Es la misma que usaba Netlify, así los teléfonos ya suscritos siguen funcionando.
    - En Netlify: *Site configuration* → *Environment variables* → `VAPID_PRIVATE_KEY` → copia el valor.
-   - En Cloudflare: abre el Worker `brujula-interior` → *Configuración* → *Variables y secretos* → *Agregar*. Tipo **Secreto**, nombre `VAPID_PRIVATE_KEY`, pega el valor y guarda.
+   - En Cloudflare: abre el Worker `app-brujula` → *Configuración* → *Variables y secretos* → *Agregar*. Tipo **Secreto**, nombre `VAPID_PRIVATE_KEY`, pega el valor y guarda.
 
    No la pegues en el repositorio ni en el chat.
 4. **Supabase despierto.** No hay que hacer nada: la URL y la clave pública de Supabase ya están en `wrangler.jsonc` (son las mismas de `config.js`).
-5. **Abre la app** en la dirección que te da Cloudflare (`https://brujula-interior.<tu-subdominio>.workers.dev`).
+5. **Abre la app** en la dirección que te da Cloudflare (`https://app-brujula.<tu-subdominio>.workers.dev`).
    - Instálala de nuevo en la pantalla de inicio.
    - En Ajustes, activa los avisos otra vez para que el teléfono se registre en el nuevo servidor.
    - En Supabase, *Authentication* → *URL Configuration*: cambia *Site URL* a la dirección nueva de Cloudflare (o agrégala en *Redirect URLs*) para que los enlaces de confirmar cuenta y recuperar contraseña abran la app nueva.
