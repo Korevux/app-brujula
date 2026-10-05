@@ -23,7 +23,7 @@
   // Las claves de los avisos (VAPID_PUBLIC_KEY y VAPID_PRIVATE_KEY) NO van aquí:
   // se guardan como secretos en el panel de Cloudflare (ver CLOUDFLARE.md).
   "vars": {
-    "VAPID_SUBJECT": "mailto:noel.duran.chile@gmail.com",
+    "VAPID_SUBJECT": "mailto:korevuxdigital@gmail.com",
     // Supabase (cuentas): la URL y la clave pública "anon", las mismas de config.js.
     // Las usa el cron diario que mantiene activo el proyecto gratis.
     "SUPABASE_URL": "https://rmjprvpqiscuxkjyuokb.supabase.co",
