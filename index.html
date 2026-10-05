@@ -3175,6 +3175,14 @@ async function cerrarSesion(){
   showToast('Sesión cerrada. Tus datos siguen en este dispositivo.');
 }
 
+// Muestra u oculta lo escrito en la contraseña, para revisar que quedó bien.
+function verPass(btn){
+  const campo = document.getElementById('cuenta-pass');
+  if(!campo) return;
+  const ver = campo.type === 'password';
+  campo.type = ver ? 'text' : 'password';
+  btn.querySelector('.ver-pass-txt').textContent = ver ? 'Ocultar contraseña' : 'Ver contraseña';
+}
 function renderCuenta(){
   const body = document.getElementById('cuenta-body');
   if(!body) return;
@@ -3189,6 +3197,7 @@ function renderCuenta(){
     body.innerHTML = `
       <p class="muted">Escribe tu contraseña nueva.</p>
       <input type="password" id="cuenta-pass" autocomplete="new-password" placeholder="Mínimo 6 caracteres" style="margin-top:10px;" onkeydown="if(event.key==='Enter') guardarNuevaPass()">
+      <button type="button" class="link" style="background:none; border:0; padding:6px 0; font:inherit; display:inline-flex; align-items:center; gap:6px;" onclick="verPass(this)">${ic('eye',16)}<span class="ver-pass-txt">Ver contraseña</span></button>
       <button class="btn block" id="btn-cuenta" style="margin-top:10px;" onclick="guardarNuevaPass()">Guardar contraseña</button>${syncAviso ? `<p class="hint">${escapeHtml(syncAviso)}</p>` : ''}`;
     return;
   }
@@ -3220,6 +3229,7 @@ function renderCuenta(){
     <p class="muted">${crear ? 'Crea tu cuenta con tu correo y una contraseña.' : 'Entra con tu correo y contraseña para tener los mismos datos en el celular y la laptop.'}</p>
     ${campoEmail}
     <input type="password" id="cuenta-pass" autocomplete="${crear?'new-password':'current-password'}" placeholder="${crear?'Contraseña (mínimo 6 caracteres)':'Contraseña'}" style="margin-top:8px;" onkeydown="if(event.key==='Enter') ${crear?'crearCuenta()':'entrarCuenta()'}">
+    <button type="button" class="link" style="background:none; border:0; padding:6px 0; font:inherit; display:inline-flex; align-items:center; gap:6px;" onclick="verPass(this)">${ic('eye',16)}<span class="ver-pass-txt">Ver contraseña</span></button>
     <button class="btn block" id="btn-cuenta" style="margin-top:10px;" onclick="${crear?'crearCuenta()':'entrarCuenta()'}">${crear?'Crear cuenta':'Entrar'}</button>
     ${aviso}
     <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-top:4px;">
