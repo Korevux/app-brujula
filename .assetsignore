@@ -1,0 +1,12 @@
+# Archivos del repositorio que NO se publican como parte de la app.
+.git
+.wrangler
+node_modules
+worker
+netlify
+supabase
+*.md
+wrangler.jsonc
+package.json
+package-lock.json
+.assetsignore

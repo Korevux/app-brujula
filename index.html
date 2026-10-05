@@ -2648,7 +2648,7 @@ function pushScheduleUpdate(){
     return registration.pushManager.getSubscription();
   }).then(function(subscription){
     if(!subscription) return;
-    fetch('/.netlify/functions/save-schedule', {
+    fetch('/api/save-schedule', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -2678,7 +2678,7 @@ function subscribeToPush(){
   }).then(function(subscription){
     if(!subscription) return;
     try{ window.localStorage.setItem(PUSH_SUBSCRIBED_KEY, '1'); }catch(e){}
-    fetch('/.netlify/functions/save-schedule', {
+    fetch('/api/save-schedule', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
