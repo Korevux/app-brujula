@@ -369,6 +369,8 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
 .next-reminder:empty{ display:none; }
 .section-title{ font-size:24px; letter-spacing:-0.02em; }
 .enfoque-hero{ border-radius:24px; padding:22px; }
+.habito-contenido{ font-size:15px; color:var(--ink-soft); margin-top:6px; }
+.habito-contenido b{ color:var(--ink); font-weight:600; }
 .siguiente-card{ background:var(--card); border:2px solid var(--gold); border-radius:var(--radius-lg); padding:18px; margin:0 0 14px; box-shadow:0 6px 20px rgba(240,123,79,.16); }
 .siguiente-card.completo{ border-color:var(--accent); box-shadow:var(--shadow-sm); }
 .siguiente-label{ font-size:13px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--gold); margin-bottom:6px; }
@@ -673,6 +675,29 @@ label{ font-size:14.5px; }
       <div id="habitos-ciencia" style="margin-top:10px;"></div>
     </div>
 
+    <div class="card tight" id="tasks-card">
+      <div class="card-title"><i class="ic" data-ic="list"></i><span>Otras tareas de hoy</span></div>
+      <p class="hint" style="margin-top:-4px; margin-bottom:10px;">Lo que no es un hábito: una llamada, un trámite, una compra.</p>
+      <div id="tasks-list"></div>
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        <input type="text" id="input-task-desc" placeholder="Agregar una tarea..." onkeydown="if(event.key==='Enter') agregarTask()">
+        <button class="btn small" onclick="agregarTask()" aria-label="Agregar tarea">+</button>
+      </div>
+      <details style="margin-top:8px;">
+        <summary class="small-muted" style="cursor:pointer;">Ponerle hora (opcional)</summary>
+        <div class="field-row" style="margin-top:8px;">
+          <div>
+            <label style="margin-top:0;">Hora</label>
+            <input type="time" id="input-task-hora">
+          </div>
+          <div>
+            <label style="margin-top:0;">Duración (min)</label>
+            <input type="number" id="input-task-duracion" placeholder="30">
+          </div>
+        </div>
+      </details>
+    </div>
+
     <div class="card tight momento noche" id="cierre-card">
       <button type="button" class="momento-head" id="cierre-toggle" aria-expanded="false" aria-controls="cierre-body" onclick="toggleMomento('cierre')">
         <span class="momento-icon luna" aria-hidden="true"><svg viewBox="0 0 48 48" width="48" height="48"><defs><linearGradient id="g-cielo-pm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b3f9e"/><stop offset="1" stop-color="#1b2160"/></linearGradient><linearGradient id="g-luna" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2c2"/><stop offset="1" stop-color="#e8c26a"/></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#g-cielo-pm)"/><path d="M29.5 12.5a12 12 0 1 0 6.5 21.4A10 10 0 0 1 29.5 12.5z" fill="url(#g-luna)"/><g fill="#fff"><path d="M13 12l.9 2 2 .9-2 .9-.9 2-.9-2-2-.9 2-.9z"/><circle cx="38" cy="15" r="1.3"/><circle cx="12" cy="31" r="1"/><circle cx="35" cy="38" r="1.1" opacity=".8"/></g></svg></span>
@@ -766,27 +791,6 @@ label{ font-size:14.5px; }
         <button class="btn ghost small block" style="margin-top:10px;" onclick="abrirEditorEnfoque()"><i class="ic" data-ic="pencil"></i> Editar objetivo y compromiso</button>
       </div>
 
-      <div class="card" id="tasks-card">
-        <div class="card-title"><i class="ic" data-ic="list"></i><span>Otras acciones de hoy</span></div>
-        <div id="tasks-list"></div>
-        <div style="display:flex; gap:8px; margin-top:10px;">
-          <input type="text" id="input-task-desc" placeholder="Agregar una acción..." onkeydown="if(event.key==='Enter') agregarTask()">
-          <button class="btn small" onclick="agregarTask()" aria-label="Agregar acción">+</button>
-        </div>
-        <details style="margin-top:8px;">
-          <summary class="small-muted" style="cursor:pointer;">Hora y duración (opcional)</summary>
-          <div class="field-row" style="margin-top:8px;">
-            <div>
-              <label style="margin-top:0;">Hora</label>
-              <input type="time" id="input-task-hora">
-            </div>
-            <div>
-              <label style="margin-top:0;">Duración (min)</label>
-              <input type="number" id="input-task-duracion" placeholder="30">
-            </div>
-          </div>
-        </details>
-      </div>
 
       <div class="card">
         <div class="card-title"><i class="ic" data-ic="calcheck"></i><span>Revisión semanal</span></div>
@@ -1300,8 +1304,9 @@ function renderHoy(){
   // 1 · Objetivo de hoy
   renderEnfoqueHoy();
 
-  // 2 · Hábitos
+  // 2 · Hábitos y otras tareas
   renderHabitosHoy();
+  renderTasks();
 
   const hc = document.getElementById('habitos-ciencia'); if(hc && !hc.innerHTML) hc.innerHTML = cienciaHtml('habitos');
 
@@ -1359,6 +1364,11 @@ function siguientePaso(){
       sub: `${x.hora ? 'A las '+x.hora+' · ' : ''}${x.duracionPersonal || x.duracionRecomendada} minutos. Márcalo cuando lo hagas.`,
       boton:'Ya lo hice', alt:'Hoy no' };
   }
+  const tarea = (dia.tasks||[]).filter(t=>!t.completado).sort((a,b)=>(a.hora||'99').localeCompare(b.hora||'99'))[0];
+  if(tarea){
+    return { tipo:'tarea', id:tarea.id, titulo: tarea.desc,
+      sub: `${tarea.hora ? 'A las '+tarea.hora+'. ' : ''}Es una de tus tareas de hoy. Márcala cuando la hagas.`, boton:'Ya lo hice' };
+  }
   if(!cierreListo) return Object.assign(cierre, { titulo:'Más tarde: tu Cierre de la noche', sub:'Ya hiciste todo lo del día. En la noche, revisa cómo te fue.', boton:'Hacerlo ahora' });
   return { tipo:'listo', titulo:'¡Día completo!', sub:'Hiciste todo lo de hoy. Descansa; mañana seguimos.' };
 }
@@ -1385,6 +1395,7 @@ function hacerSiguientePaso(alt){
     return;
   }
   if(p.tipo === 'compromiso'){ toggleEnfoquePaso(p.idx); return; }
+  if(p.tipo === 'tarea'){ toggleTask(p.id); showToast('Tarea hecha. Bien.'); return; }
   if(p.tipo === 'habito'){
     if(alt){ omitirHabito(p.id); return; }
     toggleHabito(p.id);
@@ -1748,9 +1759,12 @@ function renderHabitosHoy(){
     const dur = h.duracionPersonal || h.duracionRecomendada;
     return `<div class="check-row">
       <button type="button" data-pop="hab${h.id}" class="checkbox ${hd.completado?'checked':''}" aria-pressed="${hd.completado}" aria-label="Marcar ${escapeHtml(h.nombre)}" onclick="toggleHabito('${h.id}')"></button>
-      <div onclick="toggleHabito('${h.id}')" style="cursor:pointer;">
+      <div onclick="toggleHabito('${h.id}')" style="cursor:pointer; flex:1; min-width:0;">
         <div class="row-title">${escapeHtml(h.nombre)}</div>
         <div class="row-sub">${h.hora?h.hora+' · ':''}${hd.omitido?'Saltado hoy · no cuenta en tu logro':dur+' min recomendados'}</div>
+        <div class="habito-contenido">${h.contenidoPersonal
+          ? `${escapeHtml(contenidoHabito(h).etiqueta)}: <b>${escapeHtml(h.contenidoPersonal)}</b> <a class="link" onclick="event.stopPropagation(); editarContenidoHabito('${h.id}')">Cambiar</a>`
+          : `<a class="link" onclick="event.stopPropagation(); editarContenidoHabito('${h.id}')">${ic('pencil',14)} ${escapeHtml(contenidoHabito(h).pregunta)}</a>`}</div>
       </div>
       <div class="row-actions">
         <button type="button" class="omitir-btn${hd.omitido?' activo':''}" aria-pressed="${!!hd.omitido}" aria-label="${hd.omitido?'Retomar '+escapeHtml(h.nombre)+' hoy':'Saltar '+escapeHtml(h.nombre)+' hoy, sin que cuente en el logro'}" onclick="omitirHabito('${h.id}')">${hd.omitido?ic('undo',15)+' Retomar':ic('skip',15)+' Hoy no'}</button>
@@ -1768,6 +1782,31 @@ function renderHabitosHoy(){
     if(!d.habitos[h.id]) d.habitos[h.id] = { completado:false, duracion:null, omitido:false };
     d.habitos[h.id].nota = v;
   }));
+}
+// Qué lees, estudias o haces en cada hábito: se anota una vez y se ve cada día en Hoy.
+function contenidoHabito(h){
+  if(h.id === 'lectura') return { pregunta:'¿Qué estás leyendo?', etiqueta:'Leyendo', ejemplo:'Ej: Hábitos atómicos' };
+  if(h.id === 'estudio') return { pregunta:'¿Qué vas a estudiar?', etiqueta:'Estudiando', ejemplo:'Ej: Inglés, capítulo 3' };
+  if(h.id === 'ejercicio') return { pregunta:'¿Qué ejercicio harás?', etiqueta:'Haré', ejemplo:'Ej: Caminar 30 minutos' };
+  return { pregunta:'¿Qué harás exactamente?', etiqueta:'Plan', ejemplo:'Ej: 10 minutos al despertar' };
+}
+function editarContenidoHabito(id){
+  const h = state.habitosConfig.find(x=>x.id===id);
+  if(!h) return;
+  const c = contenidoHabito(h);
+  openModal(`
+    <h3 style="margin-bottom:6px;">${escapeHtml(c.pregunta)}</h3>
+    <p class="muted" style="margin-bottom:10px;">Se queda guardado y lo verás cada día en ${escapeHtml(h.nombre)}. Cámbialo cuando quieras.</p>
+    <input type="text" id="contenido-habito" value="${escapeHtml(h.contenidoPersonal||'')}" placeholder="${escapeHtml(c.ejemplo)}" onkeydown="if(event.key==='Enter') guardarContenidoHabito('${h.id}')">
+    <button class="btn block" style="margin-top:14px;" onclick="guardarContenidoHabito('${h.id}')">Guardar</button>
+  `);
+  setTimeout(()=>{ const t = document.getElementById('contenido-habito'); if(t) t.focus(); }, 250);
+}
+function guardarContenidoHabito(id){
+  const v = document.getElementById('contenido-habito').value.trim();
+  closeModal();
+  setHabitoField(id, 'contenidoPersonal', v);
+  showToast('Guardado.');
 }
 function toggleHabito(id){
   const fecha = todayKey();
@@ -1804,6 +1843,7 @@ function renderProgresoHoy(){
     if(hd && hd.omitido) return;
     total += 1; if(hd && hd.completado) done++;
   });
+  (dia.tasks||[]).forEach(t=>{ total += 1; if(t.completado) done++; });
   total += 1; if(cierreHecho(dia)) done++;
 
   const pct = total? Math.round((done/total)*100) : 0;
@@ -2045,7 +2085,7 @@ function renderRutinaTabs(){
   });
   document.getElementById('rutina-tab-hoy').style.display = rutinaTab==='hoy' ? '' : 'none';
   document.getElementById('rutina-tab-historial').style.display = rutinaTab==='historial' ? '' : 'none';
-  if(rutinaTab==='hoy'){ renderTimeline(); renderTasks(); }
+  if(rutinaTab==='hoy') renderTimeline();
   else renderHistorialRutina();
 }
 
@@ -2054,7 +2094,7 @@ function renderRutinaTabs(){
 // ============================================================
 function agregarTask(){
   const desc = document.getElementById('input-task-desc').value.trim();
-  if(!desc){ showToast('Escribe una descripción para la acción.'); return; }
+  if(!desc){ showToast('Escribe la tarea.'); return; }
   const hora = document.getElementById('input-task-hora').value;
   const duracion = document.getElementById('input-task-duracion').value;
   const fecha = todayKey();
@@ -2069,7 +2109,7 @@ function agregarTask(){
   document.getElementById('input-task-desc').value='';
   document.getElementById('input-task-hora').value='';
   document.getElementById('input-task-duracion').value='';
-  showToast('Acción agregada.');
+  showToast('Tarea agregada.');
   renderAll();
 }
 function renderTasks(){
@@ -2077,12 +2117,12 @@ function renderTasks(){
   const dia = ensureDia(fecha);
   const list = document.getElementById('tasks-list');
   if(!dia.tasks.length){
-    list.innerHTML = `<div class="small-muted">Sin acciones extra por ahora.</div>`;
+    list.innerHTML = `<div class="small-muted">Sin tareas extra por ahora.</div>`;
     return;
   }
   list.innerHTML = dia.tasks.map(t=>`
     <div class="task-item ${t.completado?'done':''}">
-      <button type="button" class="checkbox ${t.completado?'checked':''}" aria-pressed="${t.completado}" aria-label="Marcar acción" onclick="toggleTask('${t.id}')"></button>
+      <button type="button" class="checkbox ${t.completado?'checked':''}" aria-pressed="${t.completado}" aria-label="Marcar tarea" onclick="toggleTask('${t.id}')"></button>
       <div style="flex:1;">
         <div class="task-title">${escapeHtml(t.desc)}</div>
         <div class="task-meta">
@@ -2091,7 +2131,7 @@ function renderTasks(){
         </div>
       </div>
       <div class="row-actions">
-        <button class="icon-btn" title="Eliminar" aria-label="Eliminar acción" onclick="eliminarTask('${t.id}')">${ic('x',16)}</button>
+        <button class="icon-btn" title="Eliminar" aria-label="Eliminar tarea" onclick="eliminarTask('${t.id}')">${ic('x',16)}</button>
       </div>
     </div>
   `).join('');
@@ -2141,8 +2181,8 @@ function renderHabitosConfig(){
             <input type="number" value="${h.duracionPersonal||''}" placeholder="${h.duracionRecomendada}" onchange="setHabitoField('${h.id}','duracionPersonal',this.value?Number(this.value):null)">
           </div>
         </div>
-        ${h.id==='lectura' ? `<label>Contenido actual (ej: libro que estás leyendo)</label>
-          <input type="text" value="${escapeHtml(h.contenidoPersonal||'')}" placeholder="Ej: Libro actual: ..." onchange="setHabitoField('${h.id}','contenidoPersonal',this.value)">` : ''}
+        <label>${escapeHtml(contenidoHabito(h).pregunta)}</label>
+          <input type="text" value="${escapeHtml(h.contenidoPersonal||'')}" placeholder="${escapeHtml(contenidoHabito(h).ejemplo)}" onchange="setHabitoField('${h.id}','contenidoPersonal',this.value.trim())">
         <div style="display:flex; align-items:center; gap:8px; margin-top:12px; font-size:13px; font-weight:600; color:var(--ink-soft);">
           <span style="flex:1;">Recordatorio activo${h.hora?'':' (elige una hora)'}</span>
           <button type="button" class="switch ${h.recordatorio?'on':''}" role="switch" aria-checked="${h.recordatorio}" aria-label="Recordatorio de ${escapeHtml(h.nombre)}" onclick="toggleHabitoRecordatorio('${h.id}')"></button>
@@ -2206,7 +2246,12 @@ function renderTimeline(){
   dia.enfoque.pasos.forEach((p,i)=>{
     if(p.texto) items.push({ hora:'—', texto: `Compromiso ${i+1}: `+p.texto, done: p.completado });
   });
+  (dia.tasks||[]).forEach(t=>items.push({ hora: t.hora||'—', texto: t.desc, done: t.completado }));
   items.push({ hora:'—', texto:'Cierre de la noche', done: cierreHecho(dia) });
+  // Arranque primero, luego lo que tiene hora (en orden), luego lo que no tiene hora, y el cierre al final.
+  const primero = items.shift(), ultimo = items.pop();
+  const conHora = items.filter(it=>it.hora!=='—').sort((a,b)=>a.hora.localeCompare(b.hora));
+  items.splice(0, items.length, primero, ...conHora, ...items.filter(it=>it.hora==='—'), ultimo);
 
   const nowMin = new Date().getHours()*60+new Date().getMinutes();
   let nowAssigned = false;
@@ -2468,7 +2513,7 @@ function verDia(key){
     <p class="small-muted">${key}</p>
     ${bloque(ic('target')+'<span>Objetivo</span>', (e.metas?`<p style="font-weight:700;">${escapeHtml(e.metas)}</p>`:'') + pasos)}
     ${bloque(ic('check')+'<span>Hábitos</span>', habitos)}
-    ${bloque(ic('list')+'<span>Otras acciones</span>', tasks)}
+    ${bloque(ic('list')+'<span>Otras tareas</span>', tasks)}
     ${bloque(ic('moon')+'<span>Cierre</span>', cierre)}
     ${bloque(ic('heart')+'<span>Gratitud</span>', texto(dia.gratitud))}
     ${bloque(ic('eye')+'<span>Obstáculo y plan</span>', texto(dia.obstaculo))}
