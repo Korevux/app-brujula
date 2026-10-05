@@ -914,6 +914,12 @@ label{ font-size:14.5px; }
           Avisarme aunque no tenga la app abierta
         </label>
         <p class="hint" id="notifyStatus" style="margin-top:8px;"></p>
+        <div id="sonido-guia" style="margin-top:10px; padding:12px 14px; border-radius:var(--radius-md); background:var(--accent-soft);">
+          <div class="card-title" style="margin-bottom:2px;"><i class="ic" data-ic="bell"></i><span>Para que suene con la app cerrada</span></div>
+          <p class="hint" style="margin-top:0;">Además de activar la casilla de arriba, tu aparato tiene que dejar sonar los avisos. Revísalo una sola vez:</p>
+          <ol class="install-steps" id="sonido-pasos"></ol>
+          <p class="hint" style="margin-bottom:0;">Con la app cerrada suena el tono de notificación del aparato. La alarma que se repite solo suena con la app abierta.</p>
+        </div>
 
         <div class="card-title" style="margin-top:16px;">Tipo de aviso</div>
         <div class="estilo-row" role="radiogroup" aria-label="Tipo de aviso">
@@ -2946,12 +2952,33 @@ function renderBannerIphone(){
   if(el) el.style.display = (necesitaInstalarIphone() && !state.iosBannerOculto) ? 'flex' : 'none';
 }
 
+// Pasos para que el aparato deje sonar los avisos, según sea Android, iPhone o computador.
+function pasosSonido(){
+  if(IS_IOS) return [
+    'Abre <b>Ajustes</b> del iPhone → <b>Notificaciones</b> → <b>Brújula</b>.',
+    'Activa <b>Permitir notificaciones</b> y <b>Sonidos</b>.',
+    'Revisa que no tengas activado <b>No molestar</b> o un modo de <b>Concentración</b> a esa hora.'
+  ];
+  if(/android/i.test(navigator.userAgent)) return [
+    'Abre <b>Ajustes</b> del teléfono → <b>Aplicaciones</b> → <b>Chrome</b> (o <b>Brújula</b> si aparece) → <b>Notificaciones</b>.',
+    'Activa las notificaciones y, dentro de <b>Sitios</b> o <b>brujula.krvx.workers.dev</b>, activa <b>Sonido</b> y <b>Mostrar en pantalla</b> (o "emergente").',
+    'En Xiaomi, Redmi, Samsung y otros: en <b>Ajustes → Aplicaciones → Chrome → Ahorro de batería</b> elige <b>Sin restricciones</b>, y activa <b>Inicio automático</b> si aparece.',
+    'Revisa que el teléfono no esté en silencio ni en <b>No molestar</b>.'
+  ];
+  return [
+    'Cuando el navegador pregunte, toca <b>Permitir</b> notificaciones.',
+    'En Windows: <b>Configuración → Sistema → Notificaciones</b> y activa <b>Chrome</b> (o Edge). En Mac: <b>Ajustes del Sistema → Notificaciones → Chrome</b> y activa <b>Sonido</b>.',
+    'Deja el navegador abierto (puede estar minimizado); si lo cierras del todo, los avisos no llegan.'
+  ];
+}
 function refreshNotifyStatus(){
   const notifyToggle = document.getElementById('notifyToggle');
   const notifyStatus = document.getElementById('notifyStatus');
   if(!notifyToggle || !notifyStatus) return;
   const guia = document.getElementById('ios-install-guide');
   if(guia) guia.style.display = necesitaInstalarIphone() ? 'block' : 'none';
+  const pasos = document.getElementById('sonido-pasos');
+  if(pasos) pasos.innerHTML = pasosSonido().map(t=>'<li>'+t+'</li>').join('');
   const hintPc = document.getElementById('desktop-notify-hint');
   if(hintPc) hintPc.style.display = (!IS_IOS && !/android|mobile/i.test(navigator.userAgent)) ? 'block' : 'none';
 
