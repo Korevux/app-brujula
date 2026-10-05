@@ -1386,7 +1386,7 @@ function renderRitual(){
       onToggle:"document.getElementById('input-gratitud').focus()", ciencia:'gratitud' }),
     filaRitual({ id:'vis', done: pasos.visualizacion, titulo:'2. Visualización',
       sub: (vis ? `Tu meta ya lograda. <a class="link" onclick="modoVisualizacion()">Leer →</a>` : `<a class="link" onclick="editarTextoFijo('visualizacion')">Escríbela una sola vez →</a>`)
-        + `<span class="ritual-sub-nota">Luego imagínate haciendo tu tarea principal de hoy.</span>`,
+        + `<span class="ritual-sub-nota"><b>Visualizar es ver la escena en tu mente, como una película.</b> Cierra los ojos un minuto: 1) imagina tu meta ya lograda y cómo te sientes; 2) mírate haciendo, paso a paso, tu tarea principal de hoy; 3) piensa qué podría frenarte y qué harás.</span>`,
       extra: `<label for="input-obstaculo" style="margin-top:10px;">¿Qué obstáculo puede aparecer hoy y qué harás?</label><textarea id="input-obstaculo" rows="2" placeholder="Si aparece..., entonces haré...">${escapeHtml(dia.obstaculo||'')}</textarea>`,
       onToggle:"toggleRitual('visualizacionLeida')", ciencia:'visualizacion' }),
     filaRitual({ id:'obj', done: pasos.objetivo, titulo:'3. Objetivo del día',
@@ -1708,7 +1708,8 @@ function modoVisualizacion(){
     <div style="text-align:center; padding: 30px 10px;">
       <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:var(--accent); font-weight:700; margin-bottom:14px;">Modo foco</div>
       <div style="font-size:19px; line-height:1.6; font-weight:600;">${escapeHtml(texto)}</div>
-      <button class="btn secondary" style="margin-top:26px;" onclick="closeModal()">Cerrar</button>
+      <p class="muted" style="margin-top:18px; font-size:14.5px; line-height:1.5;">Ahora cierra los ojos un minuto. Mira la escena: dónde estás, qué haces, cómo te sientes. Después mírate haciendo hoy los pasos que te acercan.</p>
+      <button class="btn secondary" style="margin-top:22px;" onclick="closeModal()">Cerrar</button>
     </div>
   `);
 }
