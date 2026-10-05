@@ -3,6 +3,8 @@
 //  - GET /api/vapid-public-key: la clave pública de los avisos (no es secreta).
 //  - POST /api/save-schedule: guarda la suscripción push del dispositivo,
 //    su zona horaria y la lista completa de recordatorios.
+//  - POST /api/test-push: manda ya un aviso de prueba a ese dispositivo,
+//    para comprobar que los avisos llegan con la app cerrada.
 //  - Cada minuto (cron): manda los avisos cuya hora local coincide.
 //  - Una vez al día (cron): consulta mínima a Supabase para que el proyecto
 //    gratis no se pause por inactividad.
@@ -75,6 +77,44 @@ async function saveSchedule(request, env) {
   return json({ ok: true });
 }
 
+function vapidDe(env) {
+  if (!env.VAPID_PRIVATE_KEY || !env.VAPID_PUBLIC_KEY) return null;
+  return {
+    publicKey: env.VAPID_PUBLIC_KEY,
+    privateKey: env.VAPID_PRIVATE_KEY,
+    subject: env.VAPID_SUBJECT || "mailto:korevuxdigital@gmail.com"
+  };
+}
+
+// Solo puede escribirle a la suscripción que la propia app manda, así que
+// nadie puede usarlo para avisar a otro dispositivo.
+async function testPush(request, env) {
+  if (request.method !== "POST") return json({ error: "Método no permitido" }, 405);
+  const vapid = vapidDe(env);
+  if (!vapid) return json({ error: "Avisos sin configurar" }, 503);
+  let payload;
+  try {
+    payload = await request.json();
+  } catch (e) {
+    return json({ error: "JSON inválido" }, 400);
+  }
+  const sub = payload && payload.subscription;
+  if (!sub || !sub.endpoint || !sub.keys || !sub.keys.p256dh || !sub.keys.auth) {
+    return json({ error: "Falta la suscripción" }, 400);
+  }
+  const body = JSON.stringify({
+    title: "Brújula Interior",
+    body: "Prueba: así te llegarán tus recordatorios.",
+    alarma: payload.estiloAviso === "alarma"
+  });
+  try {
+    const status = await sendPush(sub, body, vapid);
+    return json({ ok: status >= 200 && status < 300, status });
+  } catch (err) {
+    return json({ ok: false, error: err && err.message }, 502);
+  }
+}
+
 // Hora, día de la semana y fecha LOCALES del dispositivo (según su zona horaria).
 export function localTime(timezone, now = new Date()) {
   const opts = {
@@ -101,15 +141,11 @@ export function localTime(timezone, now = new Date()) {
 }
 
 async function checkAndPush(env, now = new Date()) {
-  if (!env.VAPID_PRIVATE_KEY || !env.VAPID_PUBLIC_KEY) {
+  const vapid = vapidDe(env);
+  if (!vapid) {
     console.error("Faltan VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY.");
     return { sent: 0 };
   }
-  const vapid = {
-    publicKey: env.VAPID_PUBLIC_KEY,
-    privateKey: env.VAPID_PRIVATE_KEY,
-    subject: env.VAPID_SUBJECT || "mailto:korevuxdigital@gmail.com"
-  };
 
   const all = await loadSchedule(env);
   if (!all.devices.length) return { sent: 0 };
@@ -181,6 +217,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === "/api/save-schedule") return saveSchedule(request, env);
+    if (url.pathname === "/api/test-push") return testPush(request, env);
     if (url.pathname === "/api/vapid-public-key") {
       if (!env.VAPID_PUBLIC_KEY) return json({ error: "Avisos sin configurar" }, 503);
       return json({ publicKey: env.VAPID_PUBLIC_KEY });
