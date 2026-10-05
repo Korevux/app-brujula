@@ -108,7 +108,7 @@ async function checkAndPush(env, now = new Date()) {
   const vapid = {
     publicKey: env.VAPID_PUBLIC_KEY,
     privateKey: env.VAPID_PRIVATE_KEY,
-    subject: env.VAPID_SUBJECT || "mailto:noel.duran.chile@gmail.com"
+    subject: env.VAPID_SUBJECT || "mailto:korevuxdigital@gmail.com"
   };
 
   const all = await loadSchedule(env);
