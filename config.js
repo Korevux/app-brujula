@@ -7,5 +7,5 @@
 // También la usa netlify/functions/keep-supabase-alive.js (por eso funciona en el navegador y en Node).
 (typeof window !== 'undefined' ? window : globalThis).BRUJULA_CONFIG = {
   supabaseUrl: 'https://rmjprvpqiscuxkjyuokb.supabase.co',
-  supabaseAnonKey: ''
+  supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtanBydnBxaXNjdXhranl1b2tiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTExNTc0NzYsImV4cCI6MjEwNjczMzQ3Nn0.o7Hy67UJpQ9GB6atRLH86nEjSxHxRt75_gqXVPWpto8'
 };
