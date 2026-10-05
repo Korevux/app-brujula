@@ -387,8 +387,8 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
 .btn.small{ min-height:46px; padding:11px 18px; font-size:15px; border-radius:14px; }
 .btn.gold{ background:var(--accent); color:var(--white); }
 .btn.ghost{ border-width:1.5px; border-color:var(--border-strong); color:var(--accent-dark); }
-input[type=text], input[type=number], input[type=time], input[type=date], input[type=email], textarea, select{ min-height:50px; border-radius:14px; font-size:16px; }
-input[type=email]{ width:100%; padding:12px 14px; border:1.5px solid var(--border-strong); background:var(--bg-soft); color:var(--ink); outline:none; font-family:inherit; }
+input[type=text], input[type=number], input[type=time], input[type=date], input[type=email], input[type=password], textarea, select{ min-height:50px; border-radius:14px; font-size:16px; }
+input[type=email], input[type=password]{ width:100%; padding:12px 14px; border:1.5px solid var(--border-strong); background:var(--bg-soft); color:var(--ink); outline:none; font-family:inherit; }
 .cierre-row{ flex-direction:column; align-items:stretch; gap:12px; }
 .cierre-row .btn{ margin-left:0; width:100%; }
 .progress-track{ height:10px; }
@@ -2765,7 +2765,8 @@ let sb = null;            // cliente de Supabase (null si no está configurado)
 let syncUser = null;      // { id, email } cuando hay sesión
 let syncEstado = '';      // texto de estado para Ajustes
 let syncUltima = null;    // Date de la última sincronización correcta
-let syncPasoCodigo = null; // email al que se envió el código
+let syncModo = 'entrar';   // 'entrar' | 'crear' | 'olvide' | 'nueva' (cambiar contraseña tras el enlace del correo)
+let syncAviso = '';        // mensaje bajo el formulario (p. ej. "revisa tu correo")
 let subidaTimer = null;
 let descargando = false;
 
@@ -2864,38 +2865,75 @@ function borrarDatosNube(){
   sb.from('user_state').delete().eq('user_id', syncUser.id).then(()=>{}, ()=>{});
 }
 
-async function enviarCodigo(){
-  const email = (document.getElementById('cuenta-email').value || '').trim();
-  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ showToast('Escribe un correo válido.'); return; }
-  const btn = document.getElementById('btn-enviar-codigo');
-  if(btn){ btn.disabled = true; btn.textContent = 'Enviando...'; }
+// Entrar con correo y contraseña. Funciona igual dentro de la app instalada
+// (iPhone/Android) porque no depende de abrir enlaces. Los únicos correos que
+// manda Supabase (confirmar la cuenta y recuperar la contraseña) usan sus
+// plantillas por defecto, que no requieren configurar un servidor de correo.
+function datosCuenta(){
+  const email = ((document.getElementById('cuenta-email')||{}).value || '').trim();
+  const pass = (document.getElementById('cuenta-pass')||{}).value || '';
+  return { email, pass };
+}
+function correoValido(email){ return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email); }
+function botonOcupado(id, texto){ const b = document.getElementById(id); if(b){ b.disabled = true; b.textContent = texto; } }
+function errorCuenta(e){
+  const m = (e && e.message || '').toLowerCase();
+  if(m.includes('invalid login')) return 'Correo o contraseña incorrectos.';
+  if(m.includes('not confirmed')) return 'Falta confirmar tu correo: toca el enlace que te enviamos y vuelve a entrar.';
+  if(m.includes('already registered')) return 'Ese correo ya tiene cuenta. Usa "Entrar".';
+  if(m.includes('password')) return 'La contraseña debe tener al menos 6 caracteres.';
+  if(m.includes('rate') || m.includes('security purposes')) return 'Demasiados intentos seguidos. Espera un minuto y vuelve a probar.';
+  return 'No se pudo conectar. Revisa tu internet e inténtalo de nuevo.';
+}
+async function entrarCuenta(){
+  const { email, pass } = datosCuenta();
+  if(!correoValido(email)){ showToast('Escribe un correo válido.'); return; }
+  if(!pass){ showToast('Escribe tu contraseña.'); return; }
+  botonOcupado('btn-cuenta', 'Entrando...');
   try{
-    const { error } = await sb.auth.signInWithOtp({ email, options:{ shouldCreateUser:true, emailRedirectTo: location.origin + location.pathname } });
+    const { error } = await sb.auth.signInWithPassword({ email, password: pass });
     if(error) throw error;
-    syncPasoCodigo = email;
-    showToast('Te enviamos un código a tu correo.');
-  }catch(e){
-    console.warn(e);
-    showToast('No se pudo enviar el código. Revisa tu conexión e inténtalo de nuevo.');
-  }
+    syncAviso = '';
+    showToast('¡Listo! Tu cuenta está conectada.');
+  }catch(e){ console.warn(e); syncAviso = errorCuenta(e); renderCuenta(); }
+}
+async function crearCuenta(){
+  const { email, pass } = datosCuenta();
+  if(!correoValido(email)){ showToast('Escribe un correo válido.'); return; }
+  if(pass.length < 6){ showToast('La contraseña debe tener al menos 6 caracteres.'); return; }
+  botonOcupado('btn-cuenta', 'Creando...');
+  try{
+    const { data, error } = await sb.auth.signUp({ email, password: pass, options:{ emailRedirectTo: location.origin + location.pathname } });
+    if(error) throw error;
+    if(data && data.session){ syncAviso = ''; showToast('¡Cuenta creada y conectada!'); return; }
+    syncModo = 'entrar';
+    syncAviso = 'Te enviamos un correo a ' + email + '. Toca el enlace para confirmar tu cuenta y luego entra aquí con tu contraseña.';
+  }catch(e){ console.warn(e); syncAviso = errorCuenta(e); }
   renderCuenta();
 }
-
-async function verificarCodigo(){
-  const token = (document.getElementById('cuenta-codigo').value || '').replace(/\s/g,'');
-  if(token.length < 6){ showToast('Escribe el código que te llegó por correo.'); return; }
-  const btn = document.getElementById('btn-verificar-codigo');
-  if(btn){ btn.disabled = true; btn.textContent = 'Entrando...'; }
+async function recuperarCuenta(){
+  const { email } = datosCuenta();
+  if(!correoValido(email)){ showToast('Escribe tu correo.'); return; }
+  botonOcupado('btn-cuenta', 'Enviando...');
   try{
-    const { error } = await sb.auth.verifyOtp({ email: syncPasoCodigo, token, type:'email' });
+    const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
     if(error) throw error;
-    syncPasoCodigo = null;
-    showToast('¡Listo! Tu cuenta está conectada.');
-  }catch(e){
-    console.warn(e);
-    showToast('Código incorrecto o vencido. Pide uno nuevo.');
-    renderCuenta();
-  }
+    syncModo = 'entrar';
+    syncAviso = 'Te enviamos un enlace a ' + email + '. Ábrelo y la app te pedirá una contraseña nueva.';
+  }catch(e){ console.warn(e); syncAviso = errorCuenta(e); }
+  renderCuenta();
+}
+async function guardarNuevaPass(){
+  const pass = (document.getElementById('cuenta-pass')||{}).value || '';
+  if(pass.length < 6){ showToast('La contraseña debe tener al menos 6 caracteres.'); return; }
+  botonOcupado('btn-cuenta', 'Guardando...');
+  try{
+    const { error } = await sb.auth.updateUser({ password: pass });
+    if(error) throw error;
+    syncModo = 'entrar'; syncAviso = '';
+    showToast('Contraseña nueva guardada.');
+  }catch(e){ console.warn(e); syncAviso = errorCuenta(e); }
+  renderCuenta();
 }
 
 async function cerrarSesion(){
@@ -2915,6 +2953,13 @@ function renderCuenta(){
       : `<p class="muted">Tus datos se guardan solo en este dispositivo. Para usar la misma cuenta en el celular y la laptop, falta activar la sincronización.</p>`;
     return;
   }
+  if(syncModo === 'nueva'){
+    body.innerHTML = `
+      <p class="muted">Escribe tu contraseña nueva.</p>
+      <input type="password" id="cuenta-pass" autocomplete="new-password" placeholder="Mínimo 6 caracteres" style="margin-top:10px;" onkeydown="if(event.key==='Enter') guardarNuevaPass()">
+      <button class="btn block" id="btn-cuenta" style="margin-top:10px;" onclick="guardarNuevaPass()">Guardar contraseña</button>${syncAviso ? `<p class="hint">${escapeHtml(syncAviso)}</p>` : ''}`;
+    return;
+  }
   if(syncUser){
     body.innerHTML = `
       <p class="muted">Conectado como <b>${escapeHtml(syncUser.email||'')}</b>.</p>
@@ -2926,18 +2971,28 @@ function renderCuenta(){
       </div>`;
     return;
   }
-  if(syncPasoCodigo){
+  const aviso = syncAviso ? `<p class="hint" style="color:var(--accent-dark); font-weight:600;">${escapeHtml(syncAviso)}</p>` : '';
+  const enlace = (modo, texto) => `<button type="button" class="link" style="background:none; border:0; padding:6px 0; font:inherit;" onclick="syncModo='${modo}'; syncAviso=''; renderCuenta();">${texto}</button>`;
+  const emailPrev = escapeHtml(((document.getElementById('cuenta-email')||{}).value) || '');
+  const campoEmail = `<input type="email" id="cuenta-email" autocomplete="email" placeholder="tu@correo.com" value="${emailPrev}" style="margin-top:10px;">`;
+  if(syncModo === 'olvide'){
     body.innerHTML = `
-      <p class="muted">Escribe el código que enviamos a <b>${escapeHtml(syncPasoCodigo)}</b>.</p>
-      <input type="text" id="cuenta-codigo" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="123456" style="margin-top:10px; letter-spacing:0.2em; font-size:18px;" onkeydown="if(event.key==='Enter') verificarCodigo()">
-      <button class="btn block" id="btn-verificar-codigo" style="margin-top:10px;" onclick="verificarCodigo()">Entrar</button>
-      <button class="btn ghost small block" style="margin-top:8px;" onclick="syncPasoCodigo=null; renderCuenta();">Usar otro correo</button>`;
+      <p class="muted">Te enviamos un enlace para poner una contraseña nueva.</p>
+      ${campoEmail}
+      <button class="btn block" id="btn-cuenta" style="margin-top:10px;" onclick="recuperarCuenta()">Enviarme el enlace</button>
+      ${aviso}${enlace('entrar','← Volver')}`;
     return;
   }
+  const crear = syncModo === 'crear';
   body.innerHTML = `
-    <p class="muted">Entra con tu correo para tener los mismos datos en el celular y la laptop. Sin contraseña: te llega un código.</p>
-    <input type="email" id="cuenta-email" autocomplete="email" placeholder="tu@correo.com" style="margin-top:10px;" onkeydown="if(event.key==='Enter') enviarCodigo()">
-    <button class="btn block" id="btn-enviar-codigo" style="margin-top:10px;" onclick="enviarCodigo()">Enviarme un código</button>
+    <p class="muted">${crear ? 'Crea tu cuenta con tu correo y una contraseña.' : 'Entra con tu correo y contraseña para tener los mismos datos en el celular y la laptop.'}</p>
+    ${campoEmail}
+    <input type="password" id="cuenta-pass" autocomplete="${crear?'new-password':'current-password'}" placeholder="${crear?'Contraseña (mínimo 6 caracteres)':'Contraseña'}" style="margin-top:8px;" onkeydown="if(event.key==='Enter') ${crear?'crearCuenta()':'entrarCuenta()'}">
+    <button class="btn block" id="btn-cuenta" style="margin-top:10px;" onclick="${crear?'crearCuenta()':'entrarCuenta()'}">${crear?'Crear cuenta':'Entrar'}</button>
+    ${aviso}
+    <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-top:4px;">
+      ${crear ? enlace('entrar','¿Ya tienes cuenta? Entrar') : enlace('crear','¿Primera vez? Crear cuenta') + enlace('olvide','Olvidé mi contraseña')}
+    </div>
     <p class="hint">Lo que ya tienes en este dispositivo se sube a tu cuenta, no se pierde.</p>`;
 }
 
@@ -2947,7 +3002,9 @@ function initSync(){
   try{
     sb = window.supabase.createClient(c.supabaseUrl, c.supabaseAnonKey, { auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true } });
   }catch(e){ console.warn('No se pudo iniciar Supabase.', e); sb = null; return; }
-  sb.auth.onAuthStateChange((_evento, session)=>{
+  sb.auth.onAuthStateChange((evento, session)=>{
+    // Al abrir el enlace de "Olvidé mi contraseña", pedir la nueva en Ajustes.
+    if(evento === 'PASSWORD_RECOVERY'){ syncModo = 'nueva'; syncAviso = ''; setTimeout(()=>go('ajustes'), 0); }
     const u = session && session.user ? { id: session.user.id, email: session.user.email } : null;
     const cambio = (u && u.id) !== (syncUser && syncUser.id);
     syncUser = u;

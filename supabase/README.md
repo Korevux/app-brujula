@@ -11,15 +11,18 @@ Sin esto la app funciona igual, pero cada aparato guarda sus propios datos.
 1. En el proyecto: **SQL Editor → New query**.
 2. Pega todo el contenido de `supabase/schema.sql` y pulsa **Run**.
 
-## 3. Inicio de sesión por código
-La app pide un código de 6 dígitos que llega por correo (funciona también dentro de la app instalada en iPhone, donde los enlaces se abrirían en Safari).
+## 3. Inicio de sesión con correo y contraseña
+La app entra con correo y contraseña, así funciona igual dentro de la app instalada
+(iPhone y Android). Supabase solo manda dos correos, y los dos usan sus plantillas
+por defecto, así que no hace falta configurar un servidor de correo (SMTP):
+- al crear la cuenta, un enlace para confirmar el correo;
+- en "Olvidé mi contraseña", un enlace que abre la app y pide una contraseña nueva.
+
 1. **Authentication → Sign In / Providers → Email**: déjalo activado.
-2. **Authentication → Emails → Templates**: en **Magic Link** y también en **Confirm signup** (el que recibe quien entra por primera vez), cambia el cuerpo para que muestre el código, por ejemplo:
-   ```html
-   <h2>Tu código para Brújula Interior</h2>
-   <p>Escribe este código en la app: <b style="font-size:22px">{{ .Token }}</b></p>
-   ```
-3. **Authentication → URL Configuration → Site URL**: pon la dirección de tu app en Netlify (ej. `https://mibrujula.netlify.app`).
+2. **Authentication → URL Configuration**:
+   - **Site URL**: la dirección de tu app (ej. `https://mibrujula.netlify.app`).
+   - **Redirect URLs**: agrega también las otras direcciones donde la uses
+     (ej. `https://deploy-preview-1--mibrujula.netlify.app` o la de Cloudflare).
 
 ## 4. Conectar la app
 1. **Project Settings → API**: copia la **Project URL** y la clave **anon public**.
