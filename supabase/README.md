@@ -32,11 +32,10 @@ La clave anon es pública por diseño; nunca uses ni compartas la clave `service
 
 ## 5. Que nunca se pause
 El plan gratis de Supabase pausa el proyecto si pasa una semana sin actividad.
-La función `netlify/functions/keep-supabase-alive.js` hace una consulta mínima
-una vez al día (programada en `netlify.toml`), así que el proyecto queda activo
-aunque nadie abra la app. Usa los mismos datos de `config.js`; no hay que
-configurar nada más. Puedes ver que corre en Netlify → Functions →
-keep-supabase-alive.
+El Worker de Cloudflare hace una consulta mínima una vez al día (cron `0 12 * * *`
+en `wrangler.jsonc`), así que el proyecto queda activo aunque nadie abra la app.
+Usa `SUPABASE_URL` y `SUPABASE_ANON_KEY` de `wrangler.jsonc`, las mismas de
+`config.js`. Puedes ver que corre en Cloudflare → tu Worker → Registros.
 
 Nota: el plan gratuito de Supabase envía pocos correos por hora con su servidor
 de correo de prueba; para más usuarios conviene configurar un SMTP propio en
