@@ -369,6 +369,24 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
 .next-reminder:empty{ display:none; }
 .section-title{ font-size:24px; letter-spacing:-0.02em; }
 .enfoque-hero{ border-radius:24px; padding:22px; }
+.siguiente-card{ background:var(--card); border:2px solid var(--gold); border-radius:var(--radius-lg); padding:18px; margin:0 0 14px; box-shadow:0 6px 20px rgba(240,123,79,.16); }
+.siguiente-card.completo{ border-color:var(--accent); box-shadow:var(--shadow-sm); }
+.siguiente-label{ font-size:13px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--gold); margin-bottom:6px; }
+.siguiente-card.completo .siguiente-label{ color:var(--accent); }
+.siguiente-titulo{ font-size:22px; font-weight:800; color:var(--accent-dark); line-height:1.25; }
+.siguiente-sub{ font-size:16px; color:var(--ink-soft); margin:6px 0 14px; }
+.siguiente-card.completo .siguiente-sub{ margin-bottom:0; }
+.siguiente-btn{ display:block; width:100%; font:inherit; font-size:18px; font-weight:700; border:0; border-radius:14px; padding:15px; background:var(--gold); color:#fff; cursor:pointer; }
+.siguiente-btn:active{ transform:scale(.98); }
+.siguiente-alt{ display:block; width:100%; margin-top:8px; background:none; border:0; font:inherit; font-size:15px; color:var(--accent-dark); font-weight:600; cursor:pointer; padding:6px; }
+.prepara-card{ background:var(--accent-soft); border-radius:var(--radius-lg); padding:16px 18px; margin:0 0 14px; }
+.prepara-titulo{ display:flex; align-items:center; gap:8px; font-size:17px; font-weight:800; color:var(--accent-dark); margin-bottom:6px; }
+.prepara-titulo .prepara-ocultar{ margin-left:auto; background:none; border:0; font:inherit; font-size:14px; color:var(--ink-soft); cursor:pointer; padding:4px; }
+.prepara-fila{ display:flex; align-items:center; gap:10px; font-size:16px; padding:8px 0; color:var(--ink); }
+.prepara-num{ width:26px; height:26px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; flex:none; border:2px solid var(--accent); color:var(--accent-dark); }
+.prepara-fila.ok .prepara-num{ background:var(--accent); color:#fff; }
+.prepara-fila.ok .prepara-texto{ color:var(--ink-faint); text-decoration:line-through; }
+.prepara-fila button{ margin-left:auto; background:none; border:0; font:inherit; font-size:16px; font-weight:700; color:var(--gold); cursor:pointer; padding:4px 0 4px 8px; white-space:nowrap; }
 .enfoque-label{ text-transform:none; letter-spacing:0; font-size:14px; opacity:.85; display:flex; align-items:center; gap:8px; font-weight:600; }
 .enfoque-metas-text{ font-size:21px; letter-spacing:-0.01em; margin-top:8px; }
 .enfoque-empty{ font-size:15.5px; margin-top:6px; }
@@ -621,6 +639,12 @@ label{ font-size:14.5px; }
       <button class="btn small" onclick="verGuiaIphone()">Ver cómo</button>
       <button class="icon-btn" aria-label="Ocultar aviso" onclick="ocultarBannerIphone()"><i class="ic" data-ic="x"></i></button>
     </div>
+
+    <!-- Guía: qué toca ahora (cambia según la hora y lo hecho) -->
+    <div class="siguiente-card" id="siguiente-card" style="display:none;"></div>
+
+    <!-- Solo al principio: lo que se configura una vez -->
+    <div class="prepara-card" id="prepara-card" style="display:none;"></div>
 
     <!-- Arranque del día: primer hábito; usa lo definido una sola vez en "Mi brújula" -->
     <div class="card tight momento" id="arranque-card">
@@ -1292,6 +1316,120 @@ function renderHoy(){
 
   // Arranque del día
   renderRitual();
+
+  // Guía: siguiente paso y preparación inicial
+  renderSiguientePaso();
+  renderPrepara();
+}
+
+// ---------- Guía: qué hacer ahora ----------
+// Elige UNA cosa según la hora y lo que ya está hecho, para no tener que
+// leer toda la pantalla: arranque (mañana), compromisos, hábitos, cierre (noche).
+function siguientePaso(){
+  const dia = ensureDia(todayKey());
+  const h = new Date().getHours();
+  const noche = h >= 18;
+  const arr = pasosArranque(dia);
+  const faltanArr = Object.values(arr).filter(v=>!v).length;
+  const cierreListo = cierreHecho(dia);
+  const faltanCierre = Object.values(pasosCierre(dia)).filter(v=>!v).length;
+  const cierre = { tipo:'cierre', titulo:'Haz tu Cierre de la noche',
+    sub: faltanCierre === 4 ? '4 preguntas cortas para revisar tu día.' : `Te ${faltanCierre===1?'falta 1 paso':'faltan '+faltanCierre+' pasos'}.`,
+    boton: faltanCierre === 4 ? 'Empezar ahora' : 'Seguir' };
+
+  if(noche && !cierreListo) return cierre;
+  if(!noche && faltanArr > 0){
+    return { tipo:'arranque', titulo:'Haz tu Arranque del día',
+      sub: faltanArr === 6 ? '6 pasos cortos, unos 5 minutos. Empieza por el primero.' : `Te ${faltanArr===1?'falta 1 paso':'faltan '+faltanArr+' pasos'} de 6.`,
+      boton: faltanArr === 6 ? 'Empezar ahora' : 'Seguir' };
+  }
+  const idx = (dia.enfoque.pasos||[]).findIndex(p=>p.texto && !p.completado);
+  if(idx >= 0){
+    return { tipo:'compromiso', idx, titulo: dia.enfoque.pasos[idx].texto,
+      sub:'Es uno de tus compromisos de hoy. Márcalo cuando lo cumplas.', boton:'Ya lo hice' };
+  }
+  const pendientes = state.habitosConfig.filter(x=>{
+    if(!x.activo) return false;
+    const hd = dia.habitos[x.id];
+    return !(hd && (hd.completado || hd.omitido));
+  }).sort((x,y)=>(x.hora||'99').localeCompare(y.hora||'99'));
+  if(pendientes.length){
+    const x = pendientes[0];
+    return { tipo:'habito', id:x.id, titulo: x.nombre,
+      sub: `${x.hora ? 'A las '+x.hora+' · ' : ''}${x.duracionPersonal || x.duracionRecomendada} minutos. Márcalo cuando lo hagas.`,
+      boton:'Ya lo hice', alt:'Hoy no' };
+  }
+  if(!cierreListo) return Object.assign(cierre, { titulo:'Más tarde: tu Cierre de la noche', sub:'Ya hiciste todo lo del día. En la noche, revisa cómo te fue.', boton:'Hacerlo ahora' });
+  return { tipo:'listo', titulo:'¡Día completo!', sub:'Hiciste todo lo de hoy. Descansa; mañana seguimos.' };
+}
+function renderSiguientePaso(){
+  const card = document.getElementById('siguiente-card');
+  if(!card) return;
+  const p = siguientePaso();
+  card.style.display = '';
+  card.classList.toggle('completo', p.tipo === 'listo');
+  card.innerHTML = `<div class="siguiente-label">${p.tipo==='listo' ? 'Hoy' : 'Tu siguiente paso'}</div>
+    <div class="siguiente-titulo">${escapeHtml(p.titulo)}</div>
+    <div class="siguiente-sub">${escapeHtml(p.sub)}</div>
+    ${p.boton ? `<button type="button" class="siguiente-btn" onclick="hacerSiguientePaso()">${escapeHtml(p.boton)}</button>` : ''}
+    ${p.alt ? `<button type="button" class="siguiente-alt" onclick="hacerSiguientePaso(true)">${escapeHtml(p.alt)}</button>` : ''}`;
+}
+function hacerSiguientePaso(alt){
+  const p = siguientePaso();
+  if(p.tipo === 'arranque' || p.tipo === 'cierre'){
+    momentoAbierto[p.tipo] = true;
+    pintarMomento(p.tipo, true);
+    const fila = document.querySelector(`#${p.tipo==='arranque'?'ritual':'cierre'}-list .ritual-row:not(.done)`);
+    const destino = fila || document.getElementById(p.tipo+'-card');
+    if(destino) setTimeout(()=>destino.scrollIntoView({ behavior:'smooth', block:'center' }), 60);
+    return;
+  }
+  if(p.tipo === 'compromiso'){ toggleEnfoquePaso(p.idx); return; }
+  if(p.tipo === 'habito'){
+    if(alt){ omitirHabito(p.id); return; }
+    toggleHabito(p.id);
+    renderAll();
+    showToast(p.titulo + ': hecho. Bien.');
+  }
+}
+
+// ---------- Guía: preparar la Brújula (solo al principio) ----------
+function avisosActivos(){
+  try{ return ('Notification' in window) && Notification.permission === 'granted' && window.localStorage.getItem(PUSH_SUBSCRIBED_KEY) === '1'; }
+  catch(e){ return false; }
+}
+function itemsPrepara(){
+  return [
+    { ok: state.metas.some(m=>m.titulo), texto:'Tus metas', boton:'Escribir', accion:'editarMetas()' },
+    { ok: !!state.identidad.texto, texto:'Tu declaración "Soy…"', boton:'Escribir', accion:"editarTextoFijo('identidad')" },
+    { ok: !!state.visualizacionTexto, texto:'Tu visualización', boton:'Escribir', accion:"editarTextoFijo('visualizacion')" },
+    { ok: avisosActivos(), texto:'Los avisos', boton:'Activar', accion:'irAActivarAvisos()' }
+  ];
+}
+function renderPrepara(){
+  const card = document.getElementById('prepara-card');
+  if(!card) return;
+  const items = itemsPrepara();
+  const listos = items.filter(i=>i.ok).length;
+  if(state.preparaOculta || listos === items.length){ card.style.display = 'none'; return; }
+  card.style.display = '';
+  card.innerHTML = `<div class="prepara-titulo"><span>Prepara tu Brújula (${listos}/${items.length})</span>
+      <button type="button" class="prepara-ocultar" onclick="ocultarPrepara()">Ocultar</button></div>
+    ${items.map((it,i)=>`<div class="prepara-fila${it.ok?' ok':''}">
+      <span class="prepara-num">${it.ok ? ic('check',14) : i+1}</span>
+      <span class="prepara-texto">${it.texto}</span>
+      ${it.ok ? '' : `<button type="button" onclick="${it.accion}">${it.boton}</button>`}
+    </div>`).join('')}`;
+}
+function ocultarPrepara(){
+  state.preparaOculta = true;
+  saveState();
+  renderAll();
+  showToast('Oculto. Puedes completar todo desde Brújula y Ajustes.');
+}
+function irAActivarAvisos(){
+  go('ajustes');
+  setTimeout(()=>{ const t = document.getElementById('notifyToggle'); const c = t && (t.closest('.card') || t); if(c) c.scrollIntoView({ behavior:'smooth', block:'center' }); }, 100);
 }
 
 // ---------- Arranque del día ----------
