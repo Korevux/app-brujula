@@ -2671,10 +2671,35 @@ function enviarWebhook(payload){
 }
 function probarRecordatorio(){
   const esAlarma = state.estiloAviso === 'alarma';
+  let subscribed = false;
+  try{ subscribed = window.localStorage.getItem(PUSH_SUBSCRIBED_KEY) === '1'; }catch(e){}
+  // Con los avisos activados, la prueba la manda el servidor: es el mismo
+  // camino que siguen los recordatorios de verdad, con la app cerrada.
+  if(subscribed && 'serviceWorker' in navigator){
+    showToast('Enviando aviso de prueba… Puedes salir de la app para verlo llegar.');
+    navigator.serviceWorker.ready.then(function(reg){ return reg.pushManager.getSubscription(); })
+      .then(function(sub){
+        if(!sub) throw new Error('sin suscripción');
+        return fetch('/api/test-push', {
+          method:'POST', headers:{ 'Content-Type':'application/json' },
+          body: JSON.stringify({ subscription: sub.toJSON(), estiloAviso: state.estiloAviso || 'notificacion' })
+        }).then(function(r){ return r.json().catch(function(){ return {}; }).then(function(d){ return r.ok && d.ok; }); });
+      })
+      .then(function(ok){
+        if(!ok) showToast('El aviso de prueba no salió. Apaga y vuelve a encender el interruptor de notificaciones e inténtalo otra vez.');
+      })
+      .catch(function(){
+        try{ window.localStorage.setItem(PUSH_SUBSCRIBED_KEY, '0'); }catch(e){}
+        syncNotifyUI();
+        showToast('Este dispositivo no está suscrito a los avisos. Activa el interruptor de notificaciones arriba.');
+      });
+    return;
+  }
   if('Notification' in window && Notification.permission === 'granted'){
     try{
       new Notification('Brújula Interior', { body: 'Así se vería un recordatorio.', tag: 'brujula-prueba', requireInteraction: esAlarma });
     }catch(e){}
+    showToast('Esto fue solo una vista previa. Para que suene con la app cerrada, activa el interruptor de notificaciones arriba.');
   } else if(!esAlarma){
     showToast('Así se vería un recordatorio. (Activa las notificaciones arriba para verlo como aviso real.)');
   }
@@ -2876,7 +2901,10 @@ function subscribeToPush(){
     });
   }).then(function(subscription){
     if(!subscription) return;
+    const nuevo = (function(){ try{ return window.localStorage.getItem(PUSH_SUBSCRIBED_KEY) !== '1'; }catch(e){ return true; } })();
     try{ window.localStorage.setItem(PUSH_SUBSCRIBED_KEY, '1'); }catch(e){}
+    syncNotifyUI();
+    if(nuevo) showToast('Avisos activados en este dispositivo. Toca "Probar recordatorio" para comprobarlo.');
     fetch('/api/save-schedule', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -2889,6 +2917,11 @@ function subscribeToPush(){
     }).catch(function(){});
   }).catch(function(err){
     console.warn('No se pudo suscribir a notificaciones push.', err);
+    try{ window.localStorage.setItem(PUSH_SUBSCRIBED_KEY, '0'); }catch(e){}
+    syncNotifyUI();
+    showToast(/netlify\.app$/.test(location.hostname)
+      ? 'Esta es la app vieja y no puede mandar avisos. Abre brujula.krvx.workers.dev e instálala.'
+      : 'No se pudieron activar los avisos en este dispositivo. Revisa tu conexión e inténtalo otra vez.');
   });
 }
 
