@@ -1,7 +1,7 @@
 // Configuración de Cloudflare Workers para Brújula Interior.
 // Guía paso a paso: CLOUDFLARE.md
 {
-  "name": "app-brujula",
+  "name": "brujula",
   "main": "worker/index.js",
   "compatibility_date": "2026-09-01",
   // La app es estática y se sirve desde la raíz del repositorio
@@ -12,9 +12,9 @@
     "run_worker_first": ["/api/*"]
   },
   // Dónde se guardan las suscripciones y horarios de los avisos.
-  // Espacio KV "brujula-schedule", creado a mano en el panel de Cloudflare.
+  // Espacio KV "brujula-schedule", creado a mano en la cuenta de Cloudflare de Brújula.
   "kv_namespaces": [
-    { "binding": "SCHEDULE", "id": "b8f355991f0b43a8877501f262be7c8d" }
+    { "binding": "SCHEDULE", "id": "9f61583efc8441eca67056d6a46a8c79" }
   ],
   "triggers": {
     // Cada minuto: avisos. A las 12:00 UTC: mantener activo Supabase.

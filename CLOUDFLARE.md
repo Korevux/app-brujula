@@ -18,13 +18,13 @@ Las cuentas siguen en Supabase. Todo cabe en el plan gratis de Cloudflare: el Wo
    - Comando de implementación: `npx wrangler deploy`.
 
    Pulsa *Guardar e implementar*. Cloudflare lee `wrangler.jsonc` y crea solo el Worker, los dos crons y el espacio KV.
-3. **Crea las claves de los avisos.** Abre `https://app-brujula.<tu-subdominio>.workers.dev/claves.html`: la página crea dos claves en tu navegador (no se envían a ningún sitio).
-   - En Cloudflare: abre el Worker `app-brujula` → *Settings* → *Variables and Secrets* → *Add*. Tipo **Secret**, nombre `VAPID_PUBLIC_KEY`, pega la clave pública y guarda.
+3. **Crea las claves de los avisos.** Abre `https://brujula.<tu-subdominio>.workers.dev/claves.html`: la página crea dos claves en tu navegador (no se envían a ningún sitio).
+   - En Cloudflare: abre el Worker `brujula` → *Settings* → *Variables and Secrets* → *Add*. Tipo **Secret**, nombre `VAPID_PUBLIC_KEY`, pega la clave pública y guarda.
    - Repite con tipo **Secret**, nombre `VAPID_PRIVATE_KEY` y la clave privada.
 
    Usa las dos claves de la misma vez (si recargas la página salen otras). No las pegues en el repositorio ni en el chat. Si algún día cambias las claves, cada teléfono se vuelve a registrar solo al activar los avisos.
 4. **Supabase despierto.** No hay que hacer nada: la URL y la clave pública de Supabase ya están en `wrangler.jsonc` (son las mismas de `config.js`).
-5. **Abre la app** en la dirección que te da Cloudflare (`https://app-brujula.<tu-subdominio>.workers.dev`).
+5. **Abre la app** en la dirección que te da Cloudflare (`https://brujula.<tu-subdominio>.workers.dev`).
    - Instálala de nuevo en la pantalla de inicio.
    - En Ajustes, activa los avisos otra vez para que el teléfono se registre en el nuevo servidor.
    - En Supabase, *Authentication* → *URL Configuration*: cambia *Site URL* a la dirección nueva de Cloudflare (o agrégala en *Redirect URLs*) para que los enlaces de confirmar cuenta y recuperar contraseña abran la app nueva.
