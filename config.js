@@ -6,6 +6,6 @@
 // Si se dejan vacías, la app funciona igual, solo en este dispositivo.
 // También la usa netlify/functions/keep-supabase-alive.js (por eso funciona en el navegador y en Node).
 (typeof window !== 'undefined' ? window : globalThis).BRUJULA_CONFIG = {
-  supabaseUrl: '',
+  supabaseUrl: 'https://rmjprvpqiscuxkjyuokb.supabase.co',
   supabaseAnonKey: ''
 };
