@@ -196,6 +196,9 @@ input:focus, textarea:focus, select:focus{ border-color: var(--accent); backgrou
   display:flex; align-items:center; justify-content:center; font-size:15px; color:var(--ink-soft);
 }
 .icon-btn:active{ transform:scale(0.92); }
+.omitir-btn{ display:inline-flex; align-items:center; gap:5px; min-height:40px; padding:8px 13px; border-radius:999px; border:1px solid var(--border); background:var(--card); color:var(--ink-soft); font:inherit; font-size:13.5px; font-weight:650; cursor:pointer; white-space:nowrap; }
+.omitir-btn.activo{ background:var(--accent-soft); border-color:var(--accent); color:var(--accent-dark); }
+.omitir-btn:active{ transform:scale(0.95); }
 
 /* ---------- Switch ---------- */
 .switch{ padding:0; width:44px; height:26px; border-radius:999px; background: var(--border-strong); position:relative; flex-shrink:0; transition: background .15s; }
@@ -992,6 +995,7 @@ const ICONS = {
   pencil:'<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="m14 6 4 4"/>',
   x:'<path d="M6 6l12 12M18 6 6 18"/>',
   skip:'<path d="m6 5 9 7-9 7z"/><path d="M19 5v14"/>',
+  undo:'<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
   clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
   chevron:'<path d="m6 9 6 6 6-6"/>',
   leaf:'<path d="M5 21c0-9 5-15 15-16-1 10-7 15-15 16z"/><path d="M5 21 13 13"/>'
@@ -1557,10 +1561,10 @@ function renderHabitosHoy(){
       <button type="button" data-pop="hab${h.id}" class="checkbox ${hd.completado?'checked':''}" aria-pressed="${hd.completado}" aria-label="Marcar ${escapeHtml(h.nombre)}" onclick="toggleHabito('${h.id}')"></button>
       <div onclick="toggleHabito('${h.id}')" style="cursor:pointer;">
         <div class="row-title">${escapeHtml(h.nombre)}</div>
-        <div class="row-sub">${h.hora?h.hora+' · ':''}${dur} min recomendados${hd.omitido?' · omitido hoy':''}</div>
+        <div class="row-sub">${h.hora?h.hora+' · ':''}${hd.omitido?'Saltado hoy · no cuenta en tu logro':dur+' min recomendados'}</div>
       </div>
       <div class="row-actions">
-        <button class="icon-btn" title="Omitir hoy" aria-label="Omitir ${escapeHtml(h.nombre)} hoy" onclick="omitirHabito('${h.id}')">${ic('skip',18)}</button>
+        <button type="button" class="omitir-btn${hd.omitido?' activo':''}" aria-pressed="${!!hd.omitido}" aria-label="${hd.omitido?'Retomar '+escapeHtml(h.nombre)+' hoy':'Saltar '+escapeHtml(h.nombre)+' hoy, sin que cuente en el logro'}" onclick="omitirHabito('${h.id}')">${hd.omitido?ic('undo',15)+' Retomar':ic('skip',15)+' Hoy no'}</button>
       </div>
       <div class="habito-extra">
         <details class="nota-habito"${hd.nota?' open':''}><summary>${ic('pencil',14)} ${hd.nota?'Mi reflexión':'Anotar reflexión'}</summary>
@@ -1589,11 +1593,13 @@ function omitirHabito(id){
   const fecha = todayKey();
   const dia = ensureDia(fecha);
   if(!dia.habitos[id]) dia.habitos[id] = { completado:false, duracion:null, omitido:false };
-  dia.habitos[id].omitido = true;
-  dia.habitos[id].completado = false;
+  // Alterna: un toque lo salta por hoy (sale del logro del día), otro lo retoma.
+  const saltar = !dia.habitos[id].omitido;
+  dia.habitos[id].omitido = saltar;
+  if(saltar) dia.habitos[id].completado = false;
   saveState();
   renderAll();
-  showToast('Hoy puedes omitirlo. Mañana puedes retomarlo.');
+  showToast(saltar ? 'Saltado por hoy: no cuenta en tu logro. Toca "Retomar" si cambias de idea.' : 'Retomado: vuelve a contar hoy.');
 }
 
 function renderProgresoHoy(){
