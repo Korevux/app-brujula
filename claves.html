@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Claves de avisos · Brújula Interior</title>
+<style>
+  :root { --azul: #1f4e8c; --coral: #e8735a; --fondo: #f6f8fb; --texto: #1d2533; }
+  body { margin: 0; font: 18px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--fondo); color: var(--texto); }
+  main { max-width: 640px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { color: var(--azul); font-size: 26px; margin: 0 0 8px; }
+  p { margin: 0 0 16px; }
+  .caja { background: #fff; border: 1px solid #d8e0ec; border-radius: 14px; padding: 16px; margin: 0 0 18px; }
+  .caja h2 { font-size: 19px; margin: 0 0 4px; color: var(--azul); }
+  .nombre { font-family: ui-monospace, Menlo, monospace; background: #eef3fa; padding: 2px 6px; border-radius: 6px; }
+  textarea { width: 100%; box-sizing: border-box; font: 15px ui-monospace, Menlo, monospace; padding: 10px; border: 1px solid #c9d3e2; border-radius: 10px; resize: none; height: 72px; margin: 8px 0; }
+  button { font: inherit; font-weight: 600; border: 0; border-radius: 10px; padding: 10px 16px; cursor: pointer; background: var(--azul); color: #fff; }
+  button.otra { background: transparent; color: var(--azul); border: 1px solid var(--azul); }
+  .aviso { border-left: 4px solid var(--coral); padding-left: 12px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Claves de los avisos</h1>
+  <p>Esta página crea un par de claves nuevas <strong>en tu propio navegador</strong>. No se envían a ningún sitio.</p>
+  <p class="aviso">Copia cada clave en Cloudflare: <strong>app-brujula → Settings → Variables and Secrets → Add</strong>, con tipo <strong>Secret</strong> y el nombre indicado.</p>
+
+  <div class="caja">
+    <h2>1. Clave pública</h2>
+    <p>Nombre en Cloudflare: <span class="nombre">VAPID_PUBLIC_KEY</span></p>
+    <textarea id="publica" readonly></textarea>
+    <button type="button" onclick="copiar('publica', this)">Copiar</button>
+  </div>
+
+  <div class="caja">
+    <h2>2. Clave privada</h2>
+    <p>Nombre en Cloudflare: <span class="nombre">VAPID_PRIVATE_KEY</span>. No la compartas con nadie.</p>
+    <textarea id="privada" readonly></textarea>
+    <button type="button" onclick="copiar('privada', this)">Copiar</button>
+  </div>
+
+  <p>Usa las dos claves de la misma vez. Si recargas la página salen otras distintas.</p>
+  <button type="button" class="otra" onclick="location.href='/'">Volver a la app</button>
+</main>
+<script>
+  function b64u(bytes) {
+    let s = "";
+    bytes.forEach(function (b) { s += String.fromCharCode(b); });
+    return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  }
+  function desdeB64u(t) {
+    const bin = atob(t.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((t.length + 3) % 4));
+    return Uint8Array.from(bin, function (c) { return c.charCodeAt(0); });
+  }
+  async function crear() {
+    const par = await crypto.subtle.generateKey({ name: "ECDSA", namedCurve: "P-256" }, true, ["sign", "verify"]);
+    const jwk = await crypto.subtle.exportKey("jwk", par.privateKey);
+    const x = desdeB64u(jwk.x), y = desdeB64u(jwk.y);
+    const publica = new Uint8Array(65);
+    publica[0] = 4; publica.set(x, 1); publica.set(y, 33);
+    document.getElementById("publica").value = b64u(publica);
+    document.getElementById("privada").value = jwk.d;
+  }
+  function copiar(id, btn) {
+    const campo = document.getElementById(id);
+    const listo = function () { btn.textContent = "Copiada ✓"; setTimeout(function () { btn.textContent = "Copiar"; }, 2000); };
+    if (navigator.clipboard) navigator.clipboard.writeText(campo.value).then(listo, function () { campo.select(); document.execCommand("copy"); listo(); });
+    else { campo.select(); document.execCommand("copy"); listo(); }
+  }
+  crear().catch(function () {
+    document.getElementById("publica").value = "Este navegador no pudo crear las claves. Prueba con Chrome.";
+  });
+</script>
+</body>
+</html>
