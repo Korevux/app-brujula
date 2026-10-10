@@ -2886,7 +2886,9 @@ function pushScheduleUpdate(){
 // Se llama cuando la persona activa el check de notificaciones y ya se
 // le concedió el permiso del navegador. Crea la suscripción push (una
 // sola vez por dispositivo) y manda el horario actual de recordatorios.
-function subscribeToPush(){
+// automatico=true: reintento al abrir la app. Si falla por algo pasajero (sin internet,
+// servidor ocupado) no se apaga la casilla ni se avisa: se vuelve a intentar la próxima vez.
+function subscribeToPush(automatico){
   if(!('serviceWorker' in navigator) || !('PushManager' in window)) return Promise.resolve(false);
 
   return Promise.all([
@@ -2929,6 +2931,7 @@ function subscribeToPush(){
     return true;
   }).catch(function(err){
     console.warn('No se pudo suscribir a notificaciones push.', err);
+    if(automatico) return false;
     try{ window.localStorage.setItem(PUSH_SUBSCRIBED_KEY, '0'); }catch(e){}
     syncNotifyUI();
     showToast(/netlify\.app$/.test(location.hostname)
@@ -3556,7 +3559,7 @@ function init(){
   if(typeof Notification !== 'undefined' && Notification.permission === 'granted'){
     let subscribed = false;
     try{ subscribed = window.localStorage.getItem(PUSH_SUBSCRIBED_KEY) === '1'; }catch(e){}
-    if(subscribed) subscribeToPush();
+    if(subscribed) subscribeToPush(true);
   }
 }
 document.addEventListener('DOMContentLoaded', init);
