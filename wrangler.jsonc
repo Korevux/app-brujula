@@ -29,5 +29,9 @@
     "SUPABASE_URL": "https://rmjprvpqiscuxkjyuokb.supabase.co",
     "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtanBydnBxaXNjdXhranl1b2tiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTExNTc0NzYsImV4cCI6MjEwNjczMzQ3Nn0.o7Hy67UJpQ9GB6atRLH86nEjSxHxRt75_gqXVPWpto8"
   },
-  "observability": { "enabled": true }
+  "observability": { "enabled": true },
+  // Vistas previas: Cloudflare arma una versión de prueba en cada cambio
+  // (comando "wrangler preview"), y Wrangler exige este bloque aunque esté vacío.
+  // Va vacío a propósito: la vista previa no usa el KV ni los avisos reales.
+  "previews": {}
 }
