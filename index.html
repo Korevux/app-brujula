@@ -344,6 +344,7 @@ button.chip{ border:none; cursor:pointer; padding:7px 12px; font-size:12.5px; }
 @keyframes sacudir{ 0%,100%{ transform:rotate(0); } 25%{ transform:rotate(-14deg); } 75%{ transform:rotate(14deg); } }
 .alarma-title{ font-size:24px; font-weight:800; margin-top:18px; }
 .alarma-body{ font-size:16px; opacity:0.9; margin-top:10px; line-height:1.5; max-width:320px; }
+#notifyStatus.aviso-error{ color:#b8461c; font-weight:600; }
 .next-reminder{ font-size:12.5px; color:var(--ink-soft); margin-top:6px; }
 
 /* ---------- Settings list ---------- */
@@ -538,6 +539,12 @@ label{ font-size:14.5px; }
 .hero .date{ color:rgba(255,255,255,.85); }
 .hero .next-reminder{ background:rgba(255,255,255,.18); color:#fff; position:relative; z-index:1; }
 .hero .next-reminder b{ color:#fff; }
+.hoy-cualidad{ position:relative; z-index:1; margin-top:10px; font-size:15px; color:#fff; line-height:1.4; }
+.hoy-cualidad:empty{ display:none; }
+.hoy-cualidad b{ font-size:17px; }
+.hoy-cualidad .link, .hoy-cualidad button.link{ color:#fff; text-decoration:underline; background:none; border:0; padding:0; font:inherit; cursor:pointer; }
+.hoy-cualidad .cualidad-acciones{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+.hoy-cualidad .cualidad-acciones .btn{ background:rgba(255,255,255,.22); color:#fff; border:0; }
 
 /* Bloques del día con identidad propia */
 .momento-head{ background:linear-gradient(135deg, #fff0e6 0%, #fffaf6 100%); }
@@ -634,6 +641,7 @@ label{ font-size:14.5px; }
       <div class="greeting" id="hoy-greeting">Hola</div>
       <div class="date" id="hoy-date">—</div>
       <div class="next-reminder" id="hoy-next-reminder"></div>
+      <div class="hoy-cualidad" id="hoy-cualidad"></div>
     </div>
 
     <div class="ios-banner" id="ios-banner" style="display:none;">
@@ -1308,6 +1316,7 @@ function renderHoy(){
   if(state.nombre) saludo += ', ' + state.nombre;
   document.getElementById('hoy-greeting').textContent = saludo;
   document.getElementById('hoy-date').textContent = formatDateLong();
+  renderCualidadHoy();
 
   // 1 · Objetivo de hoy
   renderEnfoqueHoy();
@@ -1641,8 +1650,33 @@ function cualidadActual(){
   const c = state.cualidadSemana;
   return c && c.semana === isoWeekKey() ? c.texto : '';
 }
+// La de la semana pasada, si aún no eliges la de esta (para ofrecer seguir con ella).
+function cualidadAnterior(){
+  const c = state.cualidadSemana;
+  return c && c.texto && c.semana !== isoWeekKey() ? c.texto : '';
+}
+// Arriba en Hoy, siempre a la vista: es el recordatorio diario de la cualidad.
+function renderCualidadHoy(){
+  const el = document.getElementById('hoy-cualidad');
+  if(!el) return;
+  const actual = cualidadActual(), anterior = cualidadAnterior();
+  el.innerHTML = actual
+    ? `${ic('spark',16)} Esta semana trabajo: <b>${escapeHtml(actual)}</b> · <button type="button" class="link" onclick="elegirCualidad()">Cambiar</button>`
+    : anterior
+      ? `${ic('spark',16)} Empieza una semana nueva. ¿Sigues trabajando <b>${escapeHtml(anterior)}</b>?
+         <div class="cualidad-acciones"><button type="button" class="btn small" onclick="seguirCualidad()">Sí, sigo con ${escapeHtml(anterior)}</button><button type="button" class="btn small" onclick="elegirCualidad()">Elegir otra</button></div>`
+      : `${ic('spark',16)} <button type="button" class="link" onclick="elegirCualidad()">Elige la cualidad que quieres mejorar esta semana</button>`;
+}
+function seguirCualidad(){
+  const anterior = cualidadAnterior();
+  if(!anterior) return;
+  state.cualidadSemana = { semana: isoWeekKey(), texto: anterior };
+  saveState();
+  showToast('Sigues con ' + anterior + ' esta semana.');
+  renderAll();
+}
 function elegirCualidad(){
-  const actual = cualidadActual();
+  const actual = cualidadActual() || cualidadAnterior();
   openModal(`
     <h3 style="margin-bottom:6px;">Cualidad de esta semana</h3>
     <p class="muted" style="margin-bottom:10px;">Elige una sola cualidad que quieras mejorar estos 7 días. Toca una sugerencia o escribe la tuya.</p>
@@ -2888,9 +2922,35 @@ function pushScheduleUpdate(){
 // sola vez por dispositivo) y manda el horario actual de recordatorios.
 // automatico=true: reintento al abrir la app. Si falla por algo pasajero (sin internet,
 // servidor ocupado) no se apaga la casilla ni se avisa: se vuelve a intentar la próxima vez.
+let suscribiendoPush = false; // mientras se conecta, la casilla se queda marcada
+const PUSH_ERROR_KEY = 'brujula_push_error';
+function guardarErrorAvisos(texto){
+  try{ if(texto) window.localStorage.setItem(PUSH_ERROR_KEY, texto); else window.localStorage.removeItem(PUSH_ERROR_KEY); }catch(e){}
+}
+function leerErrorAvisos(){
+  try{ return window.localStorage.getItem(PUSH_ERROR_KEY) || ''; }catch(e){ return ''; }
+}
+// Traduce el error real del navegador a qué pasó y qué hacer, en palabras simples.
+// Se agrega el detalle técnico al final para poder diagnosticarlo con una captura.
+function explicarErrorAvisos(err){
+  const det = ((err && err.name) ? err.name + ': ' : '') + ((err && err.message) || String(err || ''));
+  const m = det.toLowerCase();
+  const android = /android/i.test(navigator.userAgent);
+  let texto;
+  if(/netlify\.app$/.test(location.hostname)) texto = 'Esta es la app vieja y no puede mandar avisos. Abre brujula.krvx.workers.dev e instálala.';
+  else if(m.includes('permission denied')) texto = android
+    ? 'Tu teléfono tiene apagadas las notificaciones de Chrome. Abre Ajustes → Aplicaciones → Chrome (y Brújula si aparece) → Notificaciones, actívalas y vuelve a marcar la casilla.'
+    : 'Tu computador tiene apagadas las notificaciones del navegador. Actívalas en la configuración del sistema y vuelve a marcar la casilla.';
+  else if(m.includes('push service')) texto = 'Chrome no pudo conectarse con el servicio de avisos de Google. Actualiza Chrome' + (android ? ' desde Play Store' : '') + ' y vuelve a marcar la casilla.';
+  else if(m.includes('claves') || m.includes('servidor')) texto = 'El servidor de Brújula no respondió. Vuelve a marcar la casilla en un rato.';
+  else if(m.includes('failed to fetch') || m.includes('network') || !navigator.onLine) texto = 'No había internet al activarlos. Conéctate y vuelve a marcar la casilla.';
+  else texto = 'No se pudieron activar los avisos en este aparato.';
+  return texto + (det ? ' (Detalle: ' + det + ')' : '');
+}
 function subscribeToPush(automatico){
   if(!('serviceWorker' in navigator) || !('PushManager' in window)) return Promise.resolve(false);
 
+  if(!automatico) suscribiendoPush = true;
   return Promise.all([
     navigator.serviceWorker.ready,
     fetch('/api/vapid-public-key', { cache: 'no-store' }).then(function(r){ return r.ok ? r.json() : null; })
@@ -2913,7 +2973,9 @@ function subscribeToPush(automatico){
       return registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: clave });
     });
   }).then(function(subscription){
+    suscribiendoPush = false;
     if(!subscription) return false;
+    guardarErrorAvisos('');
     const nuevo = (function(){ try{ return window.localStorage.getItem(PUSH_SUBSCRIBED_KEY) !== '1'; }catch(e){ return true; } })();
     try{ window.localStorage.setItem(PUSH_SUBSCRIBED_KEY, '1'); }catch(e){}
     syncNotifyUI();
@@ -2930,13 +2992,13 @@ function subscribeToPush(automatico){
     }).catch(function(){});
     return true;
   }).catch(function(err){
+    suscribiendoPush = false;
     console.warn('No se pudo suscribir a notificaciones push.', err);
-    if(automatico) return false;
+    if(automatico){ syncNotifyUI(); return false; }
     try{ window.localStorage.setItem(PUSH_SUBSCRIBED_KEY, '0'); }catch(e){}
+    guardarErrorAvisos(explicarErrorAvisos(err));
     syncNotifyUI();
-    showToast(/netlify\.app$/.test(location.hostname)
-      ? 'Esta es la app vieja y no puede mandar avisos. Abre brujula.krvx.workers.dev e instálala.'
-      : 'No se pudieron activar los avisos en este dispositivo. Revisa tu conexión e inténtalo otra vez.');
+    showToast('No se pudieron activar los avisos. Abajo de la casilla te explicamos por qué.');
     return false;
   });
 }
@@ -3100,9 +3162,7 @@ function asistentePermitir(){
       if(ok) abrirAsistenteAvisos('aparato');
       else {
         const b = document.getElementById('btn-asistente'); if(b){ b.disabled = false; b.textContent = 'Permitir avisos'; }
-        if(msg) msg.textContent = /netlify\.app$/.test(location.hostname)
-          ? 'Esta es la app vieja. Abre brujula.krvx.workers.dev e instálala.'
-          : 'No se pudo conectar. Revisa tu internet e inténtalo otra vez.';
+        if(msg) msg.textContent = leerErrorAvisos() || 'No se pudo conectar. Revisa tu internet e inténtalo otra vez.';
       }
     });
   });
@@ -3186,8 +3246,15 @@ function refreshNotifyStatus(){
     notifyToggle.disabled = true;
     return;
   }
-  if(Notification.permission === 'denied'){
-    notifyStatus.textContent = 'Notificaciones bloqueadas. Actívalas desde los ajustes del navegador si las quieres.';
+  const errorGuardado = leerErrorAvisos();
+  notifyStatus.classList.toggle('aviso-error', !notifyToggle.checked && !!errorGuardado);
+  if(suscribiendoPush){
+    notifyStatus.textContent = 'Conectando este aparato…';
+  }else if(Notification.permission === 'denied'){
+    notifyStatus.classList.add('aviso-error');
+    notifyStatus.textContent = 'Los avisos están bloqueados para Brújula en este aparato. Toca "Activar avisos paso a paso" para ver cómo desbloquearlos.';
+  }else if(!notifyToggle.checked && errorGuardado){
+    notifyStatus.textContent = errorGuardado;
   }else if(Notification.permission === 'granted' && notifyToggle.checked){
     notifyStatus.textContent = 'Te avisaremos aunque no tengas la app abierta.';
   }else{
@@ -3201,7 +3268,7 @@ function syncNotifyUI(){
   if(!notifyToggle || !('Notification' in window)) return;
   let subscribed = false;
   try{ subscribed = window.localStorage.getItem(PUSH_SUBSCRIBED_KEY) === '1'; }catch(e){}
-  notifyToggle.checked = Notification.permission === 'granted' && subscribed;
+  notifyToggle.checked = suscribiendoPush || (Notification.permission === 'granted' && subscribed);
   refreshNotifyStatus();
 }
 
@@ -3541,14 +3608,23 @@ function init(){
         return;
       }
       if(notifyToggle.checked){
+        guardarErrorAvisos('');
         Notification.requestPermission().then(function(permission){
           const granted = permission === 'granted';
           notifyToggle.checked = granted;
-          refreshNotifyStatus();
-          if(granted) subscribeToPush().then(function(ok){ if(ok) abrirAsistenteAvisos('aparato'); });
+          if(!granted){
+            // El aparato no dio el permiso: se explica en vez de desmarcar sin decir nada.
+            if(permission === 'default') guardarErrorAvisos('No llegaste a tocar "Permitir" (la pregunta se cerró o tu aparato no la mostró). Toca "Activar avisos paso a paso" y sigue los pasos.');
+            refreshNotifyStatus();
+            abrirAsistenteAvisos('permiso');
+            return;
+          }
+          subscribeToPush().then(function(ok){ if(ok) abrirAsistenteAvisos('aparato'); });
+          syncNotifyUI();
         });
       }else{
         try{ window.localStorage.setItem(PUSH_SUBSCRIBED_KEY, '0'); }catch(e){}
+        guardarErrorAvisos('');
         refreshNotifyStatus();
       }
     });
