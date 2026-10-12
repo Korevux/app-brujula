@@ -45,11 +45,13 @@ async function saveSchedule(request, env) {
   const existing = all.devices.find((d) => d.subscription.endpoint === sub.endpoint);
 
   // Conserva lastFiredDate para no repetir un aviso el mismo día solo
-  // porque el cliente volvió a mandar la lista completa.
+  // porque el cliente volvió a mandar la lista completa. Si la persona le
+  // cambió la hora, se olvida: un aviso que ya sonó hoy a las 08:00 y se
+  // movió a las 11:00 tiene que volver a sonar a las 11:00.
   const prevByHabit = {};
   if (existing && Array.isArray(existing.reminders)) {
     existing.reminders.forEach((r) => {
-      prevByHabit[r.habitId] = r.lastFiredDate || null;
+      prevByHabit[r.habitId + "@" + r.hora] = r.lastFiredDate || null;
     });
   }
 
@@ -59,7 +61,7 @@ async function saveSchedule(request, env) {
     mensaje: typeof r.mensaje === "string" ? r.mensaje : null,
     hora: typeof r.hora === "string" ? r.hora : "",
     dias: Array.isArray(r.dias) ? r.dias : [0, 1, 2, 3, 4, 5, 6],
-    lastFiredDate: prevByHabit[String(r.habitId)] || null
+    lastFiredDate: prevByHabit[String(r.habitId) + "@" + (typeof r.hora === "string" ? r.hora : "")] || null
   }));
 
   const device = {
